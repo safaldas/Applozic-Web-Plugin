@@ -111,7 +111,7 @@ Add the below code just after Step 1.
     userName: username,                 //User's display name
     imageLink : '',                     //User's profile picture url
     email : '',                         //optional
-    contactNumber: '',                  //optional, pass with internationl code eg: +16508352160
+    contactNumber: '',                  //optional, pass with internationl code eg: +13109097458
     desktopNotification: true,
     source: '1',                          // optional, WEB(1),DESKTOP_BROWSER(5), MOBILE_BROWSER(6)
     notificationIconLink: 'https://www.applozic.com/favicon.ico',    //Icon to show in desktop notification, replace with your icon

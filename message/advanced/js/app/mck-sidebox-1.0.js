@@ -1089,7 +1089,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 mckMessageLayout.createContactWithDetail({
                     'userId': MCK_USER_ID,
-                    'dispayName': data.displayName,
+                    'displayName': data.displayName,
                     'photoLink': data.imageLink
                 });
                 $applozic.ajaxPrefilter(function(options) {

@@ -1005,7 +1005,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 							MCK_CONNECTED_CLIENT_COUNT = result.connectedClientCount;
 							mckMessageLayout.createContactWithDetail({
 								'userId' : MCK_USER_ID,
-								'dispayName' : result.displayName,
+								'displayName' : result.displayName,
 								'photoLink' : result.imageLink
 							});
 							$applozic.ajaxPrefilter(function(options) {
