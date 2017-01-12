@@ -41,7 +41,9 @@ $applozic.fn.applozic('sendMessage', {
   $applozic.fn.applozic('messageList', {'id': 'Group Id or User Id',     
                                         'isGroup': false,               // True in case of group 
                                         'clientGroupId' : 'CLIENT_GROUP_ID', // use either groupId or clientGroupId
-                                        'callback': function(response){ // write your logic} 
+                                        'callback': function(response){ 
+                                        // write your logic
+                                        } 
                                         });
 ```        
 
