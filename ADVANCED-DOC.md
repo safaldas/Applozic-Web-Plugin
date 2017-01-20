@@ -111,6 +111,9 @@ $applozic.fn.applozic('subscribeToEvents', {
                  onMessageReceived: function (obj) {
                        //message received
                  },
+                 onMessageSent: function (obj) {
+                       //message sent
+                 },
                  onMessageSentUpdate: function (obj) {
                        //message sent confirmation: {'messageKey': 'sent-message-key'}
                  },
