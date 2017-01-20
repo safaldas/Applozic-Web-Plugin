@@ -1497,6 +1497,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 }
 
 .mck-msg-left .mck-msg-box {
+	position: relative;
 	float: left;
 	color: #333;
 	font-size: 14px;
@@ -1505,7 +1506,6 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	padding: 10px 14px 12px;
 	max-width: 85%;
 	border-radius: 5px;
-	/*background-color: #dcf8c6;*/
 	-webkit-align-self: flex-end;
 	-ms-flex-item-align: end;
 	align-self: flex-end;
@@ -1546,11 +1546,11 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	position: absolute;
 }
 
-
+/*
 .mck-msg-avator-bubble.mck-msg-left .mck-msg-box:after,
 	.mck-msg-avator-bubble.mck-msg-left .mck-msg-box:before {
 	right: calc(100% - 58px);
-}
+}*/
 
 .mck-msg-right .mck-msg-box:after, .mck-msg-right .mck-msg-box:before {
 	left: 100%;
@@ -2200,9 +2200,8 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	color: #fff;
 	font-size: 14px;
 	margin-right: 15px;
-	min-height: 22px;
+	min-height: 43px;
 	padding : 10px 14px 12px;
-/*	background-color: #00b0ff; */
 	-webkit-align-self: flex-start;
 	-ms-flex-item-align: start;
 	align-self: flex-start;
@@ -2226,23 +2225,6 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 
 .mck-group-inner .bubble.mck-msg-left .mck-msg-box:after {
 	border-right-color: #fff;
-}
-
-.mck-msg-left .mck-msg-box {
-	float: left;
-	color: #1a1a1a;
-	font-size: 14px;
-	margin-left: 15px;
-	min-height: 22px;
-	padding: 10px 14px 12px;
-	max-width: 85%;
-	border-radius: 5px;
-	/*background-color: #FFFFFF;*/
-	-webkit-align-self: flex-end;
-	-ms-flex-item-align: end;
-	align-self: flex-end;
-	-webkit-animation-name: slideFromRight;
-	animation-name: slideFromRight;
 }
 
 .mck-msg-avator-bubble.mck-msg-left .mck-msg-box {
