@@ -12,6 +12,7 @@ if (typeof $original !== 'undefined') {
 }
 var w = window,
     d = document;
+var MCK_LABELS;
 var MCK_BASE_URL;
 var MCK_CURR_LATITIUDE = 40.7324319;
 var MCK_CURR_LONGITUDE = -73.82480777777776;
@@ -66,8 +67,8 @@ function MckUtils() {
                         line.push(alt);
                     }
                     return;
-                } else if(tagName === 'style') {
-                   return;  
+                } else if (tagName === 'style') {
+                    return;
                 } else if (tagName === 'br') {
                     flush();
                 }
@@ -136,59 +137,73 @@ function MckUtils() {
             range.select(); //Select the range (make it the visible selection
         }
     };
-    
+
     this.encryptionKey = null;
-    this.getEncryptionKey = function(){
-      return this.encryptionKey;
+    this.getEncryptionKey = function() {
+        return this.encryptionKey;
     }
-    this.setEncryptionKey = function(key){
-      this.encryptionKey = key;
+    this.setEncryptionKey = function(key) {
+        this.encryptionKey = key;
     }
-    
+
     _this.b64EncodeUnicode = function(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-      }));
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+            return String.fromCharCode('0x' + p1);
+        }));
     };
 
     _this.b64DecodeUnicode = function(str) {
-      return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
+        return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
     };
 
     _this.ajax = function(options) {
-      var reqOptions = Object.assign({}, options);
-      if (this.getEncryptionKey()) {
-        var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
-        var iv = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-  
-        if (reqOptions.type.toLowerCase() === 'post') {
-          // encrypt Data
-          while (options.data.length % 16 != 0) {
-            options.data += ' ';
-          }
-          var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-          var bytes = aesjs.util.convertStringToBytes(options.data);
-          var encryptedBytes = aesCtr.encrypt(bytes);
-          var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
-          reqOptions.data = btoa(encryptedStr);
+        var reqOptions = Object.assign({}, options);
+        if (this.getEncryptionKey()) {
+            var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
+            var iv = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+
+            if (reqOptions.type.toLowerCase() === 'post') {
+                // encrypt Data
+                while (options.data.length % 16 != 0) {
+                    options.data += ' ';
+                }
+                var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+                var bytes = aesjs.util.convertStringToBytes(options.data);
+                var encryptedBytes = aesCtr.encrypt(bytes);
+                var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
+                reqOptions.data = btoa(encryptedStr);
+            }
+
+            reqOptions.success = function(data) {
+                // Decrypt response
+                var decodedData = atob(data);
+                var arr = [];
+                for (var i = 0; i < decodedData.length; i++) {
+                    arr.push(decodedData.charCodeAt(i));
+                }
+                var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+                var decryptedBytes = aesCtr.decrypt(arr);
+                var res = aesjs.util.convertBytesToString(decryptedBytes);
+                res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+                if (_this.isJsonString(res)) {
+                    options.success(JSON.parse(res));
+                } else {
+                    options.success(res);
+                }
+            }
         }
-  
-        reqOptions.success = function(data) {
-          // Decrypt response
-          var decodedData = atob(data);
-          var arr = [];
-          for (var i = 0; i < decodedData.length; i++) {
-            arr.push(decodedData.charCodeAt(i));
-          }
-          var aesCtr = new aesjs.ModeOfOperation.ecb(key);
-          var decryptedBytes = aesCtr.decrypt(arr);
-          var res = aesjs.util.convertBytesToString(decryptedBytes);
-          options.success(JSON.parse(res.replace(/^\s*|\s*[\x00-\x10]*$/g, '')));
+        $applozic.ajax(reqOptions);
+    };
+
+    _this.isJsonString = function(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
         }
-      }
-      $applozic.ajax(reqOptions);
+        return true;
     };
 
 }
@@ -203,7 +218,7 @@ function MckContactUtils() {
             contactId = contactId.substring(1);
         }
         contactId = decodeURIComponent(contactId);
-        return contactId.replace(/\@/g, "AT").replace(/\./g, "DOT").replace(/\*/g, "STAR").replace(/\#/g, "HASH").replace(/\|/g, "VBAR").replace(/\+/g, "PLUS").replace(/\;/g, "SCOLON").replace(/\?/g, "QMARK").replace(/\,/g, "COMMA").replace(/\:/g, 'COLON');
+        return $applozic.trim(contactId.replace(/\@/g, 'AT').replace(/\./g, 'DOT').replace(/\*/g, 'STAR').replace(/\#/g, 'HASH').replace(/\|/g, 'VBAR').replace(/\+/g, 'PLUS').replace(/\;/g, 'SCOLON').replace(/\?/g, 'QMARK').replace(/\,/g, 'COMMA').replace(/\:/g, 'COLON'));
     };
 }
 function MckGroupUtils() {
@@ -241,7 +256,7 @@ function MckGroupUtils() {
             'members': group.membersName,
             'imageUrl': group.imageUrl,
             'users': users,
-            'userCount' : group.userCount,
+            'userCount': group.userCount,
             'removedMembersId': removedMembersId,
             'clientGroupId': group.clientGroupId,
             'isGroup': true
@@ -443,7 +458,10 @@ function MckGroupService() {
                     params.callback(response);
                 }
             },
-            error: function() {
+            error: function(xhr, desc, err) {
+                 if (xhr.status === 401) {
+                    sessionStorage.clear();
+                }
                 console.log('Unable to load groups. Please reload page.');
                 response.status = 'error';
                 if (params.callback) {
@@ -579,28 +597,28 @@ function MckGroupService() {
         });
     };
     _this.removeGroupMember = function(params) {
-        var data = "";
+        var data = '';
         var response = new Object();
         if (params.groupId) {
-            data += "groupId=" + params.groupId;
+            data += 'groupId=' + params.groupId;
         } else if (params.clientGroupId) {
-            data += "clientGroupId=" + params.clientGroupId;
+            data += 'clientGroupId=' + params.clientGroupId;
         } else {
-            response.status = "error";
+            response.status = 'error';
             response.errorMessage = "GroupId or Client GroupId Required";
             if (typeof params.callback === 'function') {
                 params.callback(response);
             }
             return;
         }
-        data += "&userId=" + encodeURIComponent(params.userId);
+        data += '&userId=' + encodeURIComponent(params.userId);
         mckUtils.ajax({
             url: MCK_BASE_URL + GROUP_REMOVE_MEMBER_URL,
             data: data,
             type: 'get',
             global: false,
             success: function(data) {
-                if (data.status === "success") {
+                if (data.status === 'success') {
                     if (params.clientGroupId) {
                         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
                         if (typeof group === 'object') {
@@ -622,8 +640,8 @@ function MckGroupService() {
             },
             error: function() {
                 console.log('Unable to process your request. Please reload page.');
-                response.status = "error";
-                response.errorMessage = "";
+                response.status = 'error';
+                response.errorMessage = '';
                 if (params.callback) {
                     params.callback(response);
                 }
@@ -663,10 +681,10 @@ function MckGroupService() {
                             params.groupId = group.contactId;
                         }
                     }
-                    response.status = "success";
+                    response.status = 'success';
                     response.data = data.response;
                 } else {
-                    response.status = "error";
+                    response.status = 'error';
                     response.errorMessage = data.errorResponse[0].description;
                 }
                 if (params.callback) {
@@ -679,7 +697,7 @@ function MckGroupService() {
             error: function() {
                 console.log('Unable to process your request. Please reload page.');
                 response.status = "error";
-                response.errorMessage = "";
+                response.errorMessage = '';
                 if (params.callback) {
                     params.callback(response);
                 }
@@ -759,10 +777,10 @@ function MckGroupService() {
 }
 function MckDateUtils() {
     var _this = this;
-    var fullDateFormat = "mmm d, h:MM TT";
-    var onlyDateFormat = "mmm d";
-    var onlyTimeFormat = "h:MM TT";
-    var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    var fullDateFormat = 'mmm d, h:MM TT';
+    var onlyDateFormat = 'mmm d';
+    var onlyTimeFormat = 'h:MM TT';
+    var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
     _this.getDate = function(createdAtTime) {
         var date = new Date(parseInt(createdAtTime, 10));
         var currentDate = new Date();
@@ -775,13 +793,13 @@ function MckDateUtils() {
             var hoursDiff = currentDate.getHours() - date.getHours();
             var timeDiff = w.Math.floor((currentDate.getTime() - date.getTime()) / 60000);
             if (timeDiff < 60) {
-                return (timeDiff <= 1) ? "Last seen 1 min ago" : "Last seen " + timeDiff + " mins ago";
+                return (timeDiff <= 1) ? MCK_LABELS['last.seen'] + ' 1 min ' + MCK_LABELS['ago'] : MCK_LABELS['last.seen'] + ' ' + timeDiff + ' mins ' + MCK_LABELS['ago'];
             }
-            return (hoursDiff === 1) ? "Last seen 1 hour ago" : "Last seen " + hoursDiff + " hours ago";
+            return (hoursDiff === 1) ? MCK_LABELS['last.seen'] + ' 1 hour ' + MCK_LABELS['ago'] : MCK_LABELS['last.seen'] + ' ' + hoursDiff + ' hours ' + MCK_LABELS['ago'];
         } else if ( ((currentDate.getDate() - date.getDate() === 1) && (currentDate.getMonth() === date.getMonth()) && (currentDate.getYear() === date.getYear())) ) {
-            return "Last seen on yesterday";
+            return MCK_LABELS['last.seen.on'] + ' yesterday';
         } else {
-            return "Last seen on " + dateFormat(date, onlyDateFormat, false);
+            return MCK_LABELS['last.seen.on'] + ' ' + dateFormat(date, onlyDateFormat, false);
         }
     };
     _this.getTimeOrDate = function(createdAtTime, timeFormat) {
@@ -805,7 +823,7 @@ function MckDateUtils() {
                 val = String(val);
                 len = len || 2;
                 while (val.length < len)
-                val = "0" + val;
+                val = '0' + val;
                 return val;
             };
         // Regexes and supporting functions are cached through closure
@@ -813,7 +831,7 @@ function MckDateUtils() {
             var dF = dateFormat;
             // You can't provide utc if you skip other args (use the
             // "UTC:" mask prefix)
-            if (arguments.length === 1 && Object.prototype.toString.call(date) === "[object String]" && !/\d/.test(date)) {
+            if (arguments.length === 1 && Object.prototype.toString.call(date) === '[object String]' && !/\d/.test(date)) {
                 mask = date;
                 date = undefined;
             }
@@ -821,24 +839,24 @@ function MckDateUtils() {
             // necessary
             date = date ? new Date(date) : new Date;
             if (isNaN(date))
-                throw SyntaxError("invalid date");
+                throw SyntaxError('invalid date');
             mask = String(mask);
             // mask = String(dF.masks[mask] || mask ||
             // dF.masks["default"]);
             // Allow setting the utc argument via the mask
-            if (mask.slice(0, 4) === "UTC:") {
+            if (mask.slice(0, 4) === 'UTC:') {
                 mask = mask.slice(4);
                 utc = true;
             }
-            var _ = utc ? "getUTC" : "get",
-                d = date[_ + "Date"](),
-                D = date[_ + "Day"](),
-                m = date[_ + "Month"](),
-                y = date[_ + "FullYear"](),
-                H = date[_ + "Hours"](),
-                M = date[_ + "Minutes"](),
-                s = date[_ + "Seconds"](),
-                L = date[_ + "Milliseconds"](),
+            var _ = utc ? 'getUTC' : 'get',
+                d = date[_ + 'Date'](),
+                D = date[_ + 'Day'](),
+                m = date[_ + 'Month'](),
+                y = date[_ + 'FullYear'](),
+                H = date[_ + 'Hours'](),
+                M = date[_ + 'Minutes'](),
+                s = date[_ + 'Seconds'](),
+                L = date[_ + 'Milliseconds'](),
                 o = utc ? 0 : date.getTimezoneOffset(),
                 flags = {
                     d: d,
@@ -861,13 +879,13 @@ function MckDateUtils() {
                     ss: pad(s),
                     l: pad(L, 3),
                     L: pad(L > 99 ? w.Math.round(L / 10) : L),
-                    t: H < 12 ? "a" : "p",
-                    tt: H < 12 ? "am" : "pm",
-                    T: H < 12 ? "A" : "P",
-                    TT: H < 12 ? "AM" : "PM",
-                    Z: utc ? "UTC" : (String(date).match(timezone) || [ "" ]).pop().replace(timezoneClip, ""),
-                    o: (o > 0 ? "-" : "+") + pad(w.Math.floor(w.Math.abs(o) / 60) * 100 + w.Math.abs(o) % 60, 4),
-                    S: [ "th", "st", "nd", "rd" ][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]
+                    t: H < 12 ? 'a' : 'p',
+                    tt: H < 12 ? 'am' : 'pm',
+                    T: H < 12 ? 'A' : 'P',
+                    TT: H < 12 ? 'AM' : 'PM',
+                    Z: utc ? 'UTC' : (String(date).match(timezone) || [ '' ]).pop().replace(timezoneClip, ''),
+                    o: (o > 0 ? '-' : '+') + pad(w.Math.floor(w.Math.abs(o) / 60) * 100 + w.Math.abs(o) % 60, 4),
+                    S: [ 'th', 'st', 'nd', 'rd' ][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]
                 };
             return mask.replace(token, function($0) {
                 return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
@@ -876,7 +894,7 @@ function MckDateUtils() {
     }();
     // Some common format strings
     dateFormat.masks = {
-        "default": "mmm d, yyyy h:MM TT",
+        'default': 'mmm d, yyyy h:MM TT',
         fullDateFormat: "mmm d, yyyy h:MM TT",
         onlyDateFormat: "mmm d",
         onlyTimeFormat: "h:MM TT",
