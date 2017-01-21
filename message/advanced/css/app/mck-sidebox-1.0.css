@@ -1504,7 +1504,9 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	margin-left: 15px;
   min-height: 22px;
 	padding: 10px 14px 12px;
-	max-width: 85%;
+	max-width: 70%; /* all browsers */
+	max-width: -moz-calc(85% - 58px); /* Firefox 4+ */
+	max-width: calc(85% - 58px); /* IE9+ and future browsers */
 	border-radius: 5px;
 	-webkit-align-self: flex-end;
 	-ms-flex-item-align: end;
@@ -2200,7 +2202,9 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	-webkit-animation-name: slideFromLeft;
 	animation-name: slideFromLeft;
 	border-radius: 5px;
-	max-width: 85%;
+	max-width: 70%; /* all browsers */
+	max-width: -moz-calc(85% - 58px); /* Firefox 4+ */
+	max-width: calc(85% - 58px); /* IE9+ and future browsers */
 	display: inline-block;
 	padding: 10px 14px 12px;
 	position: relative;
