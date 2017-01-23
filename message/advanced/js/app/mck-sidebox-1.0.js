@@ -4929,6 +4929,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     delete file.blobKey;
                     messageFeed.file = file;
                 }
+                messageFeed.source = message.source;
                 return messageFeed;
             };
             _this.updateUnreadCountonChatIcon = function(userDetails) {

@@ -509,9 +509,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 		};
 	     _this.logout = function() {
 	            if (typeof mckInitializeChannel !== 'undefined') {
-	                mckInitializeChannel.disconnect();               
+	                mckInitializeChannel.disconnect();
 	            }
-	            IS_LOGGED_IN = false; 
+	            IS_LOGGED_IN = false;
 	     };
 		_this.setOnline = function() {
 			if (typeof mckInitializeChannel !== 'undefined') {
@@ -3556,7 +3556,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 						$applozic.each(data.message, function(i, message) {
 							if (!(typeof message.to === "undefined")) {
 								if (message.groupId) {
-								   _this.addGroupFromMessage(message, true); 
+								   _this.addGroupFromMessage(message, true);
 								} else {
 									_this.addContactsFromMessage(message, true);
 								}
@@ -4508,6 +4508,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 					delete file.blobKey;
 					messageFeed.file = file;
 				}
+				messageFeed.source = message.source;
 				return messageFeed;
 			};
 			_this.updateUnreadCountonChatIcon = function(response) {
@@ -6577,7 +6578,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 								'message' : messageFeed
 							});
 						}
-						if (!$mck_sidebox_content.hasClass('n-vis')) {							
+						if (!$mck_sidebox_content.hasClass('n-vis')) {
 				            if (message.conversationId) {
                                 var conversationPxy = MCK_CONVERSATION_MAP[message.conversationId];
                                 if ((IS_MCK_TOPIC_HEADER || IS_MCK_TOPIC_BOX) && ((typeof conversationPxy !== 'object') || (typeof (MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId]) !== 'object'))) {
