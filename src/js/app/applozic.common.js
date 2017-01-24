@@ -458,7 +458,10 @@ function MckGroupService() {
                     params.callback(response);
                 }
             },
-            error: function() {
+            error: function(xhr, desc, err) {
+                 if (xhr.status === 401) {
+                    sessionStorage.clear();
+                }
                 console.log('Unable to load groups. Please reload page.');
                 response.status = 'error';
                 if (params.callback) {

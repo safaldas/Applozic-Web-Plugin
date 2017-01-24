@@ -117,7 +117,7 @@
 											id="mck-block-button" class="menu-item" title="Block User">
 												Block User </a></li>
 										<li id="li-mck-group-info" class="mck-group-menu-options">
-											<a href="#" id="mck-btn-group-info" class="menu-item"
+											<a href="#" id="mck-group-info-btn" class="menu-item"
 											title="Group Info"> Group Info </a>
 										</li>
 										<li id="li-mck-leave-group" class="mck-group-menu-options">
@@ -666,7 +666,7 @@
 		function readMessage() {
 			//console.log(userId);
 		}
-		//Callback Function to return display name by userId 
+		//Callback Function to return display name by userId
 		function displayName(userId) {
 			//Todo: replace this with users display name
 			var contact = contacts[userId]; // contacts sample given above
@@ -674,17 +674,17 @@
 				return contact.displayName;
 			}
 		}
-		//Callback Function to return contact image url by userId 
+		//Callback Function to return contact image url by userId
 		function contactImageSrc(userId) {
 			var contact = contacts[userId]; // contacts sample given above
 			if (typeof contact !== 'undefined') {
 				return contact.imageLink;
 			}
 		}
-		//callback function execute after plugin initialize. 
+		//callback function execute after plugin initialize.
 		function onInitialize(status) {
 			if (status === 'success') {
-				//write your logic exectute after plugin initialize. 
+				//write your logic exectute after plugin initialize.
 			} else if (typeof response === 'object' && response.status === 'error') {
 				alert(response.errorMessage);
 			}
@@ -695,9 +695,10 @@
 					//Function to initialize plugin
 					$applozic.fn
 						.applozic({
-							userId : 'customer-1',
-							userName : 'Customer1',
+							userId : 'demouser',
+							userName : 'Demo user',
 							appId : 'applozic-sample-app',
+							accessToken: 'demouser',
 							ojq : $original,
 							obsm : oModal,
 							notificationIconLink : "https://www.applozic.com/resources/images/applozic_icon.png",
@@ -715,11 +716,11 @@
 							                            'defaultChatDisabledMessage': 'Write display message!'
 							                            }  */
 						});
-	
+
 						// var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}]};
-						// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'. 
+						// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
 						// $applozic.fn.applozic('loadContacts', contactjson);
-	
+
 				});
 	</script>
 </body>
