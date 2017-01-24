@@ -26,7 +26,7 @@
                 //console.log(userId);
             }
 
-            //Callback function to return display name by userId 
+            //Callback function to return display name by userId
             function displayName(userId) {
                 //Todo: replace this with users display name
                 var contact = contacts[userId];   // contacts sample given above
@@ -35,23 +35,23 @@
                 }
             }
 
-            //Callback function to return contact image url by userId 
+            //Callback function to return contact image url by userId
             function contactImageSrc(userId) {
                 var contact = contacts[userId]; // contacts sample given above
                 if (typeof contact !== 'undefined') {
                     return contact.imageLink;
                 }
             }
-            //callback function execute after plugin initialize. 
+            //callback function execute after plugin initialize.
             function onInitialize(response) {
                 if (response === 'success') {
-                    //write your logic exectute after plugin initialize. 
+                    //write your logic exectute after plugin initialize.
                 } else if (typeof response === 'object' && response.status === 'error') {
     				alert(response.errorMessage);
     			}
             }
-            window.applozic.init({userId: 'customer-1', userName: 'Customer', appId: 'applozic-sample-app', readConversation: readMessage, contactDisplayName: displayName,
-                contactDisplayImage: contactImageSrc, onInit: onInitialize, maxAttachmentSize: 25, desktopNotification: true, 
+            window.applozic.init({userId: 'demouser', userName: 'Demo User', appId: 'applozic-sample-app', accessToken: 'demouser', readConversation: readMessage, contactDisplayName: displayName,
+                contactDisplayImage: contactImageSrc, onInit: onInitialize, maxAttachmentSize: 25, desktopNotification: true,
                         notificationIconLink: "https://www.applozic.com/resources/images/applozic_icon.png",
                         locShare: true,
                         googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4"});
@@ -59,7 +59,7 @@
             // Note: maxAttachmentSize property value declared above is in MB
 
             // var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "http://applozic.appspot.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "http://applozic.appspot.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "http://applozic.appspot.com/resources/images/applozic_icon.png"}]};
-            // To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'. 
+            // To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
             // $applozic.fn.applozic('loadContacts', contactjson);
         </script>
     </body>

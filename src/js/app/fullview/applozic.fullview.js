@@ -24,7 +24,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 		loadOwnContacts : false,
 		maxGroupSize : 100,
 		authenticationTypeId : 0,
-        labels: {
+    labels: {
             'conversations.title': 'Converations',
             'start.new': 'Start New',
             'search.contacts': 'Contacts',
@@ -237,9 +237,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 						jQuery.fn.emojiarea = $applozic.fn.emojiarea;
 					}
 					var applozic = new Applozic(appOptions);
-					$mck_sidebox.data("applozic_instance", applozic);
 					applozic.init();
-
+					$mck_sidebox.data("applozic_instance", applozic);
 				}
 			} else {
 				alert("Oops! looks like incorrect application id or user Id.");
@@ -273,7 +272,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 		var IS_MCK_TAB_FOCUSED = true;
 		var MCK_TOTAL_UNREAD_COUNT = 0;
 		var MCK_MODE = appOptions.mode;
-		MCK_LABELS = appOptions.labels;
+    MCK_LABELS = appOptions.labels;
 		var MCK_APP_ID = appOptions.appId;
 		MCK_BASE_URL = appOptions.baseUrl;
 		var MCK_CONNECTED_CLIENT_COUNT = 0;
@@ -402,7 +401,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 			MCK_TOPIC_DETAIL_MAP = [];
 			MCK_CLIENT_GROUP_MAP = [];
 			IS_MCK_TAB_FOCUSED = true;
-			MCK_LABELS = optns.labels;
+      MCK_LABELS = optns.labels;
 			MCK_TOTAL_UNREAD_COUNT = 0;
 			MCK_BASE_URL = optns.baseUrl;
 			TAB_FILE_DRAFT = new Object();
@@ -2905,6 +2904,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 				});
 			};
 		}
+		
 		function MckMessageLayout() {
 			var _this = this;
 			var emojiTimeoutId = '';
@@ -3595,6 +3595,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 					showMoreDateTime = '';
 					return;
 				} else {
+					if (isReloaded) {
+						$mck_contact_list.html('');
+					}
 					if (typeof data.message.length === 'undefined') {
 						if (data.message.groupId) {
 							_this.addGroupFromMessage(data.message);
@@ -5667,11 +5670,11 @@ var MCK_CLIENT_GROUP_MAP = [];
 		}
 		function MckMapLayout() {
 			var _this = this;
-			var GEOCODER = '';
+      var GEOCODER = '';
 			var CURR_LOC_ADDRESS = '';
 			var IS_LOC_SHARE_INIT = false;
 			var $mck_my_loc = $applozic('#mck-my-loc');
-		    var $mck_btn_loc = $applozic("#mck-btn-loc");
+		  var $mck_btn_loc = $applozic("#mck-btn-loc");
 			var $mck_loc_box = $applozic("#mck-loc-box");
 			var $mck_loc_lat = $applozic("#mck-loc-lat");
 			var $mck_loc_lon = $applozic("#mck-loc-lon");
@@ -5683,15 +5686,15 @@ var MCK_CLIENT_GROUP_MAP = [];
 			_this.init = function() {
 				if (IS_MCK_LOCSHARE && w.google && typeof (w.google.maps) === 'object') {
 					GEOCODER = new w.google.maps.Geocoder;
-			         $mck_btn_loc.on('click', function() {
-	                        if (IS_LOC_SHARE_INIT) {
-	                            $mck_loc_box.mckModal();
-	                        } else {
-	                            mckMapUtils.getCurrentLocation(_this.onGetCurrLocation, _this.onErrorCurrLocation);
-	                            IS_LOC_SHARE_INIT = true;
-	                        }
+          $mck_btn_loc.on('click', function() {
+                         if (IS_LOC_SHARE_INIT) {
+                             $mck_loc_box.mckModal();
+                         } else {
+                             mckMapUtils.getCurrentLocation(_this.onGetCurrLocation, _this.onErrorCurrLocation);
+                             IS_LOC_SHARE_INIT = true;
+                         }
 
-	                    });
+                     });
 				}
 				$mck_my_loc.on("click", function() {
 					mckMapUtils.getCurrentLocation(_this.onGetMyCurrLocation, _this.onErrorMyCurrLocation);
@@ -5758,12 +5761,13 @@ var MCK_CLIENT_GROUP_MAP = [];
 				$mck_loc_box.on('shown.bs.mck-box', function() {
 					$mckMapContent.locationpicker('autosize');
 				});
-				 $mck_loc_box.mckModal();
+        $mck_loc_box.mckModal();
 			};
 		}
 		function MckMapService() {
 			var _this = this;
 			var $mck_msg_to = $applozic("#mck-msg-to");
+			var $mck_btn_loc = $applozic("#mck-btn-loc");
 			var $mck_loc_box = $applozic('#mck-loc-box');
 			var $mck_msg_sbmt = $applozic("#mck-msg-sbmt");
 			var $mck_msg_error = $applozic("#mck-msg-error");
@@ -5771,6 +5775,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 			var $mck_msg_response = $applozic("#mck-msg-response");
 			var $mck_response_text = $applozic("#mck_response_text");
 			var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner-right");
+			$mck_btn_loc.on("click", function() {
+				$mck_loc_box.mckModal();
+			});
 			$mck_loc_submit.on("click", function() {
 				$mck_msg_inner = mckMessageLayout.getMckMessageInner();
 				var messagePxy = {
