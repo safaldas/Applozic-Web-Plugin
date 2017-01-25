@@ -694,7 +694,15 @@
 										locShare : true,
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",
 										olStatus: false,
-                    messageBubbleAvator: false
+                    messageBubbleAvator: false,
+										onInit: function() {
+											/*$applozic.fn.applozic('subscribeToEvents', {
+				                 onMessageSent: function (obj) {
+				                       //message sent
+															 console.log(obj);
+				                 }
+				               });*/
+										}
 								/*      openGroupSettings: {
 			                            'disableChatForNonGroupMember' :true,
 			                            'allowAccessGroupMembers' : true,
