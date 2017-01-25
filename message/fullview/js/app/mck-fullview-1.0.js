@@ -4509,6 +4509,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 					messageFeed.file = file;
 				}
 				messageFeed.source = message.source;
+				messageFeed.metadata = message.metadata;
 				return messageFeed;
 			};
 			_this.updateUnreadCountonChatIcon = function(response) {
