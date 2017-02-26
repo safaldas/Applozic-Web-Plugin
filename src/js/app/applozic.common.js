@@ -159,7 +159,8 @@ function MckUtils() {
     };
 
     _this.ajax = function(options) {
-        var reqOptions = Object.assign({}, options);
+        //var reqOptions = Object.assign({}, options);
+        var reqOptions = $applozic.extend({}, {}, options);
         if (this.getEncryptionKey()) {
             var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
             var iv = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];

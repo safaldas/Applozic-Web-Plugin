@@ -1,6 +1,5 @@
 var MCK_GROUP_MAP = [];
 var MCK_CLIENT_GROUP_MAP = [];
-
 (function($applozic, w, d) {
     "use strict";
     var default_options = {
@@ -17,6 +16,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         mode: 'standard',
         visitor: false,
         olStatus: false,
+        groupUserCount: false,
         desktopNotification: false,
         locShare: false,
         maxAttachmentSize: 25, // default size is 25MB
@@ -340,6 +340,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof appOptions.messageBubbleAvator === "boolean") ? (appOptions.messageBubbleAvator) : false;
         var IS_OFFLINE_MESSAGE_ENABLED = (typeof appOptions.showOfflineMessage === 'boolean') ? (appOptions.showOfflineMessage) : false;
         var IS_GROUP_SUBTITLE_HIDDEN = (typeof appOptions.hideGroupSubtitle === 'boolean') ? (appOptions.hideGroupSubtitle) : false;
+        var MCK_DEFAULT_MESSAGE_METADATA = (typeof appOptions.defaultMessageMetaData === 'undefined') ? {} : appOptions.defaultMessageMetaData;
+        var IS_MCK_GROUPUSERCOUNT = (typeof appOptions.groupUserCount === "boolean") ? appOptions.groupUserCount : false;
         var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === 'boolean') ? (appOptions.checkUserBusyWithStatus) : false;
         var IS_RESET_USER_STATUS = (typeof appOptions.resetUserStatus === 'boolean') ? (appOptions.resetUserStatus) : false;
         var IS_MCK_TOPIC_HEADER = (typeof appOptions.topicHeader === 'boolean') ? (appOptions.topicHeader) : false;
@@ -481,6 +483,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_SW_NOTIFICATION_ENABLED = (typeof optns.swNotification === "boolean") ? optns.swNotification : false;
             MCK_SUPPORT_ID_DATA_ATTR = (optns.supportId) ? ('data-mck-id="' + optns.supportId + '"') : '';
             IS_GROUP_SUBTITLE_HIDDEN = (typeof optns.hideGroupSubtitle === "boolean") ? (optns.hideGroupSubtitle) : false;
+            MCK_DEFAULT_MESSAGE_METADATA = (typeof optns.defaultMessageMetaData === 'undefined') ? {} : optns.defaultMessageMetaData;
+            IS_MCK_GROUPUSERCOUNT = (typeof optns.groupUserCount === "boolean") ? optns.groupUserCount : false;
             IS_MCK_NOTIFICATION = (typeof optns.desktopNotification === "boolean") ? optns.desktopNotification : false;
             IS_MCK_OWN_CONTACTS = (typeof optns.loadOwnContacts === 'boolean') ? (optns.loadOwnContacts) : false;
             MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof optns.messageBubbleAvator === "boolean") ? (optns.messageBubbleAvator) : false;
@@ -734,11 +738,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
 
-                var userIdArray = [];
-                if (typeof mckMessageLayout.getContact(params.userId) === 'undefined') {
-                    userIdArray.push(params.userId);
-                }
-                mckContactService.getUsersDetail(userIdArray, {'async' : false});
+                mckContactService.loadUserProfile(params.userId);
 
                 params.apzCallback = mckGroupLayout.onAddedGroupMember;
                 mckGroupService.addGroupMember(params);
@@ -2272,6 +2272,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell .mck-message-inner div[name='message']." + randomId);
+                messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 mckUtils.ajax({
                     type: 'POST',
                     url: MCK_BASE_URL + MESSAGE_SEND_URL,
@@ -3343,7 +3344,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' + '<div class="mck-file-text notranslate mck-attachment n-vis" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-delete">${msgDeleteExpr}</a></li></ul></div></div>';
             var contactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}" data-msg-time="${msgCreatedAtTimeExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${conversationExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}">' + '<div class="mck-row" title="${contNameExpr}">' + '<div class="mck-conversation-topic mck-truncate ${contHeaderExpr}">${titleExpr}</div>' + '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + '<div class="mck-row">' + '<div class="blk-lg-8 mck-cont-name mck-truncate"><div class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</div><strong>${contNameExpr}</strong></div>' + '<div class="mck-text-muted move-right mck-cont-msg-date mck-truncate blk-lg-4">${msgCreatedDateExpr}</div></div>' + '<div class="mck-row">' + '<div class="mck-cont-msg-wrapper blk-lg-6 mck-truncate msgTextExpr"></div>' + '<div class="mck-unread-count-box move-right mck-truncate ${contUnreadExpr}"><span class="mck-unread-count-text">{{html contUnreadCount}}</span></div>' + '</div></div></div></a></li>';
             var convbox = '<li id="li-${convIdExpr}" class="${convIdExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${convIdExpr}" data-mck-id="${tabIdExpr}" data-isgroup="${isGroupExpr}" data-mck-topicid="${topicIdExpr}" data-isconvtab="true">' + '<div class="mck-row mck-truncate" title="${convTitleExpr}">${convTitleExpr}</div>' + '</a></li>';
-            var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="applozic-launcher" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div><div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div><div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
+            var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="applozic-launcher" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div>'+'<div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong>'+'<div class="move-right mck-group-count-box mck-group-count-text ${displayGroupUserCountExpr}">${groupUserCountExpr}</div></div>'+'<div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
             $applozic.template("convTemplate", convbox);
             $applozic.template("messageTemplate", markup);
             $applozic.template('contactTemplate', contactbox);
@@ -3648,6 +3649,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var nameTextExpr = '';
                 var showNameExpr = 'n-vis';
                 var msgAvatorClassExpr = "";
+
+                mckContactService.loadUserProfile(msg.to);
+
                 if (msg.groupId && msg.contentType !== 4 && (msg.type === 0 || msg.type === 4 || msg.type === 6)) {
                     displayName = _this.getTabDisplayName(msg.to, false);
                     showNameExpr = "vis";
@@ -3680,8 +3684,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     fileName = msg.fileMeta.name;
                     fileSize = msg.fileMeta.size;
                 }
-                var olStatus = 'n-vis'; //Todo: set this based on userid.
-                if (IS_MCK_OL_STATUS && w.MCK_OL_MAP[msg.to]) {
+                var olStatus = 'n-vis';
+                if (IS_MCK_OL_STATUS && w.MCK_OL_MAP[msg.to] && msg.contentType !== 10) {
                     olStatus = 'vis';
                 }
 
@@ -3811,12 +3815,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.addContactForSearchList = function(contact, $listId) {
+                var groupUserCount = contact.userCount;
                 var isGroupTab = contact.isGroup;
                 var displayName = _this.getTabDisplayName(contact.contactId, isGroupTab);
                 var imgsrctag = _this.getContactImageLink(contact, displayName);
                 var ucTabId = (isGroupTab) ? 'group_' + contact.contactId : 'user_' + contact.contactId;
                 var contHtmlExpr = (isGroupTab) ? 'gs-group-' + contact.htmlId : 'cs-user-' + contact.htmlId;
                 var lastSeenStatus = '';
+                var displayCount = isGroupTab && IS_MCK_GROUPUSERCOUNT;
+                $applozic("#li-" + contHtmlExpr + " .mck-group-count-text").html(groupUserCount);
+                //$applozic("#li-" + contHtmlExpr + " .mck-group-count-box").removeClass('n-vis').addClass('vis');
+
                 if (!isGroupTab && !MCK_BLOCKED_TO_MAP[contact.contactId]) {
                     if (w.MCK_OL_MAP[contact.contactId]) {
                         lastSeenStatus = MCK_LABELS['online'];
@@ -3830,7 +3839,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     contTabExpr: contact.isGroup,
                     contImgExpr: imgsrctag,
                     contLastSeenExpr: lastSeenStatus,
-                    contNameExpr: displayName
+                    contNameExpr: displayName,
+                    groupUserCountExpr:contact.userCount,
+                    displayGroupUserCountExpr: displayCount ? "vis" : "n-vis"
                 } ];
                 $applozic.tmpl('searchContactbox', contactList).prependTo('#' + $listId);
             };
@@ -4771,13 +4782,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.populateMessage = function(messageType, message, notifyUser) {
-                if (typeof message.to !== "undefined") {
-                    var userIdArray = [];
-                    if (typeof mckMessageLayout.getContact(message.to) === 'undefined') {
-                        userIdArray.push(message.to);
-                    }
-                    mckContactService.getUsersDetail(userIdArray, {'async': false});
-                }
+                mckContactService.loadUserProfile(message.to);
 
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isValidMeta = mckMessageLayout.isValidMetaData(message);
@@ -5184,6 +5189,23 @@ var MCK_CLIENT_GROUP_MAP = [];
                         w.console.log('Unable to load contacts. Please reload page.');
                     }
                 });
+            };
+            _this.loadUserProfile = function(userId) {
+                if (typeof userId !== "undefined") {
+                    var userIdArray = [];
+                    var memberId = '' + userId.split(",")[0];
+                    userIdArray.push(memberId);
+                    _this.loadUserProfiles(userIdArray);
+                }
+            };
+            _this.loadUserProfiles = function(userIds) {
+                var userIdArray = [];
+                $applozic.each(userIds, function (i, userId) {
+                    if (typeof mckMessageLayout.getContact(userId) === 'undefined') {
+                        userIdArray.push(userId);
+                    }
+                });
+                _this.getUsersDetail(userIdArray, {'async': false});
             };
             _this.getUsersDetail = function(userIdArray, params) {
                 if (typeof userIdArray === 'undefined' || userIdArray.length < 1) {
@@ -5875,14 +5897,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         MCK_TAB_CONVERSATION_MAP[params.groupId] = tabConvArray;
                     }
 
-                    var membersIds = groupFeed.membersId;
-                    var userIdArray = [];
-                    $applozic.each(membersIds, function (i, memberId) {
-                        if (typeof mckMessageLayout.getContact(memberId) === 'undefined') {
-                            userIdArray.push(memberId);
-                        }
-                    });
-                    mckContactService.getUsersDetail(userIdArray, {'async' : false});
+                    mckContactService.loadUserProfiles(groupFeed.membersId);
 
                     if (params.isMessage && typeof params.message === 'object') {
                         mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
@@ -6156,11 +6171,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                     var group = mckGroupUtils.getGroup(groupId);
                     if (typeof group === 'object' && MCK_USER_ID === group.adminName) {
-                        var userIdArray = [];
-                        if (typeof mckMessageLayout.getContact(userId) === 'undefined') {
-                            userIdArray.push(userId);
-                        }
-                        mckContactService.getUsersDetail(userIdArray, {'async' : false});
+                        mckContactService.loadUserProfile(userId);
 
                         mckGroupService.addGroupMember({
                             'groupId': groupId,
@@ -6726,14 +6737,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     isGroup = true;
                 }
 
-                if (typeof message.to !== "undefined") {
-                    var userIdArray = [];
-                    var memberId = '' + message.to.split(",")[0];
-                    if (typeof mckMessageLayout.getContact(memberId) === 'undefined') {
-                        userIdArray.push(memberId);
-                    }
-                    mckContactService.getUsersDetail(userIdArray, {'async' : false});
-                }
+                mckContactService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
 

@@ -1502,7 +1502,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	color: #333;
 	font-size: 14px;
 	margin-left: 15px;
-  min-height: 22px;
+	min-height: 22px;
 	padding: 10px 14px 12px;
 	max-width: 70%; /* all browsers */
 	max-width: -moz-calc(85% - 58px); /* Firefox 4+ */
@@ -2252,6 +2252,24 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 
 .fancybox-opened {
 	z-index: 2247483650;
+}
+
+#mck-group-search-list .mck-group-count-box {
+	width: 22px;
+	height: 22px;
+	background-color: orange;
+	border-radius: 110px;
+}
+
+.mck-group-count-text {
+	position: relative;
+	margin-top: 2px;
+	height: 20px;
+	text-align: center;
+	font-size: 10px;
+	z-index: 100;
+	display: block;
+	color: #FFFFFF;
 }
 
 .mck-unread-count-box {
