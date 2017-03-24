@@ -1342,11 +1342,12 @@ var MCK_CLIENT_GROUP_MAP = [];
 					e.preventDefault();
 					var $this = $applozic(this);
 					var tabId = $this.data("mck-id");
+					var isGroup = $this.data("isgroup");
 					tabId = (typeof tabId !== "undefined" && tabId !== "") ? tabId.toString() : "";
 					if (tabId) {
 						mckMessageLayout.loadTab({
 							'tabId' : tabId,
-							'isGroup' : false
+							'isGroup' : isGroup
 						});
 					}
 					$mck_contact_search_box.mckModal('hide');
@@ -4141,7 +4142,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 					contIdExpr : contact.contactId,
 					contImgExpr : imgsrctag,
 					contLastSeenExpr : lastSeenStatus,
-					contNameExpr : displayName
+					contNameExpr : displayName,
+					contTabExpr : isGroupTab
 				} ];
 				$applozic.tmpl("searchContactbox", contactList).prependTo('#' + $listId);
 			};
