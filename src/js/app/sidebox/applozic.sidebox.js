@@ -2074,9 +2074,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                         mckInitializeChannel.sendTypingStatus(0, $mck_msg_inner.data('mck-id'));
                     }
                     var message = $applozic.trim(mckUtils.textVal($mck_text_box[0]));
-                    /*if ($mck_file_box.hasClass('n-vis') && FILE_META.length > 0) {
+                    if ($mck_file_box.hasClass('n-vis') && FILE_META.length > 0) {
                         FILE_META = [];
-                    }*/
+                    }
                     if (message.length === 0 && FILE_META.length === 0) {
                         $mck_text_box.addClass("mck-text-req");
                         return false;
@@ -2184,7 +2184,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
-                if (messagePxy.message.length === 0 && FILE_META.length === 0) {
+                if ((typeof messagePxy.message === 'undefined' || messagePxy.message.length === 0) && FILE_META.length === 0) {
                     $mck_text_box.addClass("mck-text-req");
                     return;
                 }
@@ -2278,6 +2278,46 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 mckMessageLayout.addMessage(message, contact, true, true, false);
             };
+            _this.sendForwardMessage = function(forwardMessageKey) {
+                var forwardMessage = mckStorage.getMessageByKey(forwardMessageKey);
+                if (typeof forwardMessage === "undefined") {
+                    return;
+                }
+                if (forwardMessage.fileMeta) {
+                    FILE_META.push(forwardMessage.fileMeta);
+                }
+                //$mck_text_box.html(forwardMessage.message); 
+                $mck_msg_new.data('forwardMessageKey', '');
+                
+                //$mck_msg_sbmt.trigger('click');
+                console.log(forwardMessage);
+                var messagePxy = {
+                        "type": 5,
+                        "contentType": forwardMessage.contentType,
+                        "message": forwardMessage.message
+                };
+                //Todo: set metadata
+                var conversationId = $mck_msg_inner.data('mck-conversationid');
+                var topicId = $mck_msg_inner.data('mck-topicid');
+                if (conversationId) {
+                    messagePxy.conversationId = conversationId;
+                } else if (topicId) {
+                    var conversationPxy = {
+                        'topicId': topicId
+                    };
+                    var topicDetail = MCK_TOPIC_DETAIL_MAP[topicId];
+                    if (typeof topicDetail === "object") {
+                        conversationPxy.topicDetail = w.JSON.stringify(topicDetail);
+                    }
+                    messagePxy.conversationPxy = conversationPxy;
+                }
+                if ($mck_msg_inner.data("isgroup") === true) {
+                    messagePxy.groupId = $mck_msg_to.val();
+                } else {
+                    messagePxy.to = $mck_msg_to.val();
+                }
+                _this.sendMessage(messagePxy);
+            }
             _this.sendWelcomeMessage = function(params) {
                 var randomId = mckUtils.randomId();
                 var tabId = $mck_msg_inner.data('mck-id');
@@ -3593,15 +3633,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 //Forward message
                 if (params.tabId) {
                     var forwardMessageKey = $mck_msg_new.data('forwardMessageKey');
-                    var forwardMessage = mckStorage.getMessageByKey(forwardMessageKey);
-                    if (typeof forwardMessage !== "undefined") {
-                        if (forwardMessage.fileMeta) {
-                            FILE_META.push(forwardMessage.fileMeta);
-                        }
-                        $mck_text_box.html(forwardMessage.message); 
-                        $mck_msg_new.data('forwardMessageKey', '');
+                    if (typeof forwardMessageKey !== 'undefined') {
+                        mckMessageService.sendForwardMessage(forwardMessageKey);
                     }
-                    $mck_msg_sbmt.trigger('click');
                 }
             };
             _this.setProductProperties = function(topicDetail) {
