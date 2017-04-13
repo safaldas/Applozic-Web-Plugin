@@ -3487,9 +3487,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                     var name = _this.getTabDisplayName(params.tabId, params.isGroup, params.userName);
                     if (_this.isGroupDeleted(params.tabId, params.isGroup)) {
-                          $mck_msg_error.html(MCK_LABELS['group.deleted']);
- +                        $mck_msg_error.removeClass('n-vis').addClass('vis').addClass('mck-no-mb');
- +                        $mck_msg_form.removeClass('vis').addClass('n-vis');  
+                        $mck_msg_error.html(MCK_LABELS['group.deleted']);
+                        $mck_msg_error.removeClass('n-vis').addClass('vis').addClass('mck-no-mb');
+                        $mck_msg_form.removeClass('vis').addClass('n-vis');  
                     }
                     $mck_tab_title.html(name);
                     $mck_tab_title.attr('title', name);
