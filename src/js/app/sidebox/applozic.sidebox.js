@@ -3574,16 +3574,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_btn_clear_messages.removeClass('vis').addClass('n-vis');
                     $mck_msg_to.val('');
 
-                    if (typeof params.groupType !== 'undefined' || typeof params.groupCategory !== 'undefined') {
-                        $applozic("#mck-search-tabview-box a").removeClass('active');
-                        if (typeof params.groupType !== 'undefined') {
-                          $applozic("#mck-search-tabview-box a[data-mck-grouptype='" + params.groupType + "']").addClass('active');
-                        }
-                        if (typeof params.groupCategory !== 'undefined') {
-                          $applozic("#mck-search-tabview-box a[data-mck-groupcategory='" + params.groupCategory + "']").addClass('active');
-                        }
-                    }
-
                     var mckMessageArray = mckStorage.getLatestMessageArray();
                     mckInitializeChannel.unsubscibeToTypingChannel();
                     if (mckMessageArray !== null && mckMessageArray.length > 0) {
@@ -3592,11 +3582,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             message: mckMessageArray
                         }, params);
 
-                        if (typeof params.groupType === 'undefined' && typeof params.groupCategory === 'undefined') {
-                          _this.openConversation();
-                          CONTACT_SYNCING = false;
-                          return;
-                        }
+                        _this.openConversation();
+                        CONTACT_SYNCING = false;
+                        return;
                     }
                 }
                 mckMessageService.loadMessageList(params, callback);
