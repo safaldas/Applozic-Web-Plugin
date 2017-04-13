@@ -1832,6 +1832,11 @@ var MCK_CLIENT_GROUP_MAP = [];
 					}
 					$applozic('.mcktypeahead.mck-dropdown-menu').hide();
 				});
+
+				$applozic(".mck-tabview-item").click(function(){
+					$applozic(".mck-tabview-item").removeClass('active');
+					$applozic(this).addClass('active');
+				});
 			};
 			_this.sendMessage = function(messagePxy) {
 				$mck_msg_inner = mckMessageLayout.getMckMessageInner();

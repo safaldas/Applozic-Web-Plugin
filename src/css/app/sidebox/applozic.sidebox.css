@@ -876,11 +876,18 @@
 	padding: 0 10px;
 }
 
+.mck-box .mck-nav-panel .mck-tabview-item {
+	float: left;
+	text-align: center;
+	width: calc(25% - 22px);
+	padding: 0 10px;
+}
+
 .mck-nav-divider {
 	border-right: 2px solid #e5e5e5;
 }
 
-.mck-box  .mck-nav-panel .mck-nav-link {
+.mck-box  .mck-nav-panel .mck-nav-link, .mck-box .mck-tabview .mck-nav-link {
 	display: block;
 	padding: 5px 0;
 	color: #333;
@@ -888,7 +895,7 @@
 	text-transform: uppercase;
 }
 
-.mck-box  .mck-nav-panel .mck-nav-link:hover, .mck-box .mck-nav-panel .mck-nav-link:focus
+.mck-box  .mck-nav-panel .mck-nav-link:hover, .mck-box .mck-nav-panel .mck-nav-link:focus, .mck-box .mck-tabview .mck-nav-link:hover, .mck-box .mck-tabview .mck-nav-link:focus
 	{
 	color: #11b8bb;
 	background-color: inherit;
