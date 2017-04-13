@@ -3486,7 +3486,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_attachfile_box.removeClass('n-vis').addClass('vis');
                     }
                     var name = _this.getTabDisplayName(params.tabId, params.isGroup, params.userName);
-                    if (_this.isGroupDeletedAtTime(params.tabId, params.isGroup)) {
+                    if (_this.isGroupDeleted(params.tabId, params.isGroup)) {
                           $mck_msg_error.html(MCK_LABELS['group.deleted']);
  +                        $mck_msg_error.removeClass('n-vis').addClass('vis').addClass('mck-no-mb');
  +                        $mck_msg_form.removeClass('vis').addClass('n-vis');  
@@ -3669,12 +3669,10 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                 mckContactService.loadUserProfile(msg.to);
 
-                if (msg.groupId && msg.contentType !== 4 && (msg.type === 0 || msg.type === 4 || msg.type === 6)) {
-                    if(contact.type !== 7) {                 
+                if (msg.groupId && msg.contentType !== 4 && contact.type !== 7 && (msg.type === 0 || msg.type === 4 || msg.type === 6)) {
                  	displayName = _this.getTabDisplayName(msg.to, false);
-                    	showNameExpr = "vis";
-                    	nameTextExpr = _this.getNameTextClassByAlphabet(displayName);
-                    }
+                    showNameExpr = "vis";
+                    nameTextExpr = _this.getNameTextClassByAlphabet(displayName);
              	}
                 if (MESSAGE_BUBBLE_AVATOR_ENABLED) {
                     msgAvatorClassExpr = "mck-msg-avator-bubble";
@@ -4782,10 +4780,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return MCK_UNREAD_COUNT_MAP[tabId];
                 }
             };
-            _this.isGroupDeletedAtTime = function (tabId, isGroup) {
+            _this.isGroupDeleted = function (tabId, isGroup) {
                 if (isGroup) {
-                    return mckGroupLayout.getDeletedAtTime(tabId);
+                    var deletedAtTime = mckGroupLayout.getDeletedAtTime(tabId);
+                    return (typeof deletedAtTime !== 'undefined' && deletedAtTime > 0);
                 }
+                return false;
             };
             _this.getTabDisplayName = function(tabId, isGroup, userName) {
                 var displayName = '';
@@ -5646,8 +5646,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getDeletedAtTime = function (groupId) {
                 if (typeof MCK_GROUP_MAP[groupId] === 'object') {
                     var group = MCK_GROUP_MAP[groupId];
-                    var deletedAtTime = group['deletedAtTime'];
-                    return (typeof deletedAtTime !== 'undefined' && deletedAtTime > 0);
+                    return group['deletedAtTime'];
                 }
             };
             _this.getGroupDisplayName = function(groupId) {
