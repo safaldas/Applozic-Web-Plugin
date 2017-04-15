@@ -24,6 +24,12 @@
 	color: #333;
 }
 
+.mck-mike-btn {
+	margin-right :250px;
+	display: inline-block;
+	float: left;
+	margin-top: -27px;
+}
 .mck-sidebox {
 	position: fixed !important;
 	height: 100% !important;
@@ -1325,11 +1331,11 @@ ol, ul {
     outline: none !important;
 }*/
 .mck-btn-text-panel img {
-	height: 25px;
-	width: 25px;
-	margin-top: -3px;
+	height: 18px;
+	width: 19px;
+	/*margin-top: 3px;*/
 	vertical-align: middle;
-	opacity: 0.7;
+	opacity: 0.5;
 }
 
 .mck-text-box-panel.move-right img {

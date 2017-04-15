@@ -112,6 +112,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 				case "loadTab":
 					oInstance.loadTab(params);
 					break;
+				case "audioAttach":
+					oInstance.audioAttach(params);
+					break;	
 				case "loadContextualTab":
 					return oInstance.loadTabWithTopic(params);
 					break;
@@ -467,6 +470,11 @@ var MCK_CLIENT_GROUP_MAP = [];
 				isSearch : true
 			});
 			$applozic("#mck-search").val("");
+		};
+		
+		_this.audioAttach = function(file) {
+			mckFileService.audioRecoder(file);
+			
 		};
 		_this.loadGroupTab = function(tabId) {
 			if (typeof tabId === 'undefined' || tabId === "") {
@@ -1236,6 +1244,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 			var $mck_contact_search = $applozic(".mck-contact-search");
 			var $mck_group_search = $applozic(".mck-group-search");
 			var $mck_btn_attach = $applozic("#mck-btn-attach");
+			var $audiodiv = $applozic("#audiodiv");
+			var $mck_mike_btn = $applozic("#mck-mike-btn");
 			var $mck_msg_cell = $applozic("#mck-message-cell");
 			var $mck_typing_box = $applozic(".mck-typing-box");
 			var $mck_loading = $applozic("#mck-contact-loading");
@@ -1812,6 +1822,10 @@ var MCK_CLIENT_GROUP_MAP = [];
 					$applozic(this).val("");
 					$mck_msg_error.removeClass('vis').addClass('n-vis');
 					$mck_msg_response.removeClass('vis').addClass('n-vis');
+				});
+				$mck_mike_btn.on('click', function() {
+					
+					$audiodiv.removeClass('n-vis').addClass('vis');
 				});
 				$applozic(d).bind("click", function(e) {
 					$applozic(".mck-context-menu").removeClass("vis").addClass("n-vis");
@@ -5868,6 +5882,17 @@ var MCK_CLIENT_GROUP_MAP = [];
 					$mck_msg_inner = mckMessageLayout.getMckMessageInner();
 					var data = new Object();
 					var file = $applozic(this)[0].files[0];
+					var params = {};
+					params.file = file;
+					params.name =file.name;
+					_this.audioRecoder(params);
+				});
+
+
+_this.audioRecoder = function(params) {
+					var file = params.file;
+	              $mck_msg_inner = mckMessageLayout.getMckMessageInner();
+	               var data = new Object();
 					var uploadErrors = [];
 					if (typeof file === 'undefined') {
 						return;
@@ -5884,8 +5909,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 						var randomId = mckUtils.randomId();
 						var fileboxList = [ {
 							fileIdExpr : randomId,
-							fileName : file.name,
-							fileNameExpr : '<a href="#">' + file.name + '</a>',
+							fileName : params.name,
+							fileNameExpr : '<a href="#">' + params.name + '</a>',
 							fileSizeExpr : _this.getFilePreviewSize(file.size)
 						} ];
 						$applozic.tmpl("fileboxTemplate", fileboxList).appendTo('#mck-file-box');
@@ -5899,9 +5924,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 						$file_remove.attr("disabled", true);
 						$mck_file_upload.attr("disabled", true);
 						$file_box.removeClass('n-vis').addClass('vis');
-						if (file.name === $applozic(".mck-file-box." + randomId + " .mck-file-lb a").html()) {
+						if (params.name === $applozic(".mck-file-box." + randomId + " .mck-file-lb a").html()) {
 							var currTab = $mck_msg_inner.data('mck-id');
-							var uniqueId = file.name + file.size;
+							var uniqueId = params.name + file.size;
 							TAB_FILE_DRAFT[uniqueId] = currTab;
 							$mck_msg_sbmt.attr('disabled', true);
 							data.files = [];
@@ -5962,8 +5987,12 @@ var MCK_CLIENT_GROUP_MAP = [];
 							});
 						}
 						return false;
-					}
-				});
+					}			
+				};
+
+
+
+
 				_this.uplaodFileToAWS = function(file, medium) {
 					var data = new FormData();
 					var uploadErrors = [];
