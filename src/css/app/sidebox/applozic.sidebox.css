@@ -24,6 +24,16 @@
 	color: #333;
 }
 
+.mck-download-btn {
+        background-image: url(../../../images/download.png);
+	width: 10px ;
+        height: 10px;
+        padding:5px;
+        position: absolute;
+	overflow: hidden;
+        background-size: 20px;
+}
+
 .mck-sidebox {
 	position: fixed !important;
 	height: 100% !important;
