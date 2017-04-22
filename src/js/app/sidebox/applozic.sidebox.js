@@ -1608,8 +1608,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.deleteMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
            
-            $applozic(d).on("click", ".mck-image-download", function() { 
-                _this.downloadImage($applozic(this).parents('.downloadimage').data("fileurl"));
+            $applozic(d).on("click", ".download", function(e) { 
+            window.open($applozic(this).parents('.downloadimage').data("fileurl"), "_blank");
             });
 
             $applozic(d).on("click", ".mck-message-forward", function () {
@@ -2226,7 +2226,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var tabId = $mck_msg_inner.data('mck-id');
                     var randomId = mckUtils.randomId();
                     messagePxy.key = randomId;
-                    if (messagePxy.contentType !== 12 && tabId && tabId.toString() === contact.contactId) {
+                    if (messagePxy.contentType !== 12 && tabId && tabId.toString() === contact.contactId && messagePxy.contentType !== 102) {
                         _this.addMessageToTab(messagePxy, contact);
                     }
                     var optns = {
@@ -2358,7 +2358,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell .mck-message-inner div[name='message']." + randomId);
-                messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
+                if(messagePxy.contentType!=102 && messagePxy.contentType!=103){
+               		messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
+                }
                 mckUtils.ajax({
                     type: 'POST',
                     url: MCK_BASE_URL + MESSAGE_SEND_URL,
@@ -2429,7 +2431,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
 
             _this.downloadImage = function(fileurl) {            
-             	window.open(fileurl, "_blank");
+             window.open(fileurl, "_blank");
            };
 
             _this.deleteMessage = function(msgKey) {
@@ -3455,7 +3457,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
             var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
             var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' + '<div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div class="mck-image-download ${downloadIconVisibleExpr}"><span class="mck-download-btn"><span></div>{{html fileExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-forward">${msgForwardExpr}</a></li><li><a class="mck-message-delete">${msgDeleteExpr}</a></li></ul></div></div>';
+            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' + '<div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-forward">${msgForwardExpr}</a></li><li><a class="mck-message-delete">${msgDeleteExpr}</a></li></ul></div></div>';
             var contactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}" data-msg-time="${msgCreatedAtTimeExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${conversationExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}">' + '<div class="mck-row" title="${contNameExpr}">' + '<div class="mck-conversation-topic mck-truncate ${contHeaderExpr}">${titleExpr}</div>' + '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + '<div class="mck-row">' + '<div class="blk-lg-8 mck-cont-name mck-truncate"><div class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</div><strong>${contNameExpr}</strong></div>' + '<div class="mck-text-muted move-right mck-cont-msg-date mck-truncate blk-lg-4">${msgCreatedDateExpr}</div></div>' + '<div class="mck-row">' + '<div class="mck-cont-msg-wrapper blk-lg-6 mck-truncate msgTextExpr"></div>' + '<div class="mck-unread-count-box move-right mck-truncate ${contUnreadExpr}"><span class="mck-unread-count-text">{{html contUnreadCount}}</span></div>' + '</div></div></div></a></li>';
             var convbox = '<li id="li-${convIdExpr}" class="${convIdExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${convIdExpr}" data-mck-id="${tabIdExpr}" data-isgroup="${isGroupExpr}" data-mck-topicid="${topicIdExpr}" data-isconvtab="true">' + '<div class="mck-row mck-truncate" title="${convTitleExpr}">${convTitleExpr}</div>' + '</a></li>';
             var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="applozic-launcher" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div>'+'<div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong>'+'<div class="move-right mck-group-count-box mck-group-count-text ${displayGroupUserCountExpr}">${groupUserCountExpr}</div></div>'+'<div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
@@ -3750,7 +3752,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (msg.type === 6 || msg.type === 7) {
                     return;
                 }
-                if (msg.metadata && msg.metadata.category === 'HIDDEN') {
+                if ((msg.metadata && msg.metadata.category === 'HIDDEN')||msg.contentType===102) {
                     return;
                 }
                 if ($applozic("#mck-message-cell ." + msg.key).length > 0) {
@@ -3760,13 +3762,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_no_messages.removeClass('vis').addClass('n-vis');
                 }
                 var messageClass = '';
+                var downloadMediaUrl='';
                 var floatWhere = 'mck-msg-right';
                 var statusIcon = 'mck-icon-time';
                 var contactExpr = 'vis';
                 if (msg.type === 0 || msg.type === 4 || msg.type === 6) {
                     floatWhere = 'mck-msg-left';
                 }
-                if (msg.contentType === 4 || msg.contentType === 10) {
+                if (msg.contentType === 4 || msg.contentType === 10 ||msg.contentType===103) {
                     floatWhere = 'mck-msg-center';
                 }
                 statusIcon = _this.getStatusIconName(msg);
@@ -3813,7 +3816,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     fileName = msg.fileMeta.name;
                     fileSize = msg.fileMeta.size;
                 }
-                if (typeof msg.fileMeta === "object") {
+               if (typeof msg.fileMeta === "object") {
                    if (msg.fileMeta.contentType.indexOf("audio") ||(msg.fileMeta.contentType.indexOf("image"))||(msg.fileMeta.contentType.indexOf("video"))) {
                         downloadIconVisible = 'vis';
                       }
@@ -3845,6 +3848,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     createdAtTimeExpr: mckDateUtils.getDate(msg.createdAtTime),
                     msgFeatExpr: msgFeatExpr,
                     replyMessageParametersExpr: replyMessageParameters,
+                    downloadMediaUrlExpr: _this.getFileAttachment(msg),
                     msgClassExpr: messageClass,
                     msgExpr: frwdMsgExpr,
                     selfDestructTimeExpr: msg.timeToLive,
@@ -4022,6 +4026,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 }
                 return '';
+            };
+          _this.getFileAttachment = function(msg) {
+                if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
+                    if((msg.fileMeta.contentType.indexOf('image') !== -1) || (msg.fileMeta.contentType.indexOf('audio') !== -1) || (msg.fileMeta.contentType.indexOf('video') !== -1)) {
+                        return '<a href="#"<span class="mck-file-name download"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                  } else {
+                    return '';
+                  }
+               }
             };
             _this.getFileIcon = function(msg) {
                 if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
@@ -4494,6 +4507,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                     olStatus = 'vis';
                     prepend = true;
                 }
+                if(contact.type === 7) {
+                var group = mckGroupUtils.getGroup(message.groupId);
+                var contacts = mckMessageLayout.getContactFromGroupOfTwo(group);
+                if (isGroupTab && IS_MCK_OL_STATUS && w.MCK_OL_MAP[contacts.contactId]) {
+                    olStatus = 'vis';
+                    prepend = true;
+                }
+             }
                 var isContHeader = 'n-vis';
                 if (typeof conversationPxy === 'object' && IS_MCK_TOPIC_HEADER) {
                     var topicDetail = MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId];
@@ -4977,7 +4998,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                         var ucTabId = (message.groupId) ? 'group_' + contact.contactId : 'user_' + contact.contactId;
                         if (isValidMeta) {
-                            if (message.contentType !== 10) {
+                             if (message.contentType !== 10 && message.contentType !== 102) {
                                 mckMessageLayout.incrementUnreadCount(ucTabId);
                             }
                             mckNotificationService.notifyUser(message);
@@ -5047,7 +5068,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                         });
                                         return;
                                     }
-                                    if (isValidMeta && message.contentType !== 10) {
+                                     if ((isValidMeta && message.contentType !== 10) || message.contentType !== 102) {
                                         var ucTabId = (message.groupId) ? 'group_' + contact.contactId : 'user_' + contact.contactId;
                                         mckMessageLayout.incrementUnreadCount(ucTabId);
                                     }
@@ -5058,7 +5079,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                             }
                         }
-                    } else if (messageType === "APPLOZIC_02") {
+                    } else if (messageType === "APPLOZIC_02"&& !message.contentType==102) {
                         if (($applozic("." + message.oldKey).length === 0 && $applozic("." + message.key).length === 0) || message.contentType === 10) {
                             if (mckContactListLength > 0) {
                                 mckMessageLayout.addContactsFromMessage(message, true);
@@ -7070,8 +7091,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                             url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
                             type: 'post',
                             data: 'registrationId=' + subscriptionId,
-                            success: function (data) { },
-                            error: function (xhr, desc, err) {
+                            success: function(data) {},
+                            error: function(xhr, desc, err) {
                                 if (xhr.status === 401) {
                                     sessionStorage.clear();
                                     console.log('Please reload page.');
