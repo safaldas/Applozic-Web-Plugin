@@ -63,6 +63,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'online': 'Online',
             'clear.messages': 'Clear Messages',
             'delete': 'Delete',
+            'reply': 'Reply',
             'forward': 'Forward',
             'copy': 'Copy',
             'block.user': 'Block User',
@@ -389,6 +390,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckNotificationService = new MckNotificationService();
         var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
         w.MCK_OL_MAP = new Array();
+        var MessageMap = [];
         _this.events = {
             'onConnectFailed': function() {},
             'onConnect': function() {},
@@ -1608,6 +1610,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.deleteMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
            
+	    $applozic(d).on("click", ".mck-message-reply", function() {
+                _this.replyMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
+            });
             $applozic(d).on("click", ".download", function(e) { 
             window.open($applozic(this).parents('.downloadimage').data("fileurl"), "_blank");
             });
@@ -2185,10 +2190,21 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                     $mck_search.val("");               
             };
-            _this.sendMessage = function(messagePxy) {
+            _this.sendMessage = function(messagePxy) {           
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
+                var metadata = {};
+                if(MCK_DEFAULT_MESSAGE_METADATA) {
+                metadata = MCK_DEFAULT_MESSAGE_METADATA;
+                  }
+               
+                var msgKeys = $applozic("#mck-text-box").data( "reply");
+                if (typeof msgKeys !== 'undefined'&& msgKeys!=="") {
+                    metadata.reply = msgKeys;
+                   } 
+
+                messagePxy.metadata = metadata;
                 if ((typeof messagePxy.message === 'undefined' || messagePxy.message.length === 0) && FILE_META.length === 0) {
                     $mck_text_box.addClass("mck-text-req");
                     return;
@@ -2274,8 +2290,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     'key': messagePxy.key,
                     'storeOnDevice': true,
                     'sent': false,
-                    'shared': false,
-                    'read': true
+                    'read': true,
+                    'metadata':(messagePxy.metadata) ? messagePxy.metadata : "",
                 };
                 message.type = (messagePxy.type) ? messagePxy.type : 5;
                 if (messagePxy.fileMeta) {
@@ -2351,16 +2367,23 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.submitMessage = function(messagePxy, optns) {
                 var randomId = messagePxy.key;
+                var metadata = {};
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus: 4
                     };
                 }
+             var msgKeys = $applozic("#mck-text-box").data( "reply");
+                if (typeof msgKeys !== 'undefined' && msgKeys!=="") {
+                    metadata.reply = msgKeys;
+                    $applozic("#mck-text-box").data( "reply","");
+                   } 
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell .mck-message-inner div[name='message']." + randomId);
                 if(messagePxy.contentType!=102 && messagePxy.contentType!=103){
                		messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
+               messagePxy.metadata = metadata;
                 mckUtils.ajax({
                     type: 'POST',
                     url: MCK_BASE_URL + MESSAGE_SEND_URL,
@@ -2428,11 +2451,26 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 });
+                   $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
             };
 
             _this.downloadImage = function(fileurl) {            
              window.open(fileurl, "_blank");
            };
+                  _this.replyMessage = function(msgKey) {
+				 var tabId = $mck_msg_inner.data('mck-id');
+				 var message = MessageMap[msgKey];
+			         $mck_text_box.focus().select();
+				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
+				 $('#mck-reply-to').html(message.to);
+				 $('#mck-reply-msg').html(message.message); 
+				 $("#mck-text-box").data( "reply", msgKey);
+               };
+
+              $("#close").click(function() {
+					 $('#mck-reply-to-div').removeClass('vis').addClass('n-vis'); 
+					 $("#mck-text-box").data( "reply", ""); 
+				});             
 
             _this.deleteMessage = function(msgKey) {
                 var tabId = $mck_msg_inner.data('mck-id');
@@ -3457,7 +3495,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
             var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
             var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' + '<div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-forward">${msgForwardExpr}</a></li><li><a class="mck-message-delete">${msgDeleteExpr}</a></li></ul></div></div>';
+            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">'+'<div class= "move-right mck-msg-text"></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}"><div class="mck-msglist-msgto">${msgReplyTo} </div></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}"><div class="mck-msgreply-border">${msgReply} </div></div>'+'<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' + '<div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-forward">${msgForwardExpr}</a></li><li><a class="mck-message-delete">${msgDeleteExpr}</a></li><li><a class="mck-message-reply">${msgReplyExpr}</a></li></ul></div></div>';
             var contactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}" data-msg-time="${msgCreatedAtTimeExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${conversationExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}">' + '<div class="mck-row" title="${contNameExpr}">' + '<div class="mck-conversation-topic mck-truncate ${contHeaderExpr}">${titleExpr}</div>' + '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + '<div class="mck-row">' + '<div class="blk-lg-8 mck-cont-name mck-truncate"><div class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</div><strong>${contNameExpr}</strong></div>' + '<div class="mck-text-muted move-right mck-cont-msg-date mck-truncate blk-lg-4">${msgCreatedDateExpr}</div></div>' + '<div class="mck-row">' + '<div class="mck-cont-msg-wrapper blk-lg-6 mck-truncate msgTextExpr"></div>' + '<div class="mck-unread-count-box move-right mck-truncate ${contUnreadExpr}"><span class="mck-unread-count-text">{{html contUnreadCount}}</span></div>' + '</div></div></div></a></li>';
             var convbox = '<li id="li-${convIdExpr}" class="${convIdExpr}">' + '<a class="${mckLauncherExpr}" href="#" data-mck-conversationid="${convIdExpr}" data-mck-id="${tabIdExpr}" data-isgroup="${isGroupExpr}" data-mck-topicid="${topicIdExpr}" data-isconvtab="true">' + '<div class="mck-row mck-truncate" title="${convTitleExpr}">${convTitleExpr}</div>' + '</a></li>';
             var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="applozic-launcher" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div>'+'<div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong>'+'<div class="move-right mck-group-count-box mck-group-count-text ${displayGroupUserCountExpr}">${groupUserCountExpr}</div></div>'+'<div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
@@ -3677,6 +3715,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data('isgroup');
                 var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
+                $applozic.each(data.message, function(i, message) {
+                  MessageMap[message.key]= message;
+                    });                
                 if (typeof data.message.length === 'undefined') {
                     var messageArray = [];
                     messageArray.push(data.message);
@@ -3749,6 +3790,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.addMessage = function(msg, contact, append, scroll, appendContextMenu) {
+                 var metadatarepiledto ="";
+                 var replymessage ="";
+                 var replyMsg ="";
+                 var msgpreview = "";
+                
+                if (typeof msg.metadata === "object") {
+                if (typeof msg.metadata.reply !== undefined)
+                metadatarepiledto = msg.metadata.reply;
+                replyMsg = MessageMap[metadatarepiledto];
+                msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
+               }                 
                 if (msg.type === 6 || msg.type === 7) {
                     return;
                 }
@@ -3827,12 +3879,18 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
 
                 var msgList = [ {
+                    msgReply : replyMsg ? replyMsg.message +"\n" :"",
+		    msgReplyTo : replyMsg ? replyMsg.to +"\n" :"",
+                    msgReplyDivExpr : replyMsg ? 'vis' :'n-vis',
+                    msgReplyToVisibleExpr : (contact.isGroup && replyMsg)? 'vis' :'n-vis',
+                    msgPreview :replyMsg ?  msgpreview :"",
                     msgKeyExpr: msg.key,
                     msgDeliveredExpr: msg.delivered,
                     msgSentExpr: msg.sent,
                     msgCreatedAtTime: msg.createdAtTime,
                     msgTypeExpr: msg.type,
                     msgDeleteExpr: MCK_LABELS['delete'],
+                    msgReplyExpr : MCK_LABELS['reply'],
                     msgForwardExpr: MCK_LABELS['forward'],
                     msgSourceExpr: msg.source,
                     statusIconExpr: statusIcon,
