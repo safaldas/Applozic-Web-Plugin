@@ -1613,7 +1613,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 	    $applozic(d).on("click", ".mck-message-reply", function() {
                 _this.replyMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
-            $applozic(d).on("click", ".download", function(e) { 
+            $applozic(d).on("click", ".mck-image-download", function(e) { 
             window.open($applozic(this).parents('.downloadimage').data("fileurl"), "_blank");
             });
 
@@ -4088,7 +4088,7 @@ var MCK_CLIENT_GROUP_MAP = [];
           _this.getFileAttachment = function(msg) {
                 if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
                     if((msg.fileMeta.contentType.indexOf('image') !== -1) || (msg.fileMeta.contentType.indexOf('audio') !== -1) || (msg.fileMeta.contentType.indexOf('video') !== -1)) {
-                        return '<a href="#"<span class="mck-file-name download"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                        return '<a href="#"<span class="mck-file-name mck-image-download"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                   } else {
                     return '';
                   }

@@ -24,14 +24,36 @@
 	color: #333;
 }
 
-.mck-download-btn {
-        background-image: url(images/download.png);
-	width: 10px ;
-        height: 10px;
-        padding:5px;
-        position: absolute;
-	overflow: hidden;
-        background-size: 20px;
+.mck-msg-reply {
+	background-color: #0073b7;
+            
+}
+
+.mck-msgto {
+    color : red;
+    padding: 3px;
+    text-align: left;
+}
+
+.mck-msglist-msgto {
+    color : white;
+    padding: 3px;
+    text-align: left;
+}
+
+#mck-reply-msg {
+	padding-left: : 3px;
+}
+
+.mck-verticalline {
+  border-left: thick solid white;
+  border-left-width: medium;
+}
+
+.mck-msgreply-border {
+    color : white;
+    padding : 2px;
+    text-align: center;
 }
 
 .mck-download-msg-right {
