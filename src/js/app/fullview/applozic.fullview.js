@@ -351,7 +351,6 @@ var MCK_CLIENT_GROUP_MAP = [];
 		var mckNotificationService = new MckNotificationService();
 		var $mckChatLauncherIcon = $applozic(".chat-launcher-icon");
 		var mckNotificationTone = null;
-		var MessageMap = [];
 		w.MCK_OL_MAP = new Array();
 		_this.events = {
 			'onConnectFailed' : function() {},
@@ -1881,15 +1880,12 @@ var MCK_CLIENT_GROUP_MAP = [];
 					return;
 				}
 				var metadata = {};
-                if(MCK_DEFAULT_MESSAGE_METADATA) {
-                metadata = MCK_DEFAULT_MESSAGE_METADATA;
-                  }
-                var randomId = messagePxy.key;
-                var msgKeys = $applozic("#mck-text-box").data( "reply");
-                if (typeof msgKeys !== 'undefined'&& msgKeys!=="") {
-                    metadata.reply = msgKeys;
-                   } 
-                   messagePxy.metadata = metadata;
+                                var randomId = messagePxy.key;
+                                var msgKeys = $applozic("#mck-text-box").data( "reply");
+                                if (typeof msgKeys !== 'undefined'&& msgKeys!=="") {
+                                       metadata.reply = msgKeys;
+                                       } 
+                         messagePxy.metadata = metadata;
 				if (messagePxy.message.length === 0 && FILE_META.length === 0) {
 					$mck_write_box.addClass("mck-text-req");
 					return;
@@ -2130,8 +2126,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 
 			 _this.replyMessage = function(msgKey) {
 				 var tabId = $mck_msg_inner.data('mck-id');
-				 var message = MessageMap[msgKey];
-			         $mck_text_box.focus().select();
+				 var message = mckStorage.getMessageByKey(msgKey);
+			     $mck_text_box.focus().select();
 				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
 				 $('#mck-reply-to').html(message.to);
 				 $('#mck-reply-msg').html(message.message); 
@@ -3363,9 +3359,6 @@ var MCK_CLIENT_GROUP_MAP = [];
 				var tabId = $mck_msg_inner.data('mck-id');
 				var isGroup = $mck_msg_inner.data('isgroup');
 				var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
-				$applozic.each(data.message, function(i, message) {
-                MessageMap[message.key]= message;
-                    });
 				if (typeof data.message.length === "undefined") {
 					_this.addMessage(data.message, contact, false, false, true);
 					showMoreDateTime = data.createdAtTime;
@@ -3439,10 +3432,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                  var replyMsg ="";
                  var msgpreview = "";
                 
-                if (typeof msg.metadata === "object") {
-                if (typeof msg.metadata.reply !== undefined)
+                if (typeof msg.metadata === "object" && typeof msg.metadata.reply !== undefined) {
                 metadatarepiledto = msg.metadata.reply;
-                replyMsg = MessageMap[metadatarepiledto];
+                replyMsg = mckStorage.getMessageByKey(metadatarepiledto);
                 msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
                } 
 

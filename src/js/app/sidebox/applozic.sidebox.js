@@ -393,7 +393,6 @@ var MCK_CLIENT_GROUP_MAP = [];
         var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
         var mckNotificationTone = null;    
         w.MCK_OL_MAP = new Array();
-        var MessageMap = [];
         _this.events = {
             'onConnectFailed': function() {},
             'onConnect': function() {},
@@ -2199,10 +2198,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
                 var metadata = {};
-                if(MCK_DEFAULT_MESSAGE_METADATA) {
-                metadata = MCK_DEFAULT_MESSAGE_METADATA;
-                  }
-               
                 var msgKeys = $applozic("#mck-text-box").data( "reply");
                 if (typeof msgKeys !== 'undefined'&& msgKeys!=="") {
                     metadata.reply = msgKeys;
@@ -2463,8 +2458,8 @@ var MCK_CLIENT_GROUP_MAP = [];
            };
                   _this.replyMessage = function(msgKey) {
 				 var tabId = $mck_msg_inner.data('mck-id');
-				 var message = MessageMap[msgKey];
-			         $mck_text_box.focus().select();
+                  var message = mckStorage.getMessageByKey(msgKey);
+			     $mck_text_box.focus().select();
 				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
 				 $('#mck-reply-to').html(message.to);
 				 $('#mck-reply-msg').html(message.message); 
@@ -3718,10 +3713,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var $scrollToDiv = $mck_msg_inner.children("div[name='message']:first");
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data('isgroup');
-                var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
-                $applozic.each(data.message, function(i, message) {
-                  MessageMap[message.key]= message;
-                    });                
+                var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);            
                 if (typeof data.message.length === 'undefined') {
                     var messageArray = [];
                     messageArray.push(data.message);
@@ -3799,12 +3791,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                  var replyMsg ="";
                  var msgpreview = "";
                 
-                if (typeof msg.metadata === "object") {
-                if (typeof msg.metadata.reply !== undefined)
-                metadatarepiledto = msg.metadata.reply;
-                replyMsg = MessageMap[metadatarepiledto];
-                msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
-               }                 
+                if (typeof msg.metadata === "object" && typeof msg.metadata.reply !== undefined) {
+                    metadatarepiledto = msg.metadata.reply;
+                    replyMsg = mckStorage.getMessageByKey(metadatarepiledto);
+                    msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
+                }                 
                 if (msg.type === 6 || msg.type === 7) {
                     return;
                 }
