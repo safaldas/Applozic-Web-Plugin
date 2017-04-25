@@ -63,6 +63,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'clear.messages': 'Clear Messages',
             'delete': 'Delete',
             'reply': 'Reply',
+            'forward': 'Forward',
             'block.user': 'Block User',
             'unblock.user': 'Unblock User',
             'group.info.title': 'Group Info',
@@ -1321,6 +1322,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.replyMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
 
+			 $applozic(d).on("click", ".mck-message-forward", function () {
+                $mck_msg_new.data('forwardMessageKey', $applozic(this).parents('.mck-m-b').data("msgkey"));
+                $mck_msg_new.trigger('click');
+            });
+
 			$applozic(".mck-minimize-icon").click(function() {
 				$applozic(".mck-box-md,.mck-box-ft").animate({
 					height : "toggle"
@@ -1977,6 +1983,44 @@ var MCK_CLIENT_GROUP_MAP = [];
 				}
 				mckMessageLayout.addMessage(message, contact, true, true, false);
 			};
+			 _this.sendForwardMessage = function(forwardMessageKey) {
+                var forwardMessage = mckStorage.getMessageByKey(forwardMessageKey);
+                if (typeof forwardMessage === "undefined") {
+                    return;
+                }
+                if (forwardMessage.fileMeta) {
+                    FILE_META.push(forwardMessage.fileMeta);
+                }
+
+                var messagePxy = {
+                        "type": 5,
+                        "contentType": forwardMessage.contentType,
+                        "message": forwardMessage.message
+                };
+                if (forwardMessage.metadata) {
+                    messagePxy.metadata = forwardMessage.metadata;
+                }
+                var conversationId = $mck_msg_inner.data('mck-conversationid');
+                var topicId = $mck_msg_inner.data('mck-topicid');
+                if (conversationId) {
+                    messagePxy.conversationId = conversationId;
+                } else if (topicId) {
+                    var conversationPxy = {
+                        'topicId': topicId
+                    };
+                    var topicDetail = MCK_TOPIC_DETAIL_MAP[topicId];
+                    if (typeof topicDetail === "object") {
+                        conversationPxy.topicDetail = w.JSON.stringify(topicDetail);
+                    }
+                    messagePxy.conversationPxy = conversationPxy;
+                }
+                if ($mck_msg_inner.data("isgroup") === true) {
+                    messagePxy.groupId = $mck_msg_to.val();
+                } else {
+                    messagePxy.to = $mck_msg_to.val();
+                }
+                _this.sendMessage(messagePxy);
+            }
 			_this.sendWelcomeMessage = function(params) {
 				$mck_msg_inner = mckMessageLayout.getMckMessageInner();
 				var randomId = mckUtils.randomId();
@@ -2507,6 +2551,12 @@ var MCK_CLIENT_GROUP_MAP = [];
 						}
 						$mck_loading.removeClass('vis').addClass('n-vis');
 						$mck_msg_loading.removeClass('vis').addClass('n-vis');
+
+						var forwardMessageKey = $mck_msg_new.data('forwardMessageKey');
+                        if (typeof forwardMessageKey !== 'undefined') {
+                            mckMessageService.sendForwardMessage(forwardMessageKey);
+                            $mck_msg_new.data('forwardMessageKey', '');
+                        }
 					},
 					error : function() {
 						CONTACT_SYNCING = false;
@@ -3056,7 +3106,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 			var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
 			var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 			var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-			var markup = '<div name="message" class="bubble mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class= "move-right mck-msg-text"></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}"><div class="mck-msglist-msgto">${msgReplyTo} </div></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}"><div class="mck-msgreply-border">${msgReply} </div></div>'+ '<div class="${nameTextExpr} ${showNameExpr}">${msgNameExpr}</div><div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}"  data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-delete">Delete</a></li><li><a class="mck-message-reply">Reply</a></li></ul></div></div>';
+			var markup = '<div name="message" class="bubble mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class= "move-right mck-msg-text"></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}"><div class="mck-msglist-msgto">${msgReplyTo} </div></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}"><div class="mck-msgreply-border">${msgReply} </div></div>'+ '<div class="${nameTextExpr} ${showNameExpr}">${msgNameExpr}</div><div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}"  data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-forward">${msgForwardExpr}</a></li><li><a class="mck-message-delete">Delete</a></li><li><a class="mck-message-reply">Reply</a></li></ul></div></div>';
 			var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="mck-contact-search-tab" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div><div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div><div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
 			var contactbox = '<li id="li-${contHtmlExpr}" class="person ${contIdExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}" data-mck-conversationid="${conversationExpr}" data-msg-time="${msgCreatedAtTimeExpr}"><div class="mck-row">' + '<div class="blk-lg-3"><span class="icon">{{html contImgExpr}}</span></div>' + '<div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-8 name">${contNameExpr}</div>' + '<div class="blk-lg-4 time mck-truncate">${msgCreatedDateExpr}</div></div>' + '<div class="mck-row"><div class="blk-lg-8 mck-cont-msg-wrapper preview msgTextExpr"></div>' + '<div class="blk-lg-4 mck-unread-count-box unreadcount ${contUnreadExpr}"><span class="mck-unread-count-text text">{{html contUnreadCount}}</span></div></div></div></div></div>' + '</li>';
 			var conversationbox = '<div class="chat mck-message-inner ${contIdExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}" data-mck-conversationid="${conversationExpr}"></div>';
@@ -3473,6 +3523,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 					msgSourceExpr : msg.source,
 				    msgDeleteExpr: MCK_LABELS['delete'],
                     msgReplyExpr : MCK_LABELS['reply'],
+                    msgForwardExpr: MCK_LABELS['forward'],
 					statusIconExpr : statusIcon,
 					contactExpr : contactExpr,
 					toExpr : msg.to,
