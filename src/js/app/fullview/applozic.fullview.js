@@ -1313,6 +1313,10 @@ var MCK_CLIENT_GROUP_MAP = [];
 				_this.deleteMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
 			});
 
+		    $applozic(d).on("click", ".mck-image-download", function(e) { 
+            window.open($applozic(this).parents('.downloadimage').data("fileurl"), "_blank");
+            });
+
 			 $applozic(d).on("click", ".mck-message-reply", function() {
                 _this.replyMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
@@ -3052,7 +3056,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 			var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
 			var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 			var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-			var markup = '<div name="message" class="bubble mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class= "move-right mck-msg-text"></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}"><div class="mck-msglist-msgto">${msgReplyTo} </div></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}"><div class="mck-msgreply-border">${msgReply} </div></div>'+ '<div class="${nameTextExpr} ${showNameExpr}">${msgNameExpr}</div><div class="mck-file-text notranslate mck-attachment n-vis" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-delete">Delete</a></li><li><a class="mck-message-reply">Reply</a></li></ul></div></div>';
+			var markup = '<div name="message" class="bubble mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}"><div class="mck-clear"><div class="blk-lg-12"><div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div><div class="mck-msg-box ${msgClassExpr}">' + '<div class= "move-right mck-msg-text"></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}"><div class="mck-msglist-msgto">${msgReplyTo} </div></div><div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}"><div class="mck-msgreply-border">${msgReply} </div></div>'+ '<div class="${nameTextExpr} ${showNameExpr}">${msgNameExpr}</div><div class="mck-file-text notranslate mck-attachment downloadimage" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}"  data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}">{{html fileExpr}}{{html downloadMediaUrlExpr}}</div>' + '<div class="mck-msg-text mck-msg-content"></div>' + '</div></div>' + '<div class="${msgFloatExpr}-muted mck-text-light mck-text-muted mck-text-xs mck-t-xs">${createdAtTimeExpr} <span class="${statusIconExpr} mck-message-status"></span></div>' + '</div><div class="n-vis mck-context-menu">' + '<ul><li><a class="mck-message-delete">Delete</a></li><li><a class="mck-message-reply">Reply</a></li></ul></div></div>';
 			var searchContactbox = '<li id="li-${contHtmlExpr}" class="${contIdExpr}"><a class="mck-contact-search-tab" href="#" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}"><div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div><div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div><div class="blk-lg-12 mck-text-muted">${contLastSeenExpr}</div></div></div></div></a></li>';
 			var contactbox = '<li id="li-${contHtmlExpr}" class="person ${contIdExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}" data-mck-conversationid="${conversationExpr}" data-msg-time="${msgCreatedAtTimeExpr}"><div class="mck-row">' + '<div class="blk-lg-3"><span class="icon">{{html contImgExpr}}</span></div>' + '<div class="blk-lg-9"><div class="mck-row"><div class="blk-lg-8 name">${contNameExpr}</div>' + '<div class="blk-lg-4 time mck-truncate">${msgCreatedDateExpr}</div></div>' + '<div class="mck-row"><div class="blk-lg-8 mck-cont-msg-wrapper preview msgTextExpr"></div>' + '<div class="blk-lg-4 mck-unread-count-box unreadcount ${contUnreadExpr}"><span class="mck-unread-count-text text">{{html contUnreadCount}}</span></div></div></div></div></div>' + '</li>';
 			var conversationbox = '<div class="chat mck-message-inner ${contIdExpr}" data-mck-id="${contIdExpr}" data-isgroup="${contTabExpr}" data-mck-conversationid="${conversationExpr}"></div>';
@@ -3460,6 +3464,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     msgReplyDivExpr : replyMsg ? 'vis' :'n-vis',
                     msgReplyToVisibleExpr : (contact.isGroup && replyMsg)? 'vis' :'n-vis',
                     msgPreview :replyMsg ?  msgpreview :"",
+                    downloadMediaUrlExpr: _this.getFileAttachment(msg),
 					msgKeyExpr : msg.key,
 					msgDeliveredExpr : msg.delivered,
 					msgSentExpr : msg.sent,
@@ -3486,6 +3491,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 					selfDestructTimeExpr : msg.timeToLive,
 					fileMetaKeyExpr : msg.fileMetaKey,
 					fileExpr : _this.getFilePath(msg),
+					fileUrlExpr : _this.getFileurl(msg),
 					fileNameExpr : fileName,
 					fileSizeExpr : fileSize
 				} ];
@@ -3581,6 +3587,14 @@ var MCK_CLIENT_GROUP_MAP = [];
 					});
 				}
 			};
+
+			 _this.getFileurl = function(msg) {
+                if (typeof msg.fileMeta === "object") {
+                    return MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey;
+               	}
+		return '';
+            };
+
 			_this.getFilePath = function(msg) {
 				if (msg.contentType === 2) {
 					try {
@@ -3613,6 +3627,17 @@ var MCK_CLIENT_GROUP_MAP = [];
 				}
 				return "";
 			};
+
+			 _this.getFileAttachment = function(msg) {
+                if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
+                    if((msg.fileMeta.contentType.indexOf('image') !== -1) || (msg.fileMeta.contentType.indexOf('audio') !== -1) || (msg.fileMeta.contentType.indexOf('video') !== -1)) {
+                        return '<a href="#"<span class="mck-file-name mck-image-download"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                  } else {
+                    return '';
+                  }
+               }
+            };
+
 			_this.getFileIcon = function(msg) {
 				if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
 					if (msg.fileMeta.contentType.indexOf('image') !== -1) {
