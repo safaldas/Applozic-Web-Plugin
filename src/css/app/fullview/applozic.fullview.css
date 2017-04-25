@@ -24,6 +24,38 @@
 	color: #333;
 }
 
+.mck-msg-reply {
+	background-color: #0073b7;
+            
+}
+
+.mck-msgto {
+    color : red;
+    padding: 3px;
+    text-align: left;
+}
+
+.mck-msglist-msgto {
+    color : white;
+    padding: 3px;
+    text-align: left;
+}
+
+#mck-reply-msg {
+	padding-left: : 3px;
+}
+
+.mck-verticalline {
+  border-left: thick solid white;
+  border-left-width: medium;
+}
+
+.mck-msgreply-border {
+    color : white;
+    padding : 2px;
+    text-align: center;
+}
+
 .mck-mic-btn {
 	margin-right :250px;
 	display: inline-block;
