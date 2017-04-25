@@ -3360,9 +3360,13 @@ var MCK_CLIENT_GROUP_MAP = [];
 				var isGroup = $mck_msg_inner.data('isgroup');
 				var contact = (isGroup) ? mckGroupUtils.getGroup(tabId) : mckMessageLayout.fetchContact(tabId);
 				if (typeof data.message.length === "undefined") {
+					var messageArray = [];
+                    messageArray.push(data.message);
+                    mckStorage.updateMckMessageArray(messageArray);
 					_this.addMessage(data.message, contact, false, false, true);
 					showMoreDateTime = data.createdAtTime;
 				} else {
+					mckStorage.updateMckMessageArray(data.message);
 					$applozic.each(data.message, function(i, message) {
 						if (typeof message.to !== "undefined") {
 							_this.addMessage(message, contact, false, false, true);
@@ -5774,8 +5778,19 @@ var MCK_CLIENT_GROUP_MAP = [];
 		}
 		function MckStorage() {
 			var _this = this;
+			var MCK_LATEST_MESSAGE_ARRAY = [];
 			var MCK_MESSAGE_ARRAY = [];
 			var MCK_CONTACT_NAME_ARRAY = [];
+		        var MCK_MESSAGE_MAP = [];
+			_this.updateLatestMessage = function(message) {
+                var messageArray = [];
+                messageArray.push(message);
+                _this.updateLatestMessageArray(messageArray);
+                _this.updateMckMessageArray(messageArray);
+            };
+            _this.getLatestMessageArray = function() {
+                return (typeof (w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
+            };
 			_this.getMckMessageArray = function() {
 				return (typeof (w.sessionStorage) !== "undefined") ? $applozic.parseJSON(w.sessionStorage.getItem("mckMessageArray")) : MCK_MESSAGE_ARRAY;
 			};
@@ -5794,6 +5809,10 @@ var MCK_CLIENT_GROUP_MAP = [];
 				}
 			};
 			_this.updateMckMessageArray = function(mckMessageArray) {
+                                                for (var i = 0; i < mckMessageArray.length; i++) {
+                                    var message = mckMessageArray[i];
+                                    MCK_MESSAGE_MAP[message.key] = message;
+                                }
 				if (typeof (w.sessionStorage) !== "undefined") {
 					var mckLocalMessageArray = $applozic.parseJSON(w.sessionStorage.getItem('mckMessageArray'));
 					if (mckLocalMessageArray !== null) {
@@ -5818,6 +5837,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 					MCK_CONTACT_NAME_ARRAY = mckContactNameArray;
 				}
 			};
+			 _this.getMessageByKey = function(key) {
+                          return MCK_MESSAGE_MAP[key];
+                        };
 			_this.updateMckContactNameArray = function(mckContactNameArray) {
 				if (typeof (w.sessionStorage) !== "undefined") {
 					var mckLocalcontactNameArray = $applozic.parseJSON(w.sessionStorage.getItem('mckContactNameArray'));
