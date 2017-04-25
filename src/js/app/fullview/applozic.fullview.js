@@ -6,6 +6,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 		baseUrl : "https://apps.applozic.com",
 		fileBaseUrl : "https://applozic.appspot.com",
 		notificationIconLink : '',
+		notificationSoundLink: '',
 		launcher : "applozic-launcher",
 		userId : null,
 		appId : null,
@@ -307,6 +308,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 		var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
 		var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
 		var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
+		var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
 		var MCK_DEFAULT_MESSAGE_METADATA = (typeof appOptions.defaultMessageMetaData === 'undefined') ? {} : appOptions.defaultMessageMetaData;
 		var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
 		var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
@@ -347,6 +349,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 		var mckContactService = new MckContactService();
 		var mckNotificationService = new MckNotificationService();
 		var $mckChatLauncherIcon = $applozic(".chat-launcher-icon");
+		var mckNotificationTone = null;
 		var MessageMap = [];
 		w.MCK_OL_MAP = new Array();
 		_this.events = {
@@ -373,6 +376,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 			return appOptions;
 		};
 		_this.init = function() {
+			mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
 			mckMessageService.init();
 			mckFileService.init();
 			mckInit.initializeApp(appOptions, false);
@@ -407,7 +411,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 			MCK_TOPIC_DETAIL_MAP = [];
 			MCK_CLIENT_GROUP_MAP = [];
 			IS_MCK_TAB_FOCUSED = true;
-      MCK_LABELS = optns.labels;
+            MCK_LABELS = optns.labels;
 			MCK_TOTAL_UNREAD_COUNT = 0;
 			MCK_BASE_URL = optns.baseUrl;
 			TAB_FILE_DRAFT = new Object();
@@ -2015,7 +2019,6 @@ var MCK_CLIENT_GROUP_MAP = [];
 				messagePxy.source = MCK_SOURCE;
 				var $mck_msg_div = $applozic("#mck-message-cell div[name='message']." + randomId);
 				messagePxy.metadata = metadata;
-                //$applozic(".replymsgdiv").removeClass('vis').addClass('n-vis');
 				$applozic.ajax({
 					type : "POST",
 					url : MCK_BASE_URL + MESSAGE_SEND_URL,
@@ -6287,6 +6290,10 @@ _this.audioRecoder = function(params) {
 				$mck_preview_icon.html(imgsrctag);
 				$mck_msg_preview.data('mck-id', contact.contactId);
 				$mck_msg_preview.show();
+			    mckNotificationTone.play();
+                setTimeout(function() {
+                    mckNotificationTone.stop();
+                }, 1000);
 				setTimeout(function() {
 					$mck_msg_preview.fadeOut(3000);
 				}, 10000);
