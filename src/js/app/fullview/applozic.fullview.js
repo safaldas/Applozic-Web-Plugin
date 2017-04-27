@@ -3601,7 +3601,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 					});
 				}
 				if (msg.fileMeta) {
-					$applozic("." + replyId + " .mck-file-text a").trigger('click');
+					$applozic("." + replyId + " .mck-file-text a:first").trigger('click');
 					$applozic("." + replyId + " .mck-file-text").removeClass('n-vis').addClass('vis');
 					if ($textMessage.html() === "") {
 						$textMessage.removeClass('vis').addClass('n-vis');
@@ -5809,7 +5809,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 				}
 			};
 			_this.updateMckMessageArray = function(mckMessageArray) {
-                                                for (var i = 0; i < mckMessageArray.length; i++) {
+                                    for (var i = 0; i < mckMessageArray.length; i++) {
                                     var message = mckMessageArray[i];
                                     MCK_MESSAGE_MAP[message.key] = message;
                                 }

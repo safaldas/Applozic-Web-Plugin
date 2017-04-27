@@ -3971,7 +3971,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
                 if (msg.fileMeta) {
-                    $applozic("." + replyId + " .mck-file-text a").trigger('click');
+                    $applozic("." + replyId + " .mck-file-text a:first").trigger('click');
                     $applozic("." + replyId + " .mck-file-text").removeClass('n-vis').addClass('vis');
                     if ($textMessage.html() === '') {
                         $textMessage.removeClass('vis').addClass('n-vis');
