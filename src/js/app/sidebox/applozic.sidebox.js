@@ -91,7 +91,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 'JOIN_MEMBER_MESSAGE': ':userName joined',
                 'GROUP_NAME_CHANGE_MESSAGE': 'Group name changed to :groupName',
                 'GROUP_ICON_CHANGE_MESSAGE': 'Group icon changed',
-                'GROUP_LEFT_MESSAGE': ':userName left'
+                'GROUP_LEFT_MESSAGE': ':userName left',
+                'DELETED_GROUP_MESSAGE': ':adminName deleted group',
+                'GROUP_USER_ROLE_UPDATED_MESSAGE': ':userName is :role now',
+                'GROUP_META_DATA_UPDATED_MESSAGE': '',
+                'ALERT': '',
+                'HIDE': ''
             }
         },
         openGroupSettings: {
@@ -2458,10 +2463,11 @@ var MCK_CLIENT_GROUP_MAP = [];
            };
                   _this.replyMessage = function(msgKey) {
 				 var tabId = $mck_msg_inner.data('mck-id');
-                  var message = mckStorage.getMessageByKey(msgKey);
-			     $mck_text_box.focus().select();
-				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
-				 $('#mck-reply-to').html(message.to);
+				 var message = mckStorage.getMessageByKey(msgKey);
+			         $mck_text_box.focus().select();
+			         var displayName= mckMessageLayout.getTabDisplayName(message.to, false); 
+				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');          
+				 $('#mck-reply-to').html(displayName);
 				 $('#mck-reply-msg').html(message.message); 
 				 $("#mck-text-box").data( "reply", msgKey);
                };
@@ -2724,12 +2730,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                                             if (!params.isGroup) {
                                                 mckMessageLayout.processMessageList(data, true, true);
                                                 $mck_tab_message_option.removeClass('n-vis').addClass('vis');
-                                                if (typeof (MCK_CALLBACK) === 'function') {
-                                                    MCK_CALLBACK(params.tabId);
-                                                }
                                             }
                                         }
                                     }
+                                    if (!params.startTime > 0 && !params.isGroup) {
+                                        if (typeof (MCK_CALLBACK) === 'function') {
+                                            MCK_CALLBACK(params.tabId);
+                                        }
+                                    }
+                                    
                                     if (data.userDetails.length > 0) {
                                         $applozic.each(data.userDetails, function(i, userDetail) {
                                             MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
@@ -2841,13 +2850,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                                                         if (group.type !== 6) {
                                                             $mck_tab_message_option.removeClass('n-vis').addClass('vis');
                                                         }
-                                                        if (typeof (MCK_CALLBACK) === 'function') {
-                                                            MCK_CALLBACK(params.tabId);
-                                                        }
                                                     } else if ($applozic("#mck-message-cell .mck-message-inner div[name='message']").length === 0) {
                                                         $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                                                         $mck_no_messages.removeClass('n-vis').addClass('vis');
                                                     //  $mck_msg_inner.html('<div class="mck-no-data-text mck-text-muted">No messages yet!</div>');
+                                                    }
+                                                    if (typeof (MCK_CALLBACK) === 'function') {
+                                                        MCK_CALLBACK(params.tabId);
                                                     }
                                                 }
                                             }
