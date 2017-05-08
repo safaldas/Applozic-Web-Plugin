@@ -1613,7 +1613,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.deleteMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
            
-	    $applozic(d).on("click", ".mck-message-reply", function() {
+        $applozic(d).on("click", ".mck-message-reply", function() {
                 _this.replyMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
             });
             $applozic(d).on("click", ".mck-image-download", function(e) { 
@@ -2380,7 +2380,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell .mck-message-inner div[name='message']." + randomId);
                 if(messagePxy.contentType!=102 && messagePxy.contentType!=103){
-               		messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
+                    messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
                messagePxy.metadata = metadata;
                 mckUtils.ajax({
@@ -2457,19 +2457,19 @@ var MCK_CLIENT_GROUP_MAP = [];
              window.open(fileurl, "_blank");
            };
                   _this.replyMessage = function(msgKey) {
-				 var tabId = $mck_msg_inner.data('mck-id');
+                 var tabId = $mck_msg_inner.data('mck-id');
                   var message = mckStorage.getMessageByKey(msgKey);
-			     $mck_text_box.focus().select();
-				 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
-				 $('#mck-reply-to').html(message.to);
-				 $('#mck-reply-msg').html(message.message); 
-				 $("#mck-text-box").data( "reply", msgKey);
+                 $mck_text_box.focus().select();
+                 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');              
+                 $('#mck-reply-to').html(message.to);
+                 $('#mck-reply-msg').html(message.message); 
+                 $("#mck-text-box").data( "reply", msgKey);
                };
 
               $("#close").click(function() {
-					 $('#mck-reply-to-div').removeClass('vis').addClass('n-vis'); 
-					 $("#mck-text-box").data( "reply", ""); 
-				});             
+                     $('#mck-reply-to-div').removeClass('vis').addClass('n-vis'); 
+                     $("#mck-text-box").data( "reply", ""); 
+                });             
 
             _this.deleteMessage = function(msgKey) {
                 var tabId = $mck_msg_inner.data('mck-id');
@@ -3831,10 +3831,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckContactService.loadUserProfile(msg.to);
 
                 if (msg.groupId && msg.contentType !== 4 && contact.type !== 7 && (msg.type === 0 || msg.type === 4 || msg.type === 6)) {
-                 	displayName = _this.getTabDisplayName(msg.to, false);
+                    displayName = _this.getTabDisplayName(msg.to, false);
                     showNameExpr = "vis";
                     nameTextExpr = _this.getNameTextClassByAlphabet(displayName);
-             	}
+                }
                 if (MESSAGE_BUBBLE_AVATOR_ENABLED) {
                     msgAvatorClassExpr = "mck-msg-avator-bubble";
                     var fromContact = "";
@@ -3875,7 +3875,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                 var msgList = [ {
                     msgReply : replyMsg ? replyMsg.message +"\n" :"",
-		    msgReplyTo : replyMsg ? replyMsg.to +"\n" :"",
+            msgReplyTo : replyMsg ? replyMsg.to +"\n" :"",
                     msgReplyDivExpr : replyMsg ? 'vis' :'n-vis',
                     msgReplyToVisibleExpr : (contact.isGroup && replyMsg)? 'vis' :'n-vis',
                     msgPreview :replyMsg ?  msgpreview :"",
@@ -4043,8 +4043,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getFileurl = function(msg) {
                 if (typeof msg.fileMeta === "object") {
                     return MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey;
-               	}
-		return '';
+                }
+        return '';
             };
 
             _this.getFilePath = function(msg) {
@@ -4070,23 +4070,24 @@ var MCK_CLIENT_GROUP_MAP = [];
                             return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true" ></img></a>';
                         }
                     } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
-                        return '<video controls class="mck-video-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/mp4">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/ogg">Your browser does not support the video tag.</video>';
-                    //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '">Your browser does not support the HTML 5 video tag</video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                        return '<a href= "#" ><video controls class="mck-video-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/mp4">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/ogg"></video></a>';
+                    //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                     } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
-                        return '<audio controls class="mck-audio-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/ogg">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/mpeg">Audio element not supported.</audio>' + '<p class="mck-file-tag"><span class="file-name">' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></p>';
+                        return '<a href="#"><audio controls class="mck-audio-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/ogg">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
                     } else {
-                        return '<a href="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" role="link" class="file-preview-link" target="_blank"><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                        return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';             
                     }
                 }
                 return '';
             };
           _this.getFileAttachment = function(msg) {
-                if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
-                    if((msg.fileMeta.contentType.indexOf('image') !== -1) || (msg.fileMeta.contentType.indexOf('audio') !== -1) || (msg.fileMeta.contentType.indexOf('video') !== -1)) {
-                        return '<a href="#"<span class="mck-file-name mck-image-download"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
-                  } else {
-                    return '';
+               if (typeof msg.fileMeta === 'object') {
+                    if(msg.fileMeta.contentType.indexOf("image") !== -1||(msg.fileMeta.contentType.indexOf("audio") !== -1)||(msg.fileMeta.contentType.indexOf("video") !== -1)) {
+                     return '<a href="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" role="link" class="file-preview-link"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';             
+                   } else {
+                     return '<a href="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" role="link" class="file-preview-link"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';             
                   }
+                  return '';
                }
             };
             _this.getFileIcon = function(msg) {
@@ -5864,7 +5865,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var displayName = group['displayName'];
                     if (group.type === 7) {
                         var contact = mckMessageLayout.getContactFromGroupOfTwo(group);
-                        displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+                         if(typeof contact !== 'undefined') {
+                         displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+                       }
                     }
                     if (group.type === 3) {
                         if (displayName.indexOf(MCK_USER_ID) !== -1) {
