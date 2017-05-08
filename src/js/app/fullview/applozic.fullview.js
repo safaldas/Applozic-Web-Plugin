@@ -46,6 +46,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'group.info.update': 'Update',
             'group.info.updating': 'Updating...',
             'add.group.icon': 'Add Group Icon',
+            'group.deleted':'Group has been deleted',
             'change.group.icon': 'Change Group Icon',
             'group.title': 'Group Title',
             'group.type': 'Group Type',
@@ -64,6 +65,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'delete': 'Delete',
             'reply': 'Reply',
             'forward': 'Forward',
+            'copy': 'Copy',
             'block.user': 'Block User',
             'unblock.user': 'Unblock User',
             'group.info.title': 'Group Info',
@@ -88,329 +90,371 @@ var MCK_CLIENT_GROUP_MAP = [];
                 'JOIN_MEMBER_MESSAGE': ':userName joined',
                 'GROUP_NAME_CHANGE_MESSAGE': 'Group name changed to :groupName',
                 'GROUP_ICON_CHANGE_MESSAGE': 'Group icon changed',
-                'GROUP_LEFT_MESSAGE': ':userName left'
+                'GROUP_LEFT_MESSAGE': ':userName left',
+                'DELETED_GROUP_MESSAGE': ':adminName deleted group',
+                'GROUP_USER_ROLE_UPDATED_MESSAGE': ':userName is :role now',
+                'GROUP_META_DATA_UPDATED_MESSAGE': '',
+                'ALERT': '',
+                'HIDE': ''
             }
-	    }
-	};
-	var message_default_options = {
-		"messageType" : 5,
-		"type" : 0
-	};
-	$applozic.fn.applozic = function(appOptions, params) {
-		var $mck_sidebox = $applozic('#mck-sidebox');
-		if ($applozic.type(appOptions) === "object") {
-			appOptions = $applozic.extend(true, {}, default_options, appOptions);
-		}
-		var oInstance = undefined;
-		if (typeof ($mck_sidebox.data("applozic_instance")) !== "undefined") {
-			oInstance = $mck_sidebox.data("applozic_instance");
-			if ($applozic.type(appOptions) === "string") {
-				switch (appOptions) {
-				case "reInitialize":
-					return oInstance.reInit(params);
-					break;
-				case "loadConvTab":
-					oInstance.loadConvTab(params);
-					break;
-				case "loadTab":
-					oInstance.loadTab(params);
-					break;
-				case "audioAttach":
-					oInstance.audioAttach(params);
-					break;	
-				case "loadContextualTab":
-					return oInstance.loadTabWithTopic(params);
-					break;
-				case "addWelcomeMessage":
-					oInstance.addWelcomeMessage(params);
-					break;
-				case "loadContacts":
-					oInstance.loadContacts(params);
-					break;
-				case "sendMessage":
-					return oInstance.sendMessage(params);
-					break;
-				case "createGroup":
-					return oInstance.createGroup(params);
-					break;
-				case "loadBroadcastTab":
-					params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
-					params.type = 5;
-					return oInstance.initGroupTab(params);
-					break;
-				case "initBroadcastTab":
-					params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
-					params.type = 5;
-					return oInstance.initGroupTab(params);
-					break;
-				case "initGroupTab":
-					return oInstance.initGroupTab(params);
-					break;
-				case "loadGroupTab":
-					return oInstance.loadGroupTab(params);
-					break;
-				case "loadGroupTabByClientGroupId":
-					return oInstance.loadGroupTabByClientGroupId(params);
-					break;
-				case 'setOffline':
-					oInstance.setOffline();
-					return "success";
-					break;
-				case 'setOnline':
-					oInstance.setOffline();
-					return 'success';
-					break;
-			     case 'logout':
-                     oInstance.logout();
-                     return 'success';
-                     break;
-				case "getUserDetail":
-					oInstance.getUserStatus(params);
-					return "success";
-					break;
-				case "getGroupList":
-					oInstance.getGroupList(params);
-					return "success";
-					break;
-				case "leaveGroup":
-					return oInstance.leaveGroup(params);
-					break;
-				case "addGroupMember":
-					return oInstance.addGroupMember(params);
-					break;
-				case "removeGroupMember":
-					return oInstance.removeGroupMember(params);
-					break;
-				case "getMessages":
-					oInstance.getMessages(params);
-					break;
-				case "messageList":
-					return oInstance.getMessageList(params);
-					break;
-				case "getMessageListByTopicId":
-					return oInstance.getMessageListByTopicId(params);
-					break;
-				case "subscribeToEvents":
-					return oInstance.subscribeToEvents(params);
-					break;
-				}
-			} else if ($applozic.type(appOptions) === "object") {
-				oInstance.reInit(appOptions);
-			}
-		} else if ($applozic.type(appOptions) === "object") {
-			if (appOptions.userId && appOptions.appId && $applozic.trim(appOptions.userId) !== "" && $applozic.trim(appOptions.appId) !== "") {
-				if (typeof ($mck_sidebox.data("applozic_instance")) !== "undefined") {
-					oInstance = $mck_sidebox.data("applozic_instance");
-					oInstance.reInit(appOptions);
-				} else {
-					if (typeof appOptions.ojq !== 'undefined') {
-						$ = appOptions.ojq;
-						jQuery = appOptions.ojq;
-					} else {
-						$ = $applozic;
-						jQuery = $applozic;
-					}
-					if (typeof appOptions.obsm === "function") {
-						$.fn.modal = appOptions.obsm;
-						jQuery.fn.modal = appOptions.obsm;
-					} else if (typeof $applozic.fn.modal === 'function') {
-						var oModal = $applozic.fn.modal.noConflict();
-						$.fn.modal = oModal;
-						jQuery.fn.modal = oModal;
-					} else if (typeof $.fn.modal === 'function') {
-						var oModal = $.fn.modal.noConflict();
-						$.fn.modal = oModal;
-						jQuery.fn.modal = oModal;
-					}
-					if (typeof appOptions.omckm === "function") {
-						$applozic.fn.mckModal = appOptions.omckm;
-					} else if (typeof $applozic.fn.mckModal === 'function') {
-						$applozic.fn.mckModal = $applozic.fn.mckModal.noConflict();
-					} else if (typeof $.fn.mckModal === 'function') {
-						$applozic.fn.mckModal = $.fn.mckModal.noConflict();
-					}
-					if (typeof $.fn.linkify === 'function') {
-						$applozic.fn.linkify = $.fn.linkify;
-						jQuery.fn.linkify = $.fn.linkify;
-					} else if (typeof $applozic.fn.linkify === 'function') {
-						$.fn.linkify = $applozic.fn.linkify;
-						jQuery.fn.linkify = $applozic.fn.linkify;
-					}
-					if (typeof $.fn.emojiarea === 'function') {
-						$applozic.fn.emojiarea = $.fn.emojiarea;
-					} else if (typeof $applozic.fn.emojiarea === 'function') {
-						$.fn.emojiarea = $applozic.fn.emojiarea;
-						jQuery.fn.emojiarea = $applozic.fn.emojiarea;
-					}
-					var applozic = new Applozic(appOptions);
-					applozic.init();
-					$mck_sidebox.data("applozic_instance", applozic);
-				}
-			} else {
-				alert("Oops! looks like incorrect application id or user Id.");
-			}
-		}
-	};
-	$applozic.fn.applozic.defaults = default_options;
-	function Applozic(appOptions) {
-		var _this = this;
-		var MCK_TOKEN;
-		var AUTH_CODE;
-		MCK_GROUP_MAP = [];
-		var FILE_META = [];
-		var USER_DEVICE_KEY;
-		var USER_COUNTRY_CODE;
-		var MCK_WEBSOCKET_URL;
-		var IS_LOGGED_IN = true;
-		var MCK_CONTACT_MAP = [];
-		MCK_CLIENT_GROUP_MAP = [];
-		var MCK_TYPING_STATUS = 0;
-		var CONTACT_SYNCING = false;
-		var MESSAGE_SYNCING = false;
-		var MCK_USER_TIMEZONEOFFSET;
-		var MCK_BLOCKED_TO_MAP = [];
-		var MCK_BLOCKED_BY_MAP = [];
-		var MCK_IDLE_TIME_LIMIT = 90;
-		var MCK_USER_DETAIL_MAP = [];
-		var MCK_TOPIC_DETAIL_MAP = [];
-		var MCK_LAST_SEEN_AT_MAP = [];
-		var MCK_CONVERSATION_MAP = [];
-		var IS_MCK_TAB_FOCUSED = true;
-		var MCK_TOTAL_UNREAD_COUNT = 0;
-		var MCK_MODE = appOptions.mode;
-    MCK_LABELS = appOptions.labels;
-		var MCK_APP_ID = appOptions.appId;
-		MCK_BASE_URL = appOptions.baseUrl;
-		var MCK_CONNECTED_CLIENT_COUNT = 0;
-		var MCK_TOPIC_CONVERSATION_MAP = [];
-		var IS_MCK_USER_DEACTIVATED = false;
-		var MCK_LAUNCHER = appOptions.launcher;
-		var IS_MCK_VISITOR = appOptions.visitor;
-		var MCK_USER_NAME = appOptions.userName;
-		var IS_MCK_LOCSHARE = appOptions.locShare;
-		var MCK_FILE_URL = appOptions.fileBaseUrl;
-		var AUTHENTICATION_TYPE_ID_MAP = [ 0, 1, 2 ];
-		var MCK_ON_PLUGIN_INIT = appOptions.onInit;
-		var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
-		var MCK_DISPLAY_TEXT = appOptions.displayText;
-		var MCK_ACCESS_TOKEN = appOptions.accessToken;
-		var MCK_CALLBACK = appOptions.readConversation;
-		var MCK_GROUPMAXSIZE = appOptions.maxGroupSize;
-		var MCK_CONTACT_NUMBER = appOptions.contactNumber;
-		var MCK_FILEMAXSIZE = appOptions.maxAttachmentSize;
-		var MCK_APP_MODULE_NAME = appOptions.appModuleName;
-		var MCK_GETTOPICDETAIL = appOptions.getTopicDetail;
-		var MCK_GETUSERNAME = appOptions.contactDisplayName;
-		var MCK_MSG_VALIDATION = appOptions.validateMessage;
-		var MCK_PRICE_DETAIL = appOptions.finalPriceResponse;
-		var MCK_GETUSERIMAGE = appOptions.contactDisplayImage;
-		var MCK_PRICE_WIDGET_ENABLED = appOptions.priceWidget;
-		var MCK_INIT_AUTO_SUGGESTION = appOptions.initAutoSuggestions;
-		var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
-		var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
-		var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
-		var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
-		var MCK_DEFAULT_MESSAGE_METADATA = (typeof appOptions.defaultMessageMetaData === 'undefined') ? {} : appOptions.defaultMessageMetaData;
-		var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
-		var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
-		var MCK_USER_ID = (IS_MCK_VISITOR) ? "guest" : $applozic.trim(appOptions.userId);
-		var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : "NO_ACCESS";
-		var IS_MCK_TOPIC_BOX = (typeof appOptions.topicBox === "boolean") ? (appOptions.topicBox) : false;
-		var IS_MCK_OL_STATUS = (typeof appOptions.olStatus === "boolean") ? (appOptions.olStatus) : false;
-		var MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof appOptions.messageBubbleAvator === "boolean") ? (appOptions.messageBubbleAvator) : false;
-		var IS_MCK_TOPIC_HEADER = (typeof appOptions.topicHeader === "boolean") ? (appOptions.topicHeader) : false;
-		var MCK_SUPPORT_ID_DATA_ATTR = (appOptions.supportId) ? ('data-mck-id="' + appOptions.supportId + '"') : '';
-		var IS_NOTIFICATION_ENABLED = (typeof appOptions.notification === "boolean") ? appOptions.notification : true;
-		var IS_MCK_OWN_CONTACTS = (typeof appOptions.loadOwnContacts === "boolean") ? (appOptions.loadOwnContacts) : false;
-		var IS_MCK_NOTIFICATION = (typeof appOptions.desktopNotification === "boolean") ? appOptions.desktopNotification : false;
-		var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
-		var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === "boolean") ? (appOptions.checkUserBusyWithStatus) : false;
-		var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
-		var CONVERSATION_STATUS_MAP = [ "DEFAULT", "NEW", "OPEN" ];
-		var GROUP_TYPE_MAP = [ 1, 2, 5, 6 ];
-		var BLOCK_STATUS_MAP = [ "BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY" ];
-		var mckStorage = new MckStorage();
-		var TAB_FILE_DRAFT = new Object();
-		var MCK_CONTACT_ARRAY = new Array();
-		var MCK_GROUP_ARRAY = new Array();
-		var TAB_MESSAGE_DRAFT = new Object();
-		var MCK_CONTACT_NAME_MAP = new Array();
-		var MCK_UNREAD_COUNT_MAP = new Array();
-		var MCK_CHAT_CONTACT_ARRAY = new Array();
-		var MCK_GROUP_SEARCH_ARRAY = new Array();
-		var MCK_TAB_CONVERSATION_MAP = new Array();
-		var mckInit = new MckInit();
-		var mckMapLayout = new MckMapLayout();
-		var mckUserUtils = new MckUserUtils();
-		var mckMapService = new MckMapService();
-		var mckGroupLayout = new MckGroupLayout();
-		var mckFileService = new MckFileService();
-		var mckMessageLayout = new MckMessageLayout();
-		var mckMessageService = new MckMessageService();
-		var mckContactService = new MckContactService();
-		var mckNotificationService = new MckNotificationService();
-		var $mckChatLauncherIcon = $applozic(".chat-launcher-icon");
-		var mckNotificationTone = null;
-		w.MCK_OL_MAP = new Array();
-		_this.events = {
-			'onConnectFailed' : function() {},
-			'onConnect' : function() {},
-			'onMessageDelivered' : function() {},
-			'onMessageRead' : function() {},
-			'onMessageDeleted' : function() {},
-			'onConversationDeleted' : function() {},
-			'onUserConnect' : function() {},
-			'onUserDisconnect' : function() {},
-			'onConversationReadFromOtherSource' : function() {},
-			'onConversationRead' : function() {},
-			'onMessageReceived' : function() {},
-			'onMessageSentUpdate' : function() {},
-			'onMessageSent' : function() {},
-			'onUserBlocked' : function() {},
-			'onUserUnblocked' : function() {},
-			'onUserActivated' : function() {},
-			'onUserDeactivated' : function() {}
-		};
-		var mckInitializeChannel = new MckInitializeChannel(_this);
-		_this.getOptions = function() {
-			return appOptions;
-		};
-		_this.init = function() {
-			mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
-			mckMessageService.init();
-			mckFileService.init();
-			mckInit.initializeApp(appOptions, false);
-			mckNotificationService.init();
-			mckMapLayout.init();
-			mckMessageLayout.initEmojis();
-		};
-		_this.reInit = function(optns) {
-			if ($applozic.type(optns) === 'object') {
-				optns = $applozic.extend(true, {}, default_options, optns);
-			} else {
-				return;
-			}
-			w.sessionStorage.clear();
-			MCK_TOKEN = '';
-			AUTH_CODE = '';
-			FILE_META = [];
-			MCK_GROUP_MAP = [];
-			IS_LOGGED_IN = true;
-			MCK_CONTACT_MAP = [];
-			USER_DEVICE_KEY = '';
-			MCK_MODE = optns.mode;
-			USER_COUNTRY_CODE = '';
-			MCK_BLOCKED_TO_MAP = [];
-			MCK_BLOCKED_BY_MAP = [];
-			CONTACT_SYNCING = false;
-			MESSAGE_SYNCING = false;
-			MCK_IDLE_TIME_LIMIT = 90;
-			MCK_APP_ID = optns.appId;
-			MCK_LAST_SEEN_AT_MAP = [];
-			MCK_CONVERSATION_MAP = [];
-			MCK_TOPIC_DETAIL_MAP = [];
-			MCK_CLIENT_GROUP_MAP = [];
-			IS_MCK_TAB_FOCUSED = true;
+        },
+        openGroupSettings: {
+            'deleteChatAccess': 0, // NONE(0), ADMIN(1), ALL_GROUP_MEMBER(2)
+            'allowInfoAccessGroupMembers': true,
+            'disableChatForNonGroupMember': false,
+            'defaultChatDisabledMessage': 'Chat Disabled!'
+        }
+    };
+    var message_default_options = {
+        'messageType': 5,
+        'type': 0
+    };
+    $applozic.fn.applozic = function(appOptions, params) {
+        var $mck_sidebox = $applozic('#mck-sidebox');
+        if ($applozic.type(appOptions) === 'object') {
+            appOptions = $applozic.extend(true, {}, default_options, appOptions);
+        }
+        var oInstance = undefined;
+        if (typeof ($mck_sidebox.data('applozic_instance')) !== 'undefined') {
+            oInstance = $mck_sidebox.data('applozic_instance');
+            if ($applozic.type(appOptions) === 'string') {
+                switch (appOptions) {
+                    case 'reInitialize':
+                        return oInstance.reInit(params);
+                        break;
+                    case 'loadConvTab':
+                        oInstance.loadConvTab(params);
+                        break;
+                    case 'loadTab':
+                        oInstance.loadTab(params);
+                        break;
+                    case "uploadFile":
+                        oInstance.uploadFile(params);
+                        break;  
+                    case 'loadTabView':
+                        oInstance.loadTabView(params);
+                          break;
+                    case 'loadChat':
+                        oInstance.loadChat(params);
+                        break;
+                    case 'loadContextualTab':
+                        return oInstance.loadTabWithTopic(params);
+                        break;
+                    case "audioAttach":
+                        oInstance.audioAttach(params);
+                        break;  
+                    case 'addWelcomeMessage':
+                        oInstance.addWelcomeMessage(params);
+                        break;
+                    case 'loadContacts':
+                        oInstance.loadContacts(params);
+                        break;
+                    case 'sendMessage':
+                        return oInstance.sendMessage(params);
+                        break;
+                    case 'sendGroupMessage':
+                        return oInstance.sendGroupMessage(params);
+                        break;
+                    case 'createGroup':
+                        return oInstance.createGroup(params);
+                        break;
+                    case 'loadBroadcastTab':
+                        params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
+                        params.type = 5;
+                        return oInstance.initGroupTab(params);
+                        break;
+                    case 'initBroadcastTab':
+                        params.groupName = (params.groupName) ? params.groupName : 'Broadcast';
+                        params.type = 5;
+                        return oInstance.initGroupTab(params);
+                        break;
+                    case 'initGroupTab':
+                        return oInstance.initGroupTab(params);
+                        break;
+                    case 'loadGroupTab':
+                        return oInstance.loadGroupTab(params);
+                        break;
+                    case 'loadGroupTabByClientGroupId':
+                        return oInstance.loadGroupTabByClientGroupId(params);
+                        break;
+                    case 'setOffline':
+                        oInstance.setOffline();
+                        return 'success';
+                        break;
+                    case 'setOnline':
+                        oInstance.setOffline();
+                        return 'success';
+                        break;
+                    case 'logout':
+                        oInstance.logout();
+                        return 'success';
+                        break;
+                    case 'getUserDetail':
+                        oInstance.getUserStatus(params);
+                        return 'success';
+                        break;
+                    case 'getGroupList':
+                        oInstance.getGroupList(params);
+                        return 'success';
+                        break;
+                    case 'leaveGroup':
+                        return oInstance.leaveGroup(params);
+                        break;
+                    case 'addGroupMember':
+                        return oInstance.addGroupMember(params);
+                        break;
+                    case 'removeGroupMember':
+                        return oInstance.removeGroupMember(params);
+                        break;
+                    case 'updateGroupInfo':
+                        return oInstance.updateGroupInfo(params);
+                        break;
+                    case 'getMessages':
+                        oInstance.getMessages(params);
+                        break;
+                    case 'messageList':
+                        return oInstance.getMessageList(params);
+                        break;
+                    case 'getMessageListByTopicId':
+                        return oInstance.getMessageListByTopicId(params);
+                        break;
+                    case 'getTotalUnreadCount':
+                        return oInstance.getTotalUnreadCount();
+                        break;
+                    case 'subscribeToEvents':
+                        return oInstance.subscribeToEvents(params);
+                        break;
+                }
+            } else if ($applozic.type(appOptions) === 'object') {
+                oInstance.reInit(appOptions);
+            }
+        } else if ($applozic.type(appOptions) === 'object') {
+            if (appOptions.userId && appOptions.appId && $applozic.trim(appOptions.userId) !== '' && $applozic.trim(appOptions.appId) !== '') {
+                if (typeof ($mck_sidebox.data('applozic_instance')) !== 'undefined') {
+                    oInstance = $mck_sidebox.data('applozic_instance');
+                    oInstance.reInit(appOptions);
+                } else {
+                    if (typeof appOptions.ojq !== 'undefined') {
+                        $ = appOptions.ojq;
+                        jQuery = appOptions.ojq;
+                    } else {
+                        $ = $applozic;
+                        jQuery = $applozic;
+                    }
+                    if (typeof appOptions.obsm === 'function') {
+                        $.fn.modal = appOptions.obsm;
+                        jQuery.fn.modal = appOptions.obsm;
+                    } else if (typeof $applozic.fn.modal === 'function') {
+                        var oModal = $applozic.fn.modal.noConflict();
+                        $.fn.modal = oModal;
+                        jQuery.fn.modal = oModal;
+                    } else if (typeof $.fn.modal === 'function') {
+                        var oModal = $.fn.modal.noConflict();
+                        $.fn.modal = oModal;
+                        jQuery.fn.modal = oModal;
+                    }
+                    if (typeof appOptions.omckm === 'function') {
+                        $applozic.fn.mckModal = appOptions.omckm;
+                    } else if (typeof $applozic.fn.mckModal === 'function') {
+                        $applozic.fn.mckModal = $applozic.fn.mckModal.noConflict();
+                    } else if (typeof $.fn.mckModal === 'function') {
+                        $applozic.fn.mckModal = $.fn.mckModal.noConflict();
+                    }
+                    if (typeof $.fn.linkify === 'function') {
+                        $applozic.fn.linkify = $.fn.linkify;
+                        jQuery.fn.linkify = $.fn.linkify;
+                    } else if (typeof $applozic.fn.linkify === 'function') {
+                        $.fn.linkify = $applozic.fn.linkify;
+                        jQuery.fn.linkify = $applozic.fn.linkify;
+                    }
+                    if (typeof $.fn.emojiarea === 'function') {
+                        $applozic.fn.emojiarea = $.fn.emojiarea;
+                    } else if (typeof $applozic.fn.emojiarea === 'function') {
+                        $.fn.emojiarea = $applozic.fn.emojiarea;
+                        jQuery.fn.emojiarea = $applozic.fn.emojiarea;
+                    }
+                    if (typeof $.fn.locationpicker === 'function') {
+                        $applozic.fn.locationpicker = $.fn.locationpicker;
+                    } else if (typeof $applozic.fn.locationpicker === 'function') {
+                        $.fn.locationpicker = $applozic.fn.locationpicker;
+                        jQuery.fn.locationpicker = $applozic.fn.locationpicker;
+                    }
+                    var applozic = new Applozic(appOptions);
+                    $mck_sidebox.data('applozic_instance', applozic);
+                    applozic.init();
+                }
+            } else {
+                alert('Oops! looks like incorrect application id or user Id.');
+            }
+        }
+    };
+    $applozic.fn.applozic.defaults = default_options;
+    function Applozic(appOptions) {
+        var _this = this;
+        var MCK_TOKEN;
+        var AUTH_CODE;
+        MCK_GROUP_MAP = [];
+        var FILE_META = [];
+        var USER_DEVICE_KEY;
+        var USER_COUNTRY_CODE;
+        var MCK_WEBSOCKET_URL;
+        var IS_LOGGED_IN = true;
+        var MCK_CONTACT_MAP = [];
+        var MCK_TYPING_STATUS = 0;
+        MCK_CLIENT_GROUP_MAP = [];
+        var CONTACT_SYNCING = false;
+        var MCK_USER_TIMEZONEOFFSET;
+        var MCK_BLOCKED_TO_MAP = [];
+        var MCK_BLOCKED_BY_MAP = [];
+        var MCK_IDLE_TIME_LIMIT = 90;
+        var MCK_USER_DETAIL_MAP = [];
+        var MCK_TOPIC_DETAIL_MAP = [];
+        var MCK_LAST_SEEN_AT_MAP = [];
+        var MCK_CONVERSATION_MAP = [];
+        var IS_MCK_TAB_FOCUSED = true;
+        var MCK_TOTAL_UNREAD_COUNT = 0;
+        var MCK_MODE = appOptions.mode;
+        MCK_LABELS = appOptions.labels;
+        MCK_BASE_URL = appOptions.baseUrl;
+        var MCK_APP_ID = appOptions.appId;
+        var OPEN_GROUP_SUBSCRIBER_MAP = [];
+        var MCK_CONNECTED_CLIENT_COUNT = 0;
+        var GROUP_ROLE_MAP = [ 0, 1, 2, 3 ];
+        var GROUP_TYPE_MAP = [ 1, 2, 5, 6 ];
+        var MCK_TOPIC_CONVERSATION_MAP = [];
+        var IS_MCK_USER_DEACTIVATED = false;
+        var MCK_LAUNCHER = appOptions.launcher;
+        var IS_MCK_VISITOR = appOptions.visitor;
+        var MCK_USER_NAME = appOptions.userName;
+        var IS_MCK_LOCSHARE = appOptions.locShare;
+        var MCK_FILE_URL = appOptions.fileBaseUrl;
+        var MCK_ON_PLUGIN_INIT = appOptions.onInit;
+        var AUTHENTICATION_TYPE_ID_MAP = [ 0, 1, 2 ];
+        var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
+        var MCK_DISPLAY_TEXT = appOptions.displayText;
+        var MCK_ACCESS_TOKEN = appOptions.accessToken;
+        var MCK_CALLBACK = appOptions.readConversation;
+        var MCK_GROUPMAXSIZE = appOptions.maxGroupSize;
+        var MCK_ON_TAB_CLICKED = appOptions.onTabClicked;
+        var MCK_CONTACT_NUMBER = appOptions.contactNumber;
+        var MCK_FILEMAXSIZE = appOptions.maxAttachmentSize;
+        var MCK_APP_MODULE_NAME = appOptions.appModuleName;
+        var MCK_GETTOPICDETAIL = appOptions.getTopicDetail;
+        var MCK_GETUSERNAME = appOptions.contactDisplayName;
+        var MCK_MSG_VALIDATION = appOptions.validateMessage;
+        var MCK_PRICE_DETAIL = appOptions.finalPriceResponse;
+        var MCK_GETUSERIMAGE = appOptions.contactDisplayImage;
+        var MCK_PRICE_WIDGET_ENABLED = appOptions.priceWidget;
+        var MCK_OPEN_GROUP_SETTINGS = appOptions.openGroupSettings;
+        var MCK_OFFLINE_MESSAGE_DETAIL = appOptions.offlineMessageDetail;
+        var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
+        var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
+        var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
+        var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
+        var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(appOptions.userId);
+        var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : 'NO_ACCESS';
+        var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
+        var IS_MCK_TOPIC_BOX = (typeof appOptions.topicBox === 'boolean') ? (appOptions.topicBox) : false;
+        var IS_MCK_OL_STATUS = (typeof appOptions.olStatus === 'boolean') ? (appOptions.olStatus) : false;
+        var MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof appOptions.messageBubbleAvator === "boolean") ? (appOptions.messageBubbleAvator) : false;
+        var IS_OFFLINE_MESSAGE_ENABLED = (typeof appOptions.showOfflineMessage === 'boolean') ? (appOptions.showOfflineMessage) : false;
+        var IS_GROUP_SUBTITLE_HIDDEN = (typeof appOptions.hideGroupSubtitle === 'boolean') ? (appOptions.hideGroupSubtitle) : false;
+        var MCK_DEFAULT_MESSAGE_METADATA = (typeof appOptions.defaultMessageMetaData === 'undefined') ? {} : appOptions.defaultMessageMetaData;
+        var IS_MCK_GROUPUSERCOUNT = (typeof appOptions.groupUserCount === "boolean") ? appOptions.groupUserCount : false;
+        var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === 'boolean') ? (appOptions.checkUserBusyWithStatus) : false;
+        var IS_RESET_USER_STATUS = (typeof appOptions.resetUserStatus === 'boolean') ? (appOptions.resetUserStatus) : false;
+        var IS_MCK_TOPIC_HEADER = (typeof appOptions.topicHeader === 'boolean') ? (appOptions.topicHeader) : false;
+        var MCK_SUPPORT_ID_DATA_ATTR = (appOptions.supportId) ? ('data-mck-id="' + appOptions.supportId + '"') : '';
+        var IS_MCK_OWN_CONTACTS = (typeof appOptions.loadOwnContacts === "boolean") ? (appOptions.loadOwnContacts) : false;
+        var IS_MCK_NOTIFICATION = (typeof appOptions.desktopNotification === "boolean") ? appOptions.desktopNotification : false;
+        var IS_NOTIFICATION_ENABLED = (typeof appOptions.notification === "boolean") ? appOptions.notification : true;
+        var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
+        var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
+        var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
+        var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
+        var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var CONVERSATION_STATUS_MAP = [ "DEFAULT", "NEW", "OPEN" ];
+        var BLOCK_STATUS_MAP = [ "BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY" ];
+        var mckStorage = new MckStorage();
+        var TAB_FILE_DRAFT = new Object();
+        var MCK_GROUP_ARRAY = new Array();
+        var MCK_CONTACT_ARRAY = new Array();
+        var TAB_MESSAGE_DRAFT = new Object();
+        var MCK_CONTACT_NAME_MAP = new Array();
+        var MCK_UNREAD_COUNT_MAP = new Array();
+        var MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
+        var MCK_TAB_CONVERSATION_MAP = new Array();
+        var mckInit = new MckInit();
+        var mckMapLayout = new MckMapLayout();
+        var mckUserUtils = new MckUserUtils();
+        var mckMapService = new MckMapService();
+        var mckGroupLayout = new MckGroupLayout();
+        var mckFileService = new MckFileService();
+        var mckMessageLayout = new MckMessageLayout();
+        var mckMessageService = new MckMessageService();
+        var mckContactService = new MckContactService();
+        var mckNotificationService = new MckNotificationService();
+        var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
+        var mckNotificationTone = null;    
+        w.MCK_OL_MAP = new Array();
+        _this.events = {
+            'onConnectFailed': function() {},
+            'onConnect': function() {},
+            'onMessageDelivered': function() {},
+            'onMessageRead': function() {},
+            'onMessageDeleted': function() {},
+            'onConversationDeleted': function() {},
+            'onUserConnect': function() {},
+            'onUserDisconnect': function() {},
+            'onConversationReadFromOtherSource': function() {},
+            'onConversationRead': function() {},
+            'onMessageReceived': function() {},
+            'onMessageSentUpdate': function() {},
+            'onMessageSent': function() {},
+            'onUserBlocked': function() {},
+            'onUserUnblocked': function() {},
+            'onUserActivated': function() {},
+            'onUserDeactivated': function() {}
+        };
+        var mckInitializeChannel = new MckInitializeChannel(_this);
+        _this.getOptions = function() {
+            return appOptions;
+        };
+        _this.init = function() {
+            mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
+            mckMessageService.init();
+            mckFileService.init();
+            mckInit.initializeApp(appOptions, false);
+            mckNotificationService.init();
+            mckMapLayout.init();
+            mckMessageLayout.initEmojis();
+        };
+        _this.reInit = function(optns) {
+            if ($applozic.type(optns) === 'object') {
+                optns = $applozic.extend(true, {}, default_options, optns);
+            } else {
+                return;
+            }
+            w.sessionStorage.clear();
+            MCK_TOKEN = '';
+            AUTH_CODE = '';
+            FILE_META = [];
+            MCK_GROUP_MAP = [];
+            IS_LOGGED_IN = true;
+            MCK_CONTACT_MAP = [];
+            USER_DEVICE_KEY = '';
+            MCK_MODE = optns.mode;
+            USER_COUNTRY_CODE = '';
+            MCK_BLOCKED_TO_MAP = [];
+            MCK_BLOCKED_BY_MAP = [];
+            CONTACT_SYNCING = false;
+            MCK_IDLE_TIME_LIMIT = 90;
+            MCK_APP_ID = optns.appId;
+            MCK_LAST_SEEN_AT_MAP = [];
+            MCK_CONVERSATION_MAP = [];
+            MCK_TOPIC_DETAIL_MAP = [];
+            MCK_CLIENT_GROUP_MAP = [];
+            IS_MCK_TAB_FOCUSED = true;
             MCK_LABELS = optns.labels;
 			MCK_TOTAL_UNREAD_COUNT = 0;
 			MCK_BASE_URL = optns.baseUrl;
