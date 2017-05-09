@@ -3131,7 +3131,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                         tabConvArray.push(conversationPxy);
                                         MCK_TAB_CONVERSATION_MAP[params.tabId] = tabConvArray;
                                     }
-                                })
+                                }
                             }
                             if (params.isExtMessageList) {
                                 if (conversationList.length > 0) {
