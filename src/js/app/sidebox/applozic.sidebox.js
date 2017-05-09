@@ -3174,19 +3174,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                             }
                         } else {
-                            if (params.isExtMessageList) {
-                                if (typeof params.callback === 'function') {
-                                    var resp = {};
-                                    if (params.tabId) {
-                                        resp.id = params.tabId;
-                                    } else if (params.clientGroupId) {
-                                        resp.clientGroupId = params.clientGroupId;
-                                    }
-                                    resp.topicId = params.topicId;
-                                    resp.status = "error";
-                                    resp.errorMessage = 'Unable to process request. Please try again.';
-                                    params.callback(resp);
+                            if (params.isExtMessageList && typeof params.callback === 'function') {
+                                var resp = {};
+                                if (params.tabId) {
+                                    resp.id = params.tabId;
+                                } else if (params.clientGroupId) {
+                                    resp.clientGroupId = params.clientGroupId;
                                 }
+                                resp.topicId = params.topicId;
+                                resp.status = "error";
+                                resp.errorMessage = 'Unable to process request. Please try again.';
+                                params.callback(resp);
                             }
                         }
                     },
@@ -3464,58 +3462,69 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_msg_cell = $applozic("#mck-message-cell");
             var $mck_typing_box = $applozic('.mck-typing-box');
             var $mck_no_messages = $applozic('#mck-no-messages');
+
             var $mck_product_box = $applozic("#mck-product-box");
-            var $mck_search_list = $applozic("#mck-search-list");
-            var $mck_loading = $applozic("#mck-contact-loading");
-            var $mck_typing_label = $applozic('#mck-typing-label');
-            var $mck_price_widget = $applozic("#mck-price-widget");
-            var $mck_msg_response = $applozic("#mck-msg-response");
             var $mck_product_icon = $applozic(".mck-product-icon");
             var $mck_product_title = $applozic(".mck-product-title");
-            var $mck_response_text = $applozic("#mck_response_text");
-            var $li_mck_block_user = $applozic("#li-mck-block-user");
-            var $li_mck_group_info = $applozic("#li-mck-group-info");
-            var $mck_search_loading = $applozic("#mck-search-loading");
-            var $mck_tab_individual = $applozic("#mck-tab-individual");
-            var $li_mck_leave_group = $applozic("#li-mck-leave-group");
-            var $mck_sidebox_search = $applozic("#mck-sidebox-search");
-            var $mck_group_info_tab = $applozic("#mck-group-info-tab");
-            var $mck_attachfile_box = $applozic("#mck-attachfile-box");
-            var $mck_atttachmenu_box = $applozic("#mck-attachmenu-box");
-            var $mck_sidebox_content = $applozic("#mck-sidebox-content");
-            var $mck_group_search_tab = $applozic("#mck-group-search-tab");
-            var $mck_no_search_groups = $applozic("#mck-no-search-groups");
-            var $mck_tab_option_panel = $applozic("#mck-tab-option-panel");
-            var $mck_contacts_content = $applozic("#mck-contacts-content");
-            var $mck_tab_conversation = $applozic("#mck-tab-conversation");
-            var $mck_search_tabview_box = $applozic("#mck-search-tabview-box");
-            var $mck_group_create_tab = $applozic("#mck-group-create-tab");
             var $mck_product_subtitle = $applozic(".mck-product-subtitle");
-            var $mck_no_conversations = $applozic('#mck-no-conversations');
-            var $mck_group_search_list = $applozic("#mck-group-search-list");
-            var $mck_search_tab_link = $applozic("#mck-search-tab-box li a");
-            var $mck_conversation_list = $applozic("#mck-conversation-list");
             var $product_box_caret = $applozic("#mck-product-box .mck-caret");
-            var $mck_no_search_contacts = $applozic("#mck-no-search-contacts");
-            var $mck_tab_message_option = $applozic(".mck-tab-message-option");
-            var $mck_contact_search_tab = $applozic("#mck-contact-search-tab");
-            var $mck_contact_search_tabview = $applozic("#mck-contact-search-tabview");
-            var $mck_group_search_tabview = $applozic("#mck-group-search-tabview");
-            var $modal_footer_content = $applozic(".mck-box-ft .mck-box-form");
-            var $mck_btn_clear_messages = $applozic('#mck-btn-clear-messages');
-            var $mck_group_menu_options = $applozic(".mck-group-menu-options");
-            var $mck_group_search_input = $applozic("#mck-group-search-input");
-            var $mck_offline_message_box = $applozic("#mck-offline-message-box");
-            var $mck_conversation_header = $applozic("#mck-conversation-header");
-            var $mck_contact_search_list = $applozic("#mck-contact-search-list");
-            var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner");
-            var $mck_contact_search_input = $applozic("#mck-contact-search-input");
-            var $mck_group_search_input_box = $applozic("#mck-group-search-input-box");
             var $mck_product_up_key = $applozic(".mck-product-rt-up .mck-product-key");
             var $mck_contact_search_input_box = $applozic("#mck-contact-search-input-box");
             var $mck_product_up_value = $applozic(".mck-product-rt-up .mck-product-value");
             var $mck_product_down_key = $applozic(".mck-product-rt-down .mck-product-key");
             var $mck_product_down_value = $applozic(".mck-product-rt-down .mck-product-value");
+
+            var $li_mck_group_info = $applozic("#li-mck-group-info");
+            var $li_mck_leave_group = $applozic("#li-mck-leave-group");
+            var $mck_group_info_tab = $applozic("#mck-group-info-tab");
+            var $mck_group_search_tab = $applozic("#mck-group-search-tab");
+            var $mck_no_search_groups = $applozic("#mck-no-search-groups");
+            var $mck_group_create_tab = $applozic("#mck-group-create-tab");
+            var $mck_group_search_list = $applozic("#mck-group-search-list");
+            var $mck_group_search_tabview = $applozic("#mck-group-search-tabview");
+            var $mck_group_menu_options = $applozic(".mck-group-menu-options");
+            var $mck_group_search_input = $applozic("#mck-group-search-input");
+            var $mck_group_search_input_box = $applozic("#mck-group-search-input-box");
+
+            var $mck_contact_search_list = $applozic("#mck-contact-search-list");
+            var $mck_contacts_content = $applozic("#mck-contacts-content");
+            var $mck_contact_search_tab = $applozic("#mck-contact-search-tab");
+            var $mck_contact_search_tabview = $applozic("#mck-contact-search-tabview");
+            var $mck_contact_search_input = $applozic("#mck-contact-search-input");
+
+            var $mck_search_list = $applozic("#mck-search-list");
+            var $mck_no_search_contacts = $applozic("#mck-no-search-contacts");
+            var $mck_search_tab_link = $applozic("#mck-search-tab-box li a");
+            var $mck_search_tabview_box = $applozic("#mck-search-tabview-box");
+            var $mck_sidebox_search = $applozic("#mck-sidebox-search");
+
+
+            var $mck_loading = $applozic("#mck-contact-loading");
+            var $mck_typing_label = $applozic('#mck-typing-label');
+            var $mck_price_widget = $applozic("#mck-price-widget");
+            var $mck_msg_response = $applozic("#mck-msg-response");
+            
+            var $mck_response_text = $applozic("#mck_response_text");
+            var $li_mck_block_user = $applozic("#li-mck-block-user");
+            var $mck_search_loading = $applozic("#mck-search-loading");
+            var $mck_tab_individual = $applozic("#mck-tab-individual");
+            
+            var $mck_attachfile_box = $applozic("#mck-attachfile-box");
+            var $mck_atttachmenu_box = $applozic("#mck-attachmenu-box");
+            var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+            var $mck_tab_option_panel = $applozic("#mck-tab-option-panel");
+            var $mck_tab_conversation = $applozic("#mck-tab-conversation");
+            
+            var $mck_conversation_header = $applozic("#mck-conversation-header");
+            var $mck_no_conversations = $applozic('#mck-no-conversations');
+            var $mck_conversation_list = $applozic("#mck-conversation-list");
+
+            var $mck_tab_message_option = $applozic(".mck-tab-message-option");
+            var $modal_footer_content = $applozic(".mck-box-ft .mck-box-form");
+            var $mck_btn_clear_messages = $applozic('#mck-btn-clear-messages');
+            var $mck_offline_message_box = $applozic("#mck-offline-message-box");
+            var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner");
+           
             var $mck_msg_new = $applozic("#mck-msg-new");
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
             var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
