@@ -389,7 +389,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckMessageService = new MckMessageService();
         var mckContactService = new MckContactService();
         var mckNotificationService = new MckNotificationService();
-        var $mckChatLauncherIcon = $applozic(".chat-launcher-icon");
+        var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
+        var mckNotificationTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
             'onConnectFailed' : function() {},
@@ -415,6 +416,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
+            mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
             mckMessageService.init();
             mckFileService.init();
             mckInit.initializeApp(appOptions, false);
@@ -455,6 +457,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             TAB_FILE_DRAFT = new Object();
             MCK_LAUNCHER = optns.launcher;
             MCK_CONNECTED_CLIENT_COUNT = 0;
+            OPEN_GROUP_SUBSCRIBER_MAP = [];
             MCK_USER_NAME = optns.userName;
             IS_MCK_VISITOR = optns.visitor;
             MCK_TOPIC_CONVERSATION_MAP = [];
@@ -483,6 +486,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             MCK_PRICE_DETAIL = optns.finalPriceResponse;
             MCK_GETUSERIMAGE = optns.contactDisplayImage;
             MCK_PRICE_WIDGET_ENABLED = optns.priceWidget;
+            MCK_OPEN_GROUP_SETTINGS = appOptions.openGroupSettings;
+            MCK_OFFLINE_MESSAGE_DETAIL = optns.offlineMessageDetail;
             MCK_INIT_AUTO_SUGGESTION = optns.initAutoSuggestions;
             MCK_GETCONVERSATIONDETAIL = optns.getConversationDetail;
             MCK_AUTHENTICATION_TYPE_ID = optns.authenticationTypeId;
@@ -507,6 +512,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                 w.console("Oops! looks like incorrect application id or user Id.");
                 return;
             }
+        };
+        _this.loadTabView = function(params) {
+            if (typeof params.isGroup === 'undefined') {
+                params.isGroup = false;
+            }
+            mckMessageLayout.loadTab(params);
+            $applozic('#mck-search').val('');
         };
         _this.loadTab = function(tabId) {
             mckMessageLayout.loadTab({
@@ -799,7 +811,41 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckMessageService.sendMessage(messagePxy);
                 return "success";
             } else {
-                return "Unsupported Format. Please check format";
+                return 'Unsupported format. Please check format';
+            }
+        };
+        _this.sendGroupMessage = function(params) {
+            if (typeof params === 'object') {
+                params = $applozic.extend(true, {}, message_default_options, params);
+                var message = params.message;
+                if (!params.groupId && !params.clientGroupId) {
+                    return 'groupId or clientGroupId required';
+                }
+                if (typeof message === 'undefined' || message === '') {
+                    return 'message field required';
+                }
+                if (params.type > 12) {
+                    return 'invalid message type';
+                }
+                message = $applozic.trim(message);
+                var messagePxy = {
+                    'type': params.messageType,
+                    'contentType': params.type,
+                    'message': message
+                };
+                if (params.groupId) {
+                    messagePxy.groupId = $applozic.trim(params.groupId);
+                } else if (params.clientGroupId) {
+                    var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
+                    if (typeof group === 'undefined') {
+                        return 'group not found';
+                    }
+                    messagePxy.clientGroupId = $applozic.trim(params.clientGroupId);
+                }
+                mckMessageService.sendMessage(messagePxy);
+                return 'success';
+            } else {
+                return 'Unsupported format. Please check format';
             }
         };
         _this.addWelcomeMessage = function(params) {
