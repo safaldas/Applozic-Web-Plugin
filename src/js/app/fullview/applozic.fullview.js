@@ -16,6 +16,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         mode : "standard",
         visitor : false,
         olStatus : false,
+	groupUserCount: false,
         desktopNotification : false,
         locShare : false,
         maxAttachmentSize : 25, // default size is 25MB
@@ -45,7 +46,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'group.info.update': 'Update',
             'group.info.updating': 'Updating...',
             'add.group.icon': 'Add Group Icon',
-	    'group.deleted': 'Group has been deleted',
+	        'group.deleted': 'Group has been deleted',
             'change.group.icon': 'Change Group Icon',
             'group.title': 'Group Title',
             'group.type': 'Group Type',
@@ -105,8 +106,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         }
     };
     var message_default_options = {
-        "messageType" : 5,
-        "type" : 0
+        'messageType': 5,
+        'type': 0
     };
     $applozic.fn.applozic = function(appOptions, params) {
         var $mck_sidebox = $applozic('#mck-sidebox');
@@ -127,6 +128,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                 case "loadTab":
                     oInstance.loadTab(params);
                     break;
+ 		         case "uploadFile":
+                    oInstance.uploadFile(params);
+                    break;
+                case 'loadTabView':
+                    oInstance.loadTabView(params);
+                    break;
+                case 'loadChat':
+                    oInstance.loadChat(params);
+                    break;
                 case "loadContextualTab":
                     return oInstance.loadTabWithTopic(params);
                     break;
@@ -138,6 +148,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     break;
                 case "sendMessage":
                     return oInstance.sendMessage(params);
+                    break;
+                case 'sendGroupMessage':
+                    return oInstance.sendGroupMessage(params);
                     break;
                 case "createGroup":
                     return oInstance.createGroup(params);
@@ -190,6 +203,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 case "removeGroupMember":
                     return oInstance.removeGroupMember(params);
                     break;
+                case 'updateGroupInfo':
+                    return oInstance.updateGroupInfo(params);
+                    break;
                 case "getMessages":
                     oInstance.getMessages(params);
                     break;
@@ -198,6 +214,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     break;
                 case "getMessageListByTopicId":
                     return oInstance.getMessageListByTopicId(params);
+                    break;
+                case 'getTotalUnreadCount':
+                    return oInstance.getTotalUnreadCount();
                     break;
                 case "subscribeToEvents":
                     return oInstance.subscribeToEvents(params);
@@ -251,9 +270,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $.fn.emojiarea = $applozic.fn.emojiarea;
                         jQuery.fn.emojiarea = $applozic.fn.emojiarea;
                     }
+                    if (typeof $.fn.locationpicker === 'function') {
+                        $applozic.fn.locationpicker = $.fn.locationpicker;
+                    } else if (typeof $applozic.fn.locationpicker === 'function') {
+                        $.fn.locationpicker = $applozic.fn.locationpicker;
+                        jQuery.fn.locationpicker = $applozic.fn.locationpicker;
+                    }
                     var applozic = new Applozic(appOptions);
+                    $mck_sidebox.data('applozic_instance', applozic);
                     applozic.init();
-                    $mck_sidebox.data("applozic_instance", applozic);
                 }
             } else {
                 alert("Oops! looks like incorrect application id or user Id.");
@@ -291,6 +316,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_APP_ID = appOptions.appId;
         MCK_BASE_URL = appOptions.baseUrl;
         var MCK_CONNECTED_CLIENT_COUNT = 0;
+        var GROUP_ROLE_MAP = [0, 1, 2, 3];
+        var GROUP_TYPE_MAP = [1, 2, 5, 6];
         var MCK_TOPIC_CONVERSATION_MAP = [];
         var IS_MCK_USER_DEACTIVATED = false;
         var MCK_LAUNCHER = appOptions.launcher;
@@ -298,13 +325,14 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_USER_NAME = appOptions.userName;
         var IS_MCK_LOCSHARE = appOptions.locShare;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
-        var AUTHENTICATION_TYPE_ID_MAP = [ 0, 1, 2 ];
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
+        var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
         var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
         var MCK_DISPLAY_TEXT = appOptions.displayText;
         var MCK_ACCESS_TOKEN = appOptions.accessToken;
         var MCK_CALLBACK = appOptions.readConversation;
         var MCK_GROUPMAXSIZE = appOptions.maxGroupSize;
+        var MCK_ON_TAB_CLICKED = appOptions.onTabClicked;
         var MCK_CONTACT_NUMBER = appOptions.contactNumber;
         var MCK_FILEMAXSIZE = appOptions.maxAttachmentSize;
         var MCK_APP_MODULE_NAME = appOptions.appModuleName;
@@ -314,11 +342,15 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_PRICE_DETAIL = appOptions.finalPriceResponse;
         var MCK_GETUSERIMAGE = appOptions.contactDisplayImage;
         var MCK_PRICE_WIDGET_ENABLED = appOptions.priceWidget;
+        var MCK_OPEN_GROUP_SETTINGS = appOptions.openGroupSettings;
+        var MCK_OFFLINE_MESSAGE_DETAIL = appOptions.offlineMessageDetail;
         var MCK_INIT_AUTO_SUGGESTION = appOptions.initAutoSuggestions;
         var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
         var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
+	var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
         var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
+
         var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
         var MCK_USER_ID = (IS_MCK_VISITOR) ? "guest" : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : "NO_ACCESS";
@@ -333,9 +365,10 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
         var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === "boolean") ? (appOptions.checkUserBusyWithStatus) : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
-        var CONVERSATION_STATUS_MAP = [ "DEFAULT", "NEW", "OPEN" ];
+        var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var GROUP_TYPE_MAP = [ 1, 2, 5, 6 ];
-        var BLOCK_STATUS_MAP = [ "BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY" ];
+        var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var mckStorage = new MckStorage();
         var TAB_FILE_DRAFT = new Object();
         var MCK_CONTACT_ARRAY = new Array();

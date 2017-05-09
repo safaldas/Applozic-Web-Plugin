@@ -376,6 +376,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
+        var GROUP_TYPE_MAP = [ 1, 2, 5, 6 ];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var mckStorage = new MckStorage();
         var TAB_FILE_DRAFT = new Object();
