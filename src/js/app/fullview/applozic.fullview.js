@@ -384,6 +384,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 	var MCK_GROUP_ARRAY = new Array();
         var MCK_CONTACT_ARRAY = new Array();
         var MCK_GROUP_SEARCH_ARRAY = new Array();
+        
         var TAB_MESSAGE_DRAFT = new Object();
         var MCK_CONTACT_NAME_MAP = new Array();
         var MCK_UNREAD_COUNT_MAP = new Array();
@@ -881,7 +882,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return "Message Field Required";
                 }
                 if (params.type > 12) {
-                    return "Incorrect Message Type";
+                    return 'Invalid message type';
                 }
                 message = $applozic.trim(message);
                 var messagePxy = {
@@ -2232,20 +2233,29 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.submitMessage = function(messagePxy, optns) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var randomId = messagePxy.key;
+                var metadata = {};
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus : 4
                     };
+                var msgKeys = $applozic("#mck-text-box").data("reply");
+                if (typeof msgKeys !== 'undefined' && msgKeys !== "") {
+                    metadata.reply = msgKeys;
+                    $applozic("#mck-text-box").data("reply", "");
                 }
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell div[name='message']." + randomId);
-                $applozic.ajax({
-                    type : "POST",
-                    url : MCK_BASE_URL + MESSAGE_SEND_URL,
-                    global : false,
-                    data : w.JSON.stringify(messagePxy),
-                    contentType : 'application/json',
-                    success : function(data) {
+                if (messagePxy.contentType != 102 && messagePxy.contentType != 103) {
+                    messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
+                }
+                messagePxy.metadata = metadata;
+                mckUtils.ajax({
+                    type: 'POST',
+                    url: MCK_BASE_URL + MESSAGE_SEND_URL,
+                    global: false,
+                    data: w.JSON.stringify(messagePxy),
+                    contentType: 'application/json',
+                    success: function(data) {
                         var currentTabId = $mck_msg_inner.data('mck-id');
                         if (typeof data === 'object') {
                             var messageKey = data.messageKey;
@@ -2297,7 +2307,29 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 });
+                $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
             };
+
+            _this.downloadImage = function(fileurl) {
+                window.open(fileurl, "_blank");
+            };
+            _this.replyMessage = function(msgKey) { 
+                var tabId = $mck_msg_inner.data('mck-id');
+                var message = mckStorage.getMessageByKey(msgKey);
+                $mck_text_box.focus().select();
+                $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');
+		        var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+                
+                $('#mck-reply-to').html(displayName);
+                $('#mck-reply-msg').html(message.message);
+                $("#mck-text-box").data("reply", msgKey);
+                //Todo: move this to init
+                $("#close").click(function() {
+                    $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
+                    $("#mck-text-box").data("reply", "");
+                });
+            };
+
             _this.deleteMessage = function(msgKey) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var tabId = $mck_msg_inner.data('mck-id');
@@ -2342,7 +2374,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (conversationId) {
                         data += "&conversationId=" + conversationId;
                     }
-                    $applozic.ajax({
+                    mckUtils.ajax({
                         type : "get",
                         url : MCK_BASE_URL + CONVERSATION_DELETE_URL,
                         global : false,
@@ -6326,11 +6358,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
             };
             _this.deleteFileMeta = function(blobKey) {
-                $applozic.ajax({
-                    url : MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
-                    type : 'post',
-                    success : function() {},
-                    error : function() {}
+                mckUtils.ajax({
+                    url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
+                    type: 'post',
+                    success: function() {},
+                    error: function() {}
                 });
             };
             _this.getFilePreviewPath = function(fileMeta) {
