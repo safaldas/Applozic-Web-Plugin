@@ -383,7 +383,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var TAB_FILE_DRAFT = new Object();
 	var MCK_GROUP_ARRAY = new Array();
         var MCK_CONTACT_ARRAY = new Array();
-        
+        var MCK_GROUP_SEARCH_ARRAY = new Array();
         var TAB_MESSAGE_DRAFT = new Object();
         var MCK_CONTACT_NAME_MAP = new Array();
         var MCK_UNREAD_COUNT_MAP = new Array();
