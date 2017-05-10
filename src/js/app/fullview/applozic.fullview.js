@@ -3,29 +3,30 @@ var MCK_CLIENT_GROUP_MAP = [];
 (function($applozic, w, d) {
     "use strict";
     var default_options = {
-        baseUrl : "https://apps.applozic.com",
-        fileBaseUrl : "https://applozic.appspot.com",
-        notificationIconLink : '',
-        launcher : "applozic-launcher",
-        userId : null,
-        appId : null,
-        userName : null,
-        contactNumber : null,
-        email : null,
-        supportId : null,
-        mode : "standard",
-        visitor : false,
-        olStatus : false,
-	groupUserCount: false,
-        desktopNotification : false,
-        locShare : false,
-        maxAttachmentSize : 25, // default size is 25MB
-        notification : true,
-        launchOnUnreadMessage : false,
-        loadOwnContacts : false,
-        maxGroupSize : 100,
-        authenticationTypeId : 0,
-    labels: {
+        baseUrl: 'https://apps.applozic.com',
+        fileBaseUrl: 'https://applozic.appspot.com',
+        notificationIconLink: '',
+        notificationSoundLink: '',
+        launcher: 'applozic-launcher',
+        userId: null,
+        appId: null,
+        userName: null,
+        contactNumber: null,
+        email: null,
+        supportId: null,
+        mode: 'standard',
+        visitor: false,
+        olStatus: false,
+        groupUserCount: false,
+        desktopNotification: false,
+        locShare: false,
+        maxAttachmentSize: 25, // default size is 25MB
+        notification: true,
+        launchOnUnreadMessage: false,
+        loadOwnContacts: false,
+        maxGroupSize: 100,
+        authenticationTypeId: 0,
+        labels: {
             'conversations.title': 'Conversations',
             'start.new': 'Start New',
             'search.contacts': 'Contacts',
@@ -46,7 +47,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             'group.info.update': 'Update',
             'group.info.updating': 'Updating...',
             'add.group.icon': 'Add Group Icon',
-	        'group.deleted': 'Group has been deleted',
+            'group.deleted': 'Group has been deleted',
             'change.group.icon': 'Change Group Icon',
             'group.title': 'Group Title',
             'group.type': 'Group Type',
@@ -98,7 +99,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 'HIDE': ''
             }
         },
- 	openGroupSettings: {
+        openGroupSettings: {
             'deleteChatAccess': 0, // NONE(0), ADMIN(1), ALL_GROUP_MEMBER(2)
             'allowInfoAccessGroupMembers': true,
             'disableChatForNonGroupMember': false,
@@ -111,7 +112,7 @@ var MCK_CLIENT_GROUP_MAP = [];
     };
     $applozic.fn.applozic = function(appOptions, params) {
         var $mck_sidebox = $applozic('#mck-sidebox');
-        if ($applozic.type(appOptions) === "object") {
+        if ($applozic.type(appOptions) === 'object') {
             appOptions = $applozic.extend(true, {}, default_options, appOptions);
         }
         var oInstance = undefined;
@@ -312,9 +313,10 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_MCK_TAB_FOCUSED = true;
         var MCK_TOTAL_UNREAD_COUNT = 0;
         var MCK_MODE = appOptions.mode;
-    MCK_LABELS = appOptions.labels;
-        var MCK_APP_ID = appOptions.appId;
+        MCK_LABELS = appOptions.labels;
         MCK_BASE_URL = appOptions.baseUrl;
+        var MCK_APP_ID = appOptions.appId;
+        var OPEN_GROUP_SUBSCRIBER_MAP = [];
         var MCK_CONNECTED_CLIENT_COUNT = 0;
         var GROUP_ROLE_MAP = [0, 1, 2, 3];
         var GROUP_TYPE_MAP = [1, 2, 5, 6];
@@ -350,20 +352,28 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
 	var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
         var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
-
-        var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
         var MCK_USER_ID = (IS_MCK_VISITOR) ? "guest" : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : "NO_ACCESS";
+ 
+        var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
         var IS_MCK_TOPIC_BOX = (typeof appOptions.topicBox === "boolean") ? (appOptions.topicBox) : false;
         var IS_MCK_OL_STATUS = (typeof appOptions.olStatus === "boolean") ? (appOptions.olStatus) : false;
         var MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof appOptions.messageBubbleAvator === "boolean") ? (appOptions.messageBubbleAvator) : false;
+
+ 	var IS_OFFLINE_MESSAGE_ENABLED = (typeof appOptions.showOfflineMessage === 'boolean') ? (appOptions.showOfflineMessage) : false;
+        var IS_GROUP_SUBTITLE_HIDDEN = (typeof appOptions.hideGroupSubtitle === 'boolean') ? (appOptions.hideGroupSubtitle) : false;
+        var MCK_DEFAULT_MESSAGE_METADATA = (typeof appOptions.defaultMessageMetaData === 'undefined') ? {} : appOptions.defaultMessageMetaData;
+        var IS_MCK_GROUPUSERCOUNT = (typeof appOptions.groupUserCount === "boolean") ? appOptions.groupUserCount : false;
+        var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === "boolean") ? (appOptions.checkUserBusyWithStatus) : false;
+        var IS_RESET_USER_STATUS = (typeof appOptions.resetUserStatus === 'boolean') ? (appOptions.resetUserStatus) : false;
         var IS_MCK_TOPIC_HEADER = (typeof appOptions.topicHeader === "boolean") ? (appOptions.topicHeader) : false;
         var MCK_SUPPORT_ID_DATA_ATTR = (appOptions.supportId) ? ('data-mck-id="' + appOptions.supportId + '"') : '';
-        var IS_NOTIFICATION_ENABLED = (typeof appOptions.notification === "boolean") ? appOptions.notification : true;
         var IS_MCK_OWN_CONTACTS = (typeof appOptions.loadOwnContacts === "boolean") ? (appOptions.loadOwnContacts) : false;
         var IS_MCK_NOTIFICATION = (typeof appOptions.desktopNotification === "boolean") ? appOptions.desktopNotification : false;
+        var IS_NOTIFICATION_ENABLED = (typeof appOptions.notification === "boolean") ? appOptions.notification : true;
+        var IS_SW_NOTIFICATION_ENABLED = (typeof appOptions.swNotification === "boolean") ? appOptions.swNotification : false;
         var IS_AUTO_TYPE_SEARCH_ENABLED = (typeof appOptions.autoTypeSearchEnabled === "boolean") ? appOptions.autoTypeSearchEnabled : true;
-        var MCK_CHECK_USER_BUSY_STATUS = (typeof appOptions.checkUserBusyWithStatus === "boolean") ? (appOptions.checkUserBusyWithStatus) : false;
+        var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
@@ -371,13 +381,14 @@ var MCK_CLIENT_GROUP_MAP = [];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var mckStorage = new MckStorage();
         var TAB_FILE_DRAFT = new Object();
+	var MCK_GROUP_ARRAY = new Array();
         var MCK_CONTACT_ARRAY = new Array();
-        var MCK_GROUP_ARRAY = new Array();
+        
         var TAB_MESSAGE_DRAFT = new Object();
         var MCK_CONTACT_NAME_MAP = new Array();
         var MCK_UNREAD_COUNT_MAP = new Array();
         var MCK_CHAT_CONTACT_ARRAY = new Array();
-        var MCK_GROUP_SEARCH_ARRAY = new Array();
+        var MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
         var MCK_TAB_CONVERSATION_MAP = new Array();
         var mckInit = new MckInit();
         var mckMapLayout = new MckMapLayout();
@@ -455,6 +466,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             MCK_TOTAL_UNREAD_COUNT = 0;
             MCK_BASE_URL = optns.baseUrl;
             TAB_FILE_DRAFT = new Object();
+	    MCK_GROUP_ARRAY = new Array();
             MCK_LAUNCHER = optns.launcher;
             MCK_CONNECTED_CLIENT_COUNT = 0;
             OPEN_GROUP_SUBSCRIBER_MAP = [];
@@ -462,7 +474,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_MCK_VISITOR = optns.visitor;
             MCK_TOPIC_CONVERSATION_MAP = [];
             MCK_CONTACT_ARRAY = new Array();
-            MCK_GROUP_ARRAY = new Array();
+            
             TAB_MESSAGE_DRAFT = new Object();
             MCK_FILE_URL = optns.fileBaseUrl;
             IS_MCK_LOCSHARE = optns.locShare;
@@ -477,6 +489,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             MCK_CALLBACK = optns.readConversation;
             MCK_GROUPMAXSIZE = optns.maxGroupSize;
             MCK_TAB_CONVERSATION_MAP = new Array();
+            MCK_ON_TAB_CLICKED = optns.onTabClicked;
             MCK_CONTACT_NUMBER = optns.contactNumber;
             MCK_APP_MODULE_NAME = optns.appModuleName;
             MCK_GETTOPICDETAIL = optns.getTopicDetail;
@@ -493,15 +506,21 @@ var MCK_CLIENT_GROUP_MAP = [];
             MCK_AUTHENTICATION_TYPE_ID = optns.authenticationTypeId;
             MCK_USER_ID = (IS_MCK_VISITOR) ? "guest" : $applozic.trim(optns.userId);
             MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? optns.googleApiKey : "NO_ACCESS";
-            IS_SW_NOTIFICATION_ENABLED = (typeof optns.swNotification === "boolean") ? optns.swNotification : false;
             IS_MCK_OL_STATUS = (typeof optns.olStatus === "boolean") ? (optns.olStatus) : false;
             IS_MCK_TOPIC_BOX = (typeof optns.topicBox === "boolean") ? (optns.topicBox) : false;
+            IS_OFFLINE_MESSAGE_ENABLED = (typeof optns.showOfflineMessage === "boolean") ? (optns.showOfflineMessage) : false;
             IS_MCK_TOPIC_HEADER = (typeof optns.topicHeader === "boolean") ? (optns.topicHeader) : false;
-            MCK_SUPPORT_ID_DATA_ATTR = (optns.supportId) ? ('data-mck-id="' + optns.supportId + '"') : '';
             IS_NOTIFICATION_ENABLED = (typeof optns.notification === "boolean") ? optns.notification : true;
+            IS_SW_NOTIFICATION_ENABLED = (typeof optns.swNotification === "boolean") ? optns.swNotification : false;
+            MCK_SUPPORT_ID_DATA_ATTR = (optns.supportId) ? ('data-mck-id="' + optns.supportId + '"') : '';
+            IS_GROUP_SUBTITLE_HIDDEN = (typeof optns.hideGroupSubtitle === "boolean") ? (optns.hideGroupSubtitle) : false;
+            MCK_DEFAULT_MESSAGE_METADATA = (typeof optns.defaultMessageMetaData === 'undefined') ? {} : optns.defaultMessageMetaData;
+            IS_MCK_GROUPUSERCOUNT = (typeof optns.groupUserCount === "boolean") ? optns.groupUserCount : false;
+            IS_MCK_NOTIFICATION = (typeof optns.desktopNotification === "boolean") ? optns.desktopNotification : false;
             IS_MCK_OWN_CONTACTS = (typeof optns.loadOwnContacts === "boolean") ? (optns.loadOwnContacts) : false;
             MESSAGE_BUBBLE_AVATOR_ENABLED = (typeof optns.messageBubbleAvator === "boolean") ? (optns.messageBubbleAvator) : false;
-            IS_MCK_NOTIFICATION = (typeof optns.desktopNotification === "boolean") ? optns.desktopNotification : false;
+            IS_RESET_USER_STATUS = (typeof appOptions.resetUserStatus === 'boolean') ? (appOptions.resetUserStatus) : false;
+            IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof optns.launchOnNewMessage === "boolean") ? optns.launchOnNewMessage : false;
             IS_AUTO_TYPE_SEARCH_ENABLED = (typeof optns.autoTypeSearchEnabled === "boolean") ? optns.autoTypeSearchEnabled : true;
             MCK_CHECK_USER_BUSY_STATUS = (typeof optns.checkUserBusyWithStatus === "boolean") ? (optns.checkUserBusyWithStatus) : false;
             IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof optns.launchOnUnreadMessage === "boolean") ? optns.launchOnUnreadMessage : false;

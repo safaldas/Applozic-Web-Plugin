@@ -520,7 +520,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_AUTO_TYPE_SEARCH_ENABLED = (typeof optns.autoTypeSearchEnabled === "boolean") ? optns.autoTypeSearchEnabled : true;
             MCK_CHECK_USER_BUSY_STATUS = (typeof optns.checkUserBusyWithStatus === "boolean") ? (optns.checkUserBusyWithStatus) : false;
             IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof optns.launchOnUnreadMessage === "boolean") ? optns.launchOnUnreadMessage : false;
-            MCK_SUPPORT_ID_DATA_ATTR = (optns.supportId) ? ('data-mck-id="' + optns.supportId + '"') : '';
 
             if (optns.userId && optns.appId && $applozic.trim(optns.userId) !== "" && $applozic.trim(optns.appId) !== "") {
                 mckInit.initializeApp(optns, true);
