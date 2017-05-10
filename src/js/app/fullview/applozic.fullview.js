@@ -5397,7 +5397,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         }
         function MckGroupLayout() {
             var _this = this;
-	    var ROLE_MAP = {
+            var ROLE_MAP = {
                 0: 'User',
                 1: 'Admin',
                 2: 'Moderator',
@@ -5406,6 +5406,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_tab_info = $applozic("#mck-tab-info");
             var $mck_msg_form = $applozic("#mck-msg-form");
             var $mck_msg_error = $applozic("#mck-msg-error");
+            var $mck_tab_title = $applozic("#mck-tab-individual .mck-tab-title");
+            var $mck_tab_status = $applozic("#mck-tab-individual .mck-tab-status");
             var $mck_container = $applozic(".mck-container");
             var $mck_new_group = $applozic("#mck-new-group");
             var $mck_no_gsm_text = $applozic("#mck-no-gsm-text");
@@ -5416,12 +5418,14 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_info_tab = $applozic("#mck-group-info-tab");
             var $mck_sidebox_search = $applozic("#mck-sidebox-search");
             var $mck_goup_search_box = $applozic("#mck-goup-search-box");
-            var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+            
             var $mck_group_name_edit = $applozic("#mck-group-name-edit");
             var $mck_group_name_save = $applozic("#mck-group-name-save");
+	    var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+	    var $mck_btn_group_create = $applozic("#mck-btn-group-create");
             var $mck_group_create_tab = $applozic("#mck-group-create-tab");
             var $mck_group_info_close = $applozic("#mck-group-info-close");
-            var $mck_btn_group_create = $applozic("#mck-btn-group-create");
+            
             var $mck_contacts_content = $applozic("#mck-contacts-content");
 	    var $mck_btn_group_update = $applozic("#mck-btn-group-update");
             var $mck_group_icon_change = $applozic("#mck-group-icon-change");
@@ -5434,8 +5438,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_menu_options = $applozic(".mck-group-menu-options");
             var $mck_btn_group_icon_save = $applozic("#mck-btn-group-icon-save");
             var $mck_group_admin_options = $applozic(".mck-group-admin-options");
-            var $mck_tab_title = $applozic("#mck-tab-individual .mck-tab-title");
-            var $mck_tab_status = $applozic("#mck-tab-individual .mck-tab-status");
             var $mck_group_add_member_box = $applozic("#mck-group-add-member-box");
             var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner");
             var $mck_group_title = $applozic("#mck-group-name-sec .mck-group-title");
@@ -5446,7 +5448,36 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_create_icon = $applozic("#mck-group-create-icon-box .mck-group-icon");
             var $mck_group_create_overlay_box = $applozic("#mck-group-create-icon-box .mck-overlay-box");
             var $mck_group_create_overlay_label = $applozic("#mck-group-create-icon-box .mck-overlay-label");
-            var groupContactbox = '<li id="li-gm-${contHtmlExpr}" class="${contIdExpr} mck-li-group-member" data-mck-id="${contIdExpr}" data-alpha="${contFirstAlphaExpr}">' + '<div class="mck-row mck-group-member-info" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + '<div class="mck-row">' + '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' + '<div class="blk-lg-4 mck-group-admin-text move-right ${isAdminExpr}"><span>Admin</span></div></div>' + '<div class="mck-row">' + '<div class="blk-lg-10 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' + '<div class="blk-lg-2 mck-group-admin-options ${enableAdminMenuExpr}">' + '<div class="mck-menu-box n-vis"><div class="mck-dropdown-toggle mck-group-admin-menu-toggle mck-text-center" data-toggle="mckdropdown" aria-expanded="true">' + '<span class="mck-caret"></span></div>' + '<ul id="mck-group-admin-menu" class="mck-dropdown-menu mck-group-admin-menu mck-tab-menu-box menu-right" role="menu">' + '<li><a href="#" class="mck-btn-remove-member menu-item" title="Remove Member">Remove Member</a></li>' + '</ul></div></div>' + '</div></div></div></li>';
+            var groupContactbox = '<li id="li-gm-${contHtmlExpr}" class="${contIdExpr} mck-li-group-member" data-mck-id="${contIdExpr}" data-role="${roleVal}" data-alpha="${contFirstAlphaExpr}">' + 
+            '<div class="mck-row mck-group-member-info" title="${contNameExpr}">' + 
+            '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + 
+            '<div class="mck-row">' + 
+            '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' + 
+            '<div class="blk-lg-4 mck-group-admin-text move-right ${enableAdminMenuExpr} ${isAdminExpr}"><span>${roleExpr}</span></div></div>' + 
+            '<div class="mck-row">' + 
+            '<div class="blk-lg-10 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' + 
+            '<div class="blk-lg-2 mck-group-admin-options ${enableAdminMenuExpr}">' + 
+            '<div class="mck-menu-box n-vis"><div class="mck-dropdown-toggle mck-group-admin-menu-toggle mck-text-center" data-toggle="mckdropdown" aria-expanded="true">' + 
+            '<span class="mck-caret"></span></div>' + 
+            '<ul id="mck-group-admin-menu" class="mck-dropdown-menu mck-group-admin-menu mck-tab-menu-box menu-right" role="menu">' + 
+            '<li>' +
+            '<a href="#" class="mck-btn-remove-member menu-item" title="${removeMemberLabel}">${removeMemberLabel}</a>' + 
+   	    '</li>' +
+            '<li>' +
+                '<a href="#" class="mck-btn-change-role menu-item" title="${changeRoleLabel}">${changeRoleLabel}</a>' +
+             '</li>' + '</ul></div></div>' + 
+            '</div>' + 
+             '<div id="mck-group-change-role-box" class="mck-row mck-group-change-role-box n-vis">' +
+                '<div class="blk-lg-4"><div class="mck-label">Select role </div></div>' +
+                '<div class="blk-lg-8 move-right">' +
+                '<select id="mck-change-role-type" class="mck-select">' +
+                '<option value="0">User</option>' +
+                '<option value="1">Admin</option>' +
+                '<option value="2">Moderator</option>' +
+                '<option value="3" selected>Member</option>' +
+                '</select>' +
+            '</div></div></div></div></li>';
+            
             var groupMemberSearchContact = '<li id="li-${contHtmlExpr}" class="${contIdExpr} mck-li-group-member" data-mck-id="${contIdExpr}">' + '<a class="mck-add-to-group" href="#" data-mck-id="${contIdExpr}">' + '<div class="mck-row" title="${contNameExpr}">' + '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + '<div class="mck-row"><div class="blk-lg-12 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div></div>' + '<div class="mck-row"><div class="blk-lg-12 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div></div>' + '</div></div></a></li>';
             $applozic.template("groupMemberTemplate", groupContactbox);
             $applozic.template("groupMemberSearchTemplate", groupMemberSearchContact);
