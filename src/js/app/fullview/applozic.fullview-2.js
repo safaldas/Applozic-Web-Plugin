@@ -2403,6 +2403,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     messagePxy.metadata = {
                         userStatus: 4
                     };
+                }
                 var msgKeys = $applozic("#mck-text-box").data("reply");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== "") {
                     metadata.reply = msgKeys;
