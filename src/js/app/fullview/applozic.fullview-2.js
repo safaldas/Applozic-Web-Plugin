@@ -7210,16 +7210,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_msg_preview.fadeOut(3000);
                 }, 10000);
             };
-            _this.unsubscribeToServiceWorker = function() {
-                if (MCK_SW_SUBSCRIPTION) {
-                    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
-                        MCK_SW_SUBSCRIPTION.unsubscribe().then(function(successful) {
-                            MCK_SW_SUBSCRIPTION = null;
-                            console.log('Unsubscribed to notification successfully');
-                        })
-                    });
-                }
-            };
             _this.sendSubscriptionIdToServer = function() {
                 if (MCK_SW_SUBSCRIPTION) {
                     var subscriptionId = MCK_SW_SUBSCRIPTION.endpoint.split("/").slice(-1)[0];
@@ -7255,6 +7245,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                             })
                         });
                     }
+                }
+            };
+            _this.unsubscribeToServiceWorker = function() {
+                if (MCK_SW_SUBSCRIPTION) {
+                    navigator.serviceWorker.ready.then(function(serviceWorkerRegistration) {
+                        MCK_SW_SUBSCRIPTION.unsubscribe().then(function(successful) {
+                            MCK_SW_SUBSCRIPTION = null;
+                            console.log('Unsubscribed to notification successfully');
+                        })
+                    });
                 }
             };
         }
