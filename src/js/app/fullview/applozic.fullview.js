@@ -2727,12 +2727,12 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.updateContactList = function(tabId, isGroup) {
                 var tabExpr = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
                 var paramData = "startIndex=0&pageSize=1&" + tabExpr;
-                $applozic.ajax({
-                    url : MCK_BASE_URL + MESSAGE_LIST_URL,
-                    data : paramData,
-                    global : false,
-                    type : 'get',
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + MESSAGE_LIST_URL,
+                    data: paramData,
+                    global: false,
+                    type: 'get',
+                    success: function(data) {
                         if (data + '' === "null" || typeof data.message === "undefined" || data.message.length === 0) {
                             mckMessageLayout.clearContactMessageData(tabId, isGroup);
                         } else {
@@ -2742,32 +2742,36 @@ var MCK_CLIENT_GROUP_MAP = [];
                             }
                         }
                     },
-                    error : function() {
+                    error: function(xhr, desc, err) {
+                        if (xhr.status === 401) {
+                            sessionStorage.clear();
+                            console.log('Please reload page.');
+                        }
                         mckMessageLayout.clearContactMessageData(tabId, isGroup);
                     }
                 });
             };
             _this.sendDeliveryUpdate = function(message) {
                 var data = "key=" + message.pairedMessageKey;
-                $applozic.ajax({
-                    url : MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
-                    data : data,
-                    global : false,
-                    type : 'get',
-                    success : function() {},
-                    error : function() {}
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
+                    data: data,
+                    global: false,
+                    type: 'get',
+                    success: function() {},
+                    error: function() {}
                 });
             };
             _this.sendReadUpdate = function(key) {
                 if (typeof key !== "undefined" && key !== "") {
                     var data = "key=" + key;
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
-                        data : data,
-                        global : false,
-                        type : 'get',
-                        success : function() {},
-                        error : function() {}
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
+                        data: data,
+                        global: false,
+                        type: 'get',
+                        success: function() {},
+                        error: function() {}
                     });
                 }
             };
@@ -2775,12 +2779,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var ucTabId = (isGroup) ? 'group_' + tabId : 'user_' + tabId;
                 if (tabId && (mckMessageLayout.getUnreadCount(ucTabId) > 0)) {
                     var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
-                        data : data,
-                        global : false,
-                        type : 'get',
-                        success : function() {
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
+                        data: data,
+                        global: false,
+                        type: 'get',
+                        success: function() {
                             mckMessageLayout.updateUnreadCount(ucTabId, 0, true);
                         },
                         error : function() {}
@@ -2823,13 +2827,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (params.fallBackTemplatesList && params.fallBackTemplatesList.length > 0) {
                         conversationPxy.fallBackTemplatesList = params.fallBackTemplatesList;
                     }
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + CONVERSATION_ID_URL,
-                        global : false,
-                        data : w.JSON.stringify(conversationPxy),
-                        type : 'post',
-                        contentType : 'application/json',
-                        success : function(data) {
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONVERSATION_ID_URL,
+                        global: false,
+                        data: w.JSON.stringify(conversationPxy),
+                        type: 'post',
+                        contentType: 'application/json',
+                        success: function(data) {
                             if (typeof data === 'object' && data.status === "success") {
                                 var groupPxy = data.response;
                                 if (typeof groupPxy === 'object' && groupPxy.conversationPxy !== 'undefined') {
@@ -2874,11 +2878,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (params.pageSize) {
                     reqdata += '&pageSize=' + params.pageSize;
                 }
-                $applozic.ajax({
-                    url : MCK_BASE_URL + CONVERSATION_FETCH_URL,
-                    data : reqdata,
-                    type : 'get',
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
+                    data: reqdata,
+                    type: 'get',
+                    success: function(data) {
                         if (typeof data === 'object' && data.status === "success") {
                             var conversationList = data.response;
                             if (conversationList.length > 0) {
@@ -2897,7 +2901,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                         tabConvArray.push(conversationPxy);
                                         MCK_TAB_CONVERSATION_MAP[params.tabId] = tabConvArray;
                                     }
-                                })
+                                });
                             }
                             if (params.isExtMessageList) {
                                 if (conversationList.length > 0) {
@@ -2953,12 +2957,12 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.getTopicId = function(params) {
                 if (params.conversationId) {
-                    var data = 'id=' + params.conversationId;
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + TOPIC_ID_URL,
-                        data : data,
-                        global : false,
-                        type : 'get',
+                    var data = "id=" + params.conversationId;
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + TOPIC_ID_URL,
+                        data: data,
+                        global: false,
+                        type: 'get',
                         async: (typeof params.async !== 'undefined') ? params.async : true,
                         success : function(data) {
                             if (typeof data === 'object' && data.status === 'success') {
@@ -3003,13 +3007,13 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.sendConversationCloseUpdate = function(conversationId) {
                 if (conversationId) {
                     var data = "id=" + conversationId;
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
-                        data : data,
-                        global : false,
-                        type : 'get',
-                        success : function() {},
-                        error : function() {}
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
+                        data: data,
+                        global: false,
+                        type: 'get',
+                        success: function() {},
+                        error: function() {}
                     });
                 }
             };
@@ -3114,13 +3118,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                     groupInfo.imageUrl = params.groupIcon;
                 }
                 var response = new Object();
-                $applozic.ajax({
-                    url : MCK_BASE_URL + GROUP_CREATE_URL,
-                    global : false,
-                    data : w.JSON.stringify(groupInfo),
-                    type : 'post',
-                    contentType : 'application/json',
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + GROUP_CREATE_URL,
+                    global: false,
+                    data: w.JSON.stringify(groupInfo),
+                    type: 'post',
+                    contentType: 'application/json',
+                    success: function(data) {
                         if (params.isInternal) {
                             $mck_btn_group_create.attr('disabled', false);
                             $mck_btn_group_create.html('Create Group');
@@ -5015,12 +5019,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                         data = data.substring(0, data.length - 1);
                     }
                     if (data) {
-                        $applozic.ajax({
-                            url : MCK_BASE_URL + CONTACT_NAME_URL,
-                            data : data,
-                            global : false,
-                            type : 'get',
-                            success : function(data) {
+                        mckUtils.ajax({
+                            url: MCK_BASE_URL + CONTACT_NAME_URL,
+                            data: data,
+                            global: false,
+                            type: 'get',
+                            success: function(data) {
                                 for (var userId in data) {
                                     if (data.hasOwnProperty(userId)) {
                                         mckContactNameArray.push([ userId, data[userId] ]);
@@ -5040,11 +5044,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
                 $mck_search_List.html('');
                 var userIdArray = [];
-                $applozic.ajax({
-                    url : MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=30&orderBy=1",
-                    type : 'get',
-                    global : false,
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=30&orderBy=1",
+                    type: 'get',
+                    global: false,
+                    success: function(data) {
                         $mck_search_loading.removeClass('vis').addClass('n-vis');
                         if ($mck_sidebox_search.length == 0 || $mck_sidebox_search.hasClass('vis')) {
                             if (data === null || data.length === 0) {
@@ -5105,7 +5109,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                     return;
                 }
-                $applozic.ajax({
+                mckUtils.ajax({
                     url : MCK_BASE_URL + USER_DETAIL_URL + "?" + data,
                     type : 'get',
                     contentType : 'application/json',
@@ -5138,10 +5142,10 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.getUserStatus = function(params) {
                 var response = new Object();
-                $applozic.ajax({
-                    url : MCK_BASE_URL + USER_STATUS_URL,
-                    type : 'get',
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + USER_STATUS_URL,
+                    type: 'get',
+                    success: function(data) {
                         if (data.users.length > 0) {
                             MCK_GROUP_SEARCH_ARRAY = [];
                             $applozic.each(data.users, function(i, user) {
@@ -5170,11 +5174,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
-                $applozic.ajax({
-                    url : MCK_BASE_URL + USER_BLOCK_URL,
-                    type : 'get',
-                    data : data,
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + USER_BLOCK_URL,
+                    type: 'get',
+                    data: data,
+                    success: function(data) {
                         if (typeof data === 'object') {
                             if (data.status === 'success') {
                                 MCK_BLOCKED_TO_MAP[userId] = isBlock;
