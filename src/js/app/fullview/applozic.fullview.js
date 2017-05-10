@@ -2216,13 +2216,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var contact = mckMessageLayout.fetchContact(tabId);
                     _this.addMessageToTab(messagePxy, contact);
                 }
-                $applozic.ajax({
-                    type : "GET",
-                    url : MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
-                    global : false,
-                    data : "sender=" + encodeURIComponent(params.sender) + "&messageContent=" + encodeURIComponent(params.messageContent),
-                    contentType : 'text/plain',
-                    success : function(data) {}
+                mckUtils.ajax({
+                    type: 'GET',
+                    url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
+                    global: false,
+                    data: 'sender=' + encodeURIComponent(params.sender) + "&messageContent=" + encodeURIComponent(params.messageContent),
+                    contentType: 'text/plain',
+                    success: function(data) {
+                        if (params.callback) {
+                            params.callback(data);
+                        }
+                    }
                 });
             };
             _this.submitMessage = function(messagePxy, optns) {
@@ -2299,10 +2303,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data("isgroup");
                 if (typeof tabId !== 'undefined') {
-                    $applozic.ajax({
-                        url : MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + msgKey,
-                        type : 'get',
-                        success : function(data) {
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + msgKey,
+                        type: 'get',
+                        success: function(data) {
                             if (data === 'success') {
                                 var currentTabId = $mck_msg_inner.data('mck-id');
                                 if (currentTabId === tabId) {
@@ -2382,10 +2386,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     reqData += "&mainPageSize=100";
                 }
                 var response = new Object();
-                $applozic.ajax({
-                    url : MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
-                    type : 'get',
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
+                    type: 'get',
+                    success: function(data) {
                         response.status = "success";
                         response.data = data;
                         if (params.callback) {
@@ -2393,7 +2397,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                         return;
                     },
-                    error : function() {
+                    error: function(xhr, desc, err) {
+                        if (xhr.status === 401) {
+                            sessionStorage.clear();
+                            console.log('Please reload page.');
+                        }
                         response.status = "error";
                         if (params.callback) {
                             params.callback(response);
@@ -2438,11 +2446,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         resp['topicId'] = params.topicId;
                     }
                 }
-                $applozic.ajax({
-                    url : MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqdata,
-                    type : 'get',
-                    global : false,
-                    success : function(data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqdata,
+                    type: 'get',
+                    global: false,
+                    success: function(data) {
                         resp.status = "success";
                         if (typeof data.message === "undefined" || data.message.length === 0) {
                             resp.messages = [];
@@ -2462,7 +2470,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                         params.callback(resp);
                     },
-                    error : function() {
+                    error: function(xhr, desc, err) {
+                        if (xhr.status === 401) {
+                            sessionStorage.clear();
+                            console.log('Please reload page.');
+                        }
                         resp.status = "error";
                         params.callback(resp);
                     }
