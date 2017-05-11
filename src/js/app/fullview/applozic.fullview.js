@@ -5445,7 +5445,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_info_icon = $applozic("#mck-group-info-icon-box .mck-group-icon");
             var $mck_group_create_icon = $applozic("#mck-group-create-icon-box .mck-group-icon");
             var $mck_group_create_overlay_box = $applozic("#mck-group-create-icon-box .mck-overlay-box");
-            var $mck_group_create_overlay_label = $applozic("#mck-group-create-icon-box .mck-overlay-label");
+            var $mck_gc_overlay_label = $applozic("#mck-group-create-icon-box .mck-overlay-label");
             var groupContactbox = '<li id="li-gm-${contHtmlExpr}" class="${contIdExpr} mck-li-group-member" data-mck-id="${contIdExpr}" data-role="${roleVal}" data-alpha="${contFirstAlphaExpr}">' + 
             '<div class="mck-row mck-group-member-info" title="${contNameExpr}">' + 
             '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' + 
@@ -5872,8 +5872,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.onGroupLeft = function(response, params) {
                 $mck_loading.removeClass('vis').addClass('n-vis');
                 if (typeof response === 'object') {
-                    if (response.status === "error") {
-                        alert("Unable to process your request. " + response.errorMessage);
+                    if (response.status === 'error') {
+                        alert('Unable to process your request. ' + response.errorMessage);
                         return;
                     }
                 }
@@ -5896,8 +5896,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.onAddedGroupMember = function(response, params) {
                 $mck_loading.removeClass('vis').addClass('n-vis');
                 if (typeof response === 'object') {
-                    if (response.status === "error") {
-                        alert("Unable to process your request. " + response.errorMessage);
+                    if (response.status === 'error') {
+                        alert('Unable to process your request. ' + response.errorMessage);
                         return;
                     }
                 }
@@ -6159,10 +6159,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         lastSeenStatus = mckDateUtils.getLastSeenAtStatus(MCK_LAST_SEEN_AT_MAP[contact.contactId]);
                     }
                 }
-                if (contact.contactId === group.adminName) {
-                    isGroupAdminExpr = "vis";
-                }
-                var contactList = [ {
+                var contactList = [{
   		    roleExpr: roleExpr,
                     roleVal: roleValue,
                     removeMemberLabel: MCK_LABELS['remove.member'],
@@ -6236,7 +6233,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_group_create_icon.data('iconurl', '');
                 $mck_group_create_title.html('')
                 $mck_group_create_overlay_box.removeClass('n-vis');
-                $mck_group_create_overlay_label.html(MCK_LABELS['add.group.icon']);
+                $mck_gc_overlay_label.html(MCK_LABELS['add.group.icon']);
                 $mck_group_create_icon.html(_this.getGroupDefaultIcon());
                 $applozic('body').addClass('mck-panel-3');
                 $applozic('.emoji-menu').addClass('mck-panel-3');
@@ -6604,7 +6601,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_create_icon_loading = $applozic("#mck-group-create-icon-loading");
             var $mck_group_info_icon = $applozic("#mck-group-info-icon-box .mck-group-icon");
             var $mck_group_create_icon = $applozic("#mck-group-create-icon-box .mck-group-icon");
-            var $mck_group_create_overlay_label = $applozic("#mck-group-create-icon-box .mck-overlay-label");
+            var $mck_gc_overlay_label = $applozic("#mck-group-create-icon-box .mck-overlay-label");
             var FILE_PREVIEW_URL = "/rest/ws/aws/file";
             var FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
  	    var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
@@ -6781,7 +6778,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 if (UPLOAD_VIA[0] === medium) {
                                     $mck_group_create_icon.html('<img src="' + fileUrl + '"/>');
                                     $mck_group_create_icon.data('iconurl', fileUrl);
-                                    $mck_group_create_overlay_label.html(MCK_LABELS['change.group.icon']);
+                                    $mck_gc_overlay_label.html(MCK_LABELS['change.group.icon']);
                                     $mck_group_create_icon_loading.removeClass('vis').addClass('n-vis');
                                     $mck_group_create_icon_box.addClass('mck-hover-on');
                                 } else {
