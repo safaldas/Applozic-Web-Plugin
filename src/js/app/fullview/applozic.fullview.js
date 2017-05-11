@@ -1371,6 +1371,20 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
+             _this.validateAppSession = function(userPxy) {
+                var appHeaders = mckStorage.getAppHeaders();
+                if (appHeaders && appHeaders.userId) {
+                    if (userPxy.applicationId === appHeaders.appId && userPxy.userId === appHeaders.userId && userPxy.password === appHeaders.accessToken) {
+                        _this.onInitApp(appHeaders);
+                        return true;
+                    }
+                    mckStorage.clearAppHeaders();
+                    return false;
+                } else {
+                    return false;
+                }
+
+            };
             _this.setHeaders = function(jqXHR) {
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (AUTH_CODE) {
