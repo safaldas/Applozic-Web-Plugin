@@ -3478,7 +3478,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_tab_title.removeClass("mck-tab-title-w-status");
                 $mck_tab_title.removeClass("mck-tab-title-w-typing");
                 $mck_typing_box.removeClass('vis').addClass('n-vis');
-                $mck_typing_label.html();
+                $mck_typing_label.html(MCK_LABELS['typing']);
                 $mck_msg_inner.data('isgroup', params.isGroup);
                 $mck_msg_inner.data('datetime', '');
                 if (params.tabId) {
@@ -5115,6 +5115,35 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 }
             };
+            _this.loadMessageListOnUserDetailFetch = function(params) {
+                $mck_loading.removeClass('vis').addClass('n-vis');
+                var currTabId = $mck_msg_inner.data('mck-id');
+                var isGroupTab = $mck_msg_inner.data('isgroup');
+                if (typeof currTabId === "undefined" || (params.tabId === currTabId && ('' + isGroupTab === '' + params.isGroup))) {
+                    var group = mckGroupUtils.getGroup(params.tabId);
+                    mckGroupLayout.addGroupStatus(group);
+                    var validated = (group.type === 6) ? false: true;
+                    var validated = true;
+                    if (group.type === 6) {
+                        mckGroupLayout.validateOpenGroupUser(group);
+                        validated = mckGroupLayout.isAppendOpenGroupContextMenu(group);
+                    }
+                    if (params.isMessages) {
+                        $mck_no_messages.removeClass('vis').addClass('n-vis');
+                        mckMessageLayout.processMessageList(params.messageData, true, validated);
+                        if (group.type !== 6) {
+                            $mck_tab_message_option.removeClass('n-vis').addClass('vis');
+                        }
+                        if (typeof(MCK_CALLBACK) === 'function') {
+                            MCK_CALLBACK(params.tabId);
+                        }
+                    } else if ($applozic("#mck-message-cell .mck-message-inner div[name='message']").length === 0) {
+                        $mck_tab_message_option.removeClass('vis').addClass('n-vis');
+                        $mck_no_messages.removeClass('n-vis').addClass('vis');
+                        //   $mck_msg_inner.html('<div class="mck-no-data-text mck-text-muted">No messages yet!</div>');
+                    }
+                }
+            };
         }
         function MckUserUtils() {
             var _this = this;
@@ -5503,11 +5532,13 @@ var MCK_CLIENT_GROUP_MAP = [];
             
             var $mck_contacts_content = $applozic("#mck-contacts-content");
 	    var $mck_btn_group_update = $applozic("#mck-btn-group-update");
+	    var $mck_group_create_type = $applozic("#mck-group-create-type");
+	    var $mck_group_icon_upload = $applozic("#mck-group-icon-upload");
             var $mck_group_icon_change = $applozic("#mck-group-icon-change");
-            var $mck_group_icon_upload = $applozic("#mck-group-icon-upload");
+            
             var $mck_group_search_list = $applozic("#mck-group-search-list");
             var $mck_group_member_List = $applozic("#mck-group-member-list");
-            var $mck_group_create_type = $applozic("#mck-group-create-type");
+            
             var $mck_group_create_close = $applozic("#mck-group-create-close");
             var $mck_group_create_title = $applozic("#mck-group-create-title");
             var $mck_group_menu_options = $applozic(".mck-group-menu-options");
@@ -6378,6 +6409,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_gm_search_box.mckModal('hide');
             };
         }
+
         function MckStorage() {
             var _this = this;
             var MCK_LATEST_MESSAGE_ARRAY = [];
@@ -6523,7 +6555,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                      });
                 }
-                $mck_my_loc.on("click", function() {
+                $mck_my_loc.on('click', function() {
                     mckMapUtils.getCurrentLocation(_this.onGetMyCurrLocation, _this.onErrorMyCurrLocation);
                 });
             };
@@ -6734,7 +6766,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_msg_inner = mckMessageLayout.getMckMessageInner();
 		    var file = params.file;
                     var data = new Object();
-                    
                     var uploadErrors = [];
                     if (typeof file === 'undefined') {
                         return;
@@ -6749,7 +6780,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         alert(uploadErrors.toString());
                     } else {
                         var randomId = mckUtils.randomId();
-                        var fileboxList = [ {
+                        var fileboxList = [{
                             fileIdExpr: randomId,
                             fileName: params.name,
                             fileNameExpr: '<a href="#">' + params.name + '</a>',
@@ -7271,7 +7302,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var tabId = resp.headers.destination.substring(resp.headers.destination.lastIndexOf("-") + 1, resp.headers.destination.length);
                     var currTabId = $mck_message_inner.data('mck-id');
                     var isGroup = $mck_message_inner.data('isgroup');
-		    var group = mckGroupUtils.getGroup(currTabId);
+                    var group = mckGroupUtils.getGroup(currTabId);
                     if (!MCK_BLOCKED_TO_MAP[publisher] && !MCK_BLOCKED_BY_MAP[publisher]) {
                         if (status === 1) {
                             if ((MCK_USER_ID !== publisher || !isGroup) && (currTabId === publisher || currTabId === tabId)) {
