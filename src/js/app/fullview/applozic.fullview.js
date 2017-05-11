@@ -1193,7 +1193,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     },
                     success: function(result) {
                         mckStorage.clearMckMessageArray();
-			mckStorage.clearMckContactNameArray()
+			            mckStorage.clearMckContactNameArray()
                         if (result === 'INVALID_PASSWORD') {
                             if (typeof MCK_ON_PLUGIN_INIT === 'function') {
                                 MCK_ON_PLUGIN_INIT({
@@ -1371,7 +1371,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
-             _this.validateAppSession = function(userPxy) {
+            _this.validateAppSession = function(userPxy) {
                 var appHeaders = mckStorage.getAppHeaders();
                 if (appHeaders && appHeaders.userId) {
                     if (userPxy.applicationId === appHeaders.appId && userPxy.userId === appHeaders.userId && userPxy.password === appHeaders.accessToken) {
@@ -1442,13 +1442,63 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('#mck-btn-group-icon-save').attr('title', MCK_LABELS['save']);
                 $applozic('#mck-group-name-edit').attr('title', MCK_LABELS['edit']);
             };
+            $applozic(d).on('click', '.fancybox', function(e) {
+                var $this = $applozic(this);
+                var contentType = $this.data('type');
+                if (contentType.indexOf("video") !== -1) {
+                    var videoTag = $this.find('.mck-video-box').html(),
+                        video;
+                    $this.fancybox({
+                        content: videoTag,
+                        title: $this.data('name'),
+                        padding: 0,
+                        'openEffect': 'none',
+                        'closeEffect': 'none',
+                        helpers: {
+                            overlay: {
+                                locked: false,
+                                css: {
+                                    'background': 'rgba(0, 0, 0, 0.8)'
+                                }
+                            }
+                        },
+                        beforeShow: function() {
+                            video = $applozic('.fancybox-inner').find('video').get(0);
+                            video.load();
+                            video.play();
+                        }
+                    });
+                } else {
+                    var href = $this.data('url');
+                    $applozic(this).fancybox({
+                        'openEffect': 'none',
+                        'closeEffect': 'none',
+                        'padding': 0,
+                        'href': href,
+                        'type': 'image'
+                    });
+                }
+            });
+            $applozic(w).on('resize', function() {
+                if ($mck_file_menu.css('display') === 'block') {
+                    mckMapLayout.fileMenuReposition();
+                }
+                if ($mck_msg_inner.find('.mck-contact-list').length === 0) {
+                    var scrollHeight = $mck_msg_inner.get(0).scrollHeight;
+                    if ($mck_msg_inner.height() < scrollHeight) {
+                        $mck_msg_inner.animate({
+                            scrollTop: $mck_msg_inner.prop("scrollHeight")
+                        }, 0);
+                    }
+                }
+            });
             _this.appendLauncher = function() {
                 $applozic("#mck-sidebox-launcher").remove();
                 $applozic("body").append(_this.getLauncherHtml());
                 mckNotificationService.init();
             };
             _this.tabFocused = function() {
-                var hidden = "hidden";
+                var hidden = 'hidden';
                 // Standards:
                 if (hidden in d)
                     d.addEventListener("visibilitychange", onchange);
