@@ -4372,9 +4372,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 _this.updateRecentConversationList(group, message, update);
             };
             _this.updateRecentConversationList = function(contact, message, update) {
-                var $listId = "mck-contact-list";
+                var $listId = 'mck-contact-list';
                 var contactHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId: 'user-' + contact.htmlId;
-                if ($applozic("#" + $listId + " #li-" + contactHtmlExpr).length > 0) {
+                if ($applozic('#' + $listId + ' #li-' + contactHtmlExpr).length > 0) {
                     var $mck_msg_part = $applozic("#" + $listId + " #li-" + contact.htmlId + " .mck-cont-msg-wrapper");
                     if (($mck_msg_part.is(":empty") || update) && message !== undefined) {
                         _this.updateContact(contact, message, $listId);
@@ -7562,7 +7562,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         var key = resp.message.split(",")[0];
                         var tabId = resp.message.split(",")[1];
                         var isGroup = (resp.message.split(",")[2] === "1") ? true: false;
-                        mckMessageLayout.removedDeletedMessage(key, userId, isGroup);
+                        mckMessageLayout.removedDeletedMessage(key, tabId, isGroup);
                         var eventResponse = {
                             'messageKey': resp.message.split(",")[0]
                         };
