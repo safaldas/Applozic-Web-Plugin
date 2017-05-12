@@ -352,7 +352,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
         var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
-        var MCK_NOTIFICATION_TONE_LINK = appOptions.notificationSoundLink;
+        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink)? appOptions.notificationSoundLink : "";
         var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest': $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey: 'NO_ACCESS';
         var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1: appOptions.source;
@@ -7169,9 +7169,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_msg_preview.data('mck-id', contact.contactId);
                 $mck_msg_preview.show();
                 mckNotificationTone.play();
-                setTimeout(function() {
-                    mckNotificationTone.stop();
-                }, 1000);
                 setTimeout(function() {
                     $mck_msg_preview.fadeOut(3000);
                 }, 10000);
