@@ -1322,7 +1322,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 });
-                $applozic(w).on('resize', function() {
+                /*$applozic(w).on('resize', function() {
                     var $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                     if ($applozic('.chat.active-chat').length > 0) {
                         var scrollHeight = $mck_msg_inner.get(0).scrollHeight;
@@ -1332,7 +1332,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             }, 0);
                         }
                     }
-                });
+                });*/
                 $applozic(d).on("click", ".fancybox", function(e) {
                     var $this = $applozic(this);
                     var contentType = $this.data('type');
