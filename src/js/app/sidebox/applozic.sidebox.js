@@ -2217,9 +2217,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
                 var metadata = {};
-                var msgKeys = $applozic("#mck-text-box").data("reply");
+                var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
-                    metadata.reply = msgKeys;
+                    metadata.AL_REPLY = msgKeys;
                 }
 
                 messagePxy.metadata = metadata;
@@ -2391,10 +2391,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         userStatus: 4
                     };
                 }
-                var msgKeys = $applozic("#mck-text-box").data("reply");
+                var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
-                    metadata.reply = msgKeys;
-                    $applozic("#mck-text-box").data("reply", '');
+                    metadata.AL_REPLY = msgKeys;
+                    $applozic("#mck-text-box").data("AL_REPLY", '');
                 }
                 messagePxy.source = MCK_SOURCE;
                 var $mck_msg_div = $applozic("#mck-message-cell .mck-message-inner div[name='message']." + randomId);
@@ -2484,12 +2484,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 
                 $('#mck-reply-to').html(displayName);
                 $('#mck-reply-msg').html(message.message);
-                $("#mck-text-box").data("reply", msgKey);
+                $("#mck-text-box").data("AL_REPLY", msgKey);
             };
 
             $("#close").click(function() {
                 $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
-                $("#mck-text-box").data("reply", '');
+                $("#mck-text-box").data("AL_REPLY", '');
             });
 
             _this.deleteMessage = function(msgKey) {
@@ -3826,8 +3826,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var replyMsg = '';
                 var msgpreview = '';
 
-                if (typeof msg.metadata === "object" && typeof msg.metadata.reply !== undefined) {
-                    metadatarepiledto = msg.metadata.reply;
+                if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== undefined) {
+                    metadatarepiledto = msg.metadata.AL_REPLY;
                     replyMsg = mckStorage.getMessageByKey(metadatarepiledto);
                     msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
                 }
