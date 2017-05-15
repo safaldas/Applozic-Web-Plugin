@@ -1584,6 +1584,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_block_button = $applozic("#mck-block-button");
             var $li_mck_block_user = $applozic("#li-mck-block-user");
             var $li_mck_group_info = $applozic("#li-mck-group-info");
+            var $li_mck_video_call = $applozic("#li-mck-video-call");
             var $mck_response_text = $applozic("#mck_response_text");
             var $mck_contact_search = $applozic(".mck-contact-search");
             var $mck_group_info_tab = $applozic("#mck-group-info-tab");
