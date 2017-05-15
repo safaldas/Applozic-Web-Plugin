@@ -329,6 +329,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_MCK_VISITOR = appOptions.visitor;
         var MCK_USER_NAME = appOptions.userName;
         var IS_MCK_LOCSHARE = appOptions.locShare;
+        var IS_CALL_ENABLED = appOptions.video;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
         var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
@@ -472,6 +473,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             TAB_MESSAGE_DRAFT = new Object();
             MCK_FILE_URL = optns.fileBaseUrl;
             IS_MCK_LOCSHARE = optns.locShare;
+            IS_CALL_ENABLED = appOptions.video;
             MCK_ON_PLUGIN_INIT = optns.onInit;
             MCK_CONTACT_NAME_MAP = new Array();
             MCK_UNREAD_COUNT_MAP = new Array();
@@ -2474,6 +2476,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.downloadImage = function(fileurl) {
                 window.open(fileurl, "_blank");
             };
+
             _this.replyMessage = function(msgKey) {
                 var tabId = $mck_msg_inner.data('mck-id');
                 var message = mckStorage.getMessageByKey(msgKey);
@@ -3508,6 +3511,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_search_loading = $applozic("#mck-search-loading");
             var $mck_tab_individual = $applozic("#mck-tab-individual");
 
+
             var $mck_attachfile_box = $applozic("#mck-attachfile-box");
             var $mck_atttachmenu_box = $applozic("#mck-attachmenu-box");
             var $mck_sidebox_content = $applozic("#mck-sidebox-content");
@@ -3516,6 +3520,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
             var $mck_conversation_header = $applozic("#mck-conversation-header");
             var $mck_no_conversations = $applozic('#mck-no-conversations');
+
             var $mck_conversation_list = $applozic("#mck-conversation-list");
 
             var $mck_tab_message_option = $applozic(".mck-tab-message-option");
@@ -3523,6 +3528,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_btn_clear_messages = $applozic('#mck-btn-clear-messages');
             var $mck_offline_message_box = $applozic("#mck-offline-message-box");
             var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner");
+
 
             var $mck_msg_new = $applozic("#mck-msg-new");
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
@@ -3654,8 +3660,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (params.isGroup) {
                         $mck_msg_inner.addClass('mck-group-inner');
                         $li_mck_block_user.removeClass('vis').addClass('n-vis');
+                        $li_mck_video_call.removeClass('vis').addClass('n-vis');
                     } else {
                         $li_mck_block_user.removeClass('n-vis').addClass('vis');
+                        $li_mck_video_call.removeClass('n-vis').addClass('vis')
                     }
                     if (!params.topicId && params.conversationId) {
                         var conversationPxy = MCK_CONVERSATION_MAP[params.conversationId];
@@ -3860,6 +3868,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
                 if ((msg.metadata && msg.metadata.category === 'HIDDEN') || msg.contentType === 102) {
+                    return;
+                }
+                if (msg.contentType === 10 && (msg.metadata && msg.metadata.hide === 'true')) {
                     return;
                 }
                 if ($applozic("#mck-message-cell ." + msg.key).length > 0) {
@@ -7193,7 +7204,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_preview_icon.html(imgsrctag);
                 $mck_msg_preview.data('mck-id', contact.contactId);
                 $mck_msg_preview.show();
-                mckNotificationTone.play();
+                //mckNotificationTone.play();
                 setTimeout(function() {
                     $mck_msg_preview.fadeOut(3000);
                 }, 10000);
