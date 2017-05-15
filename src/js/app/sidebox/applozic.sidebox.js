@@ -1903,6 +1903,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var isBlock = !$mck_msg_inner.data('blocked');
                     if (isGroup) {
                         $li_mck_block_user.removeClass('vis').addClass('n-vis');
+                        $li_mck_video_call.removeClass('vis').addClass('n-vis');
                         return;
                     }
                     var blockText = (isBlock) ? MCK_LABELS['block.user.alert'] : MCK_LABELS['unblock.user.alert'];
@@ -3509,6 +3510,8 @@ var MCK_CLIENT_GROUP_MAP = [];
 
             var $mck_response_text = $applozic("#mck_response_text");
             var $li_mck_block_user = $applozic("#li-mck-block-user");
+
+            var $li_mck_video_call = $applozic("#li-mck-video-call");
             var $mck_search_loading = $applozic("#mck-search-loading");
             var $mck_tab_individual = $applozic("#mck-tab-individual");
 
@@ -3516,6 +3519,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_attachfile_box = $applozic("#mck-attachfile-box");
             var $mck_atttachmenu_box = $applozic("#mck-attachmenu-box");
             var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+
+
             var $mck_tab_option_panel = $applozic("#mck-tab-option-panel");
             var $mck_tab_conversation = $applozic("#mck-tab-conversation");
 
