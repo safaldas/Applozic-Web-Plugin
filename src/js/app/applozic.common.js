@@ -363,10 +363,11 @@ function MckNotificationUtils() {
     _this.getNotification = function(displayName, iconLink, msg) {
         var notification;
         if (w.Notification) { /* Safari 6, Chrome (23+) */
-            notification = new w.Notification(displayName, {
+            var options = {
                 icon: iconLink,
                 body: msg
-            });
+            };
+            notification = new w.Notification(displayName, options);
             notification.onclick = function() {
                 w.focus();
                 this.close();
