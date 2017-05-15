@@ -2308,7 +2308,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     'storeOnDevice': true,
                     'sent': false,
                     'read': true,
-                    'metadata': (messagePxy.metadata) ? messagePxy.metadata : '',
+                    'metadata': (messagePxy.metadata) ? messagePxy.metadata : ''
                 };
                 message.type = (messagePxy.type) ? messagePxy.type : 5;
                 if (messagePxy.fileMeta) {
