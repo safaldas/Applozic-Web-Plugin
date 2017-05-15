@@ -4419,7 +4419,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     _this.addContact(contact, $listId, message);
                 }
             };
-            _this.addContactsToSearchList = function(userIdArray, isLocal) {
+            _this.addContactsToSearchList = function() {
                 var contactsArray = [],
                     userIdArray = [];
                 $applozic.each(MCK_CONTACT_ARRAY, function(i, contact) {
