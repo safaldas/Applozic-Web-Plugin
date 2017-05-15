@@ -1135,7 +1135,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
         function MckInit() {
             var _this = this;
-	    var IS_REINITIALIZE = false;
+	        var IS_REINITIALIZE = false;
             var refreshIntervalId,
                 offlineIntervalId;
             var $mck_user_icon = $applozic("#mck-user-icon");
@@ -1183,194 +1183,164 @@ var MCK_CLIENT_GROUP_MAP = [];
                 userPxy.authenticationTypeId = MCK_AUTHENTICATION_TYPE_ID;
                 AUTH_CODE = '';
                 USER_DEVICE_KEY = '';
-                $applozic.ajax({
-                    url: MCK_BASE_URL + INITIALIZE_APP_URL,
-                    type: 'post',
-                    data: w.JSON.stringify(userPxy),
-                    contentType: 'application/json',
-                    headers: {
-                        'Application-Key': MCK_APP_ID
-                    },
-                    success: function(result) {
-                        mckStorage.clearMckMessageArray();
-			            mckStorage.clearMckContactNameArray()
-                        if (result === "INVALID_PASSWORD") {
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'error',
-                                    'errorMessage': 'INVALID PASSWORD'
-                                });
-                            }
-                            return;
-                        } else if (result === 'INVALID_APPID') {
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'error',
-                                    'errorMessage': 'INVALID APPLICATION ID'
-                                });
-                            }
-                            return;
-                        } else if (result === 'error' || result === 'USER_NOT_FOUND') {
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'error',
-                                    'errorMessage': 'USER NOT FOUND'
-                                });
-                            }
-                            return;
-                        } else if (result === 'APPMODULE_NOT_FOUND') {
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'error',
-                                    'errorMessage': 'APPMODULE NOT FOUND'
-                                });
-                            }
-                            return;
-                        }
-                        if (typeof result === 'object' && result !== null && result.token) {
-                            if (optns.imageLink) {
-                                $mck_user_icon.html('<img src=" ' + optns.imageLink + '" />');
-                                $mck_user_icon.parents('.mck-box-top').removeClass('mck-wt-user-icon');
-                            }
-                            $applozic('.applozic-launcher').each(function() {
-                                if (!$applozic(this).hasClass('mck-msg-preview')) {
-                                    $applozic(this).show();
+                var isValidated = _this.validateAppSession(userPxy);
+                if (!isValidated) {
+                    $applozic.ajax({
+                        url: MCK_BASE_URL + INITIALIZE_APP_URL,
+                        type: 'post',
+                        data: w.JSON.stringify(userPxy),
+                        contentType: 'application/json',
+                        headers: {
+                            'Application-Key': MCK_APP_ID
+                        },
+                        success: function(result) {
+                            mckStorage.clearMckMessageArray();
+                            mckStorage.clearMckContactNameArray();
+                            if (result === "INVALID_PASSWORD") {
+                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                                    MCK_ON_PLUGIN_INIT({
+                                        'status': 'error',
+                                        'errorMessage': 'INVALID PASSWORD'
+                                    });
                                 }
-                            });
-                            MCK_TOKEN = result.token;
-                            MCK_USER_ID = result.userId;
-                            MCK_FILE_URL = result.fileBaseUrl;
-                            USER_DEVICE_KEY = result.deviceKey;
-                            USER_COUNTRY_CODE = result.countryCode;
-                            MCK_WEBSOCKET_URL = result.websocketUrl;
-                            IS_MCK_USER_DEACTIVATED = result.deactivated;
-                            MCK_USER_TIMEZONEOFFSET = result.timeZoneOffset;
-                            MCK_IDLE_TIME_LIMIT = result.websocketIdleTimeLimit;
-                            AUTH_CODE = btoa(result.userId + ':' + result.deviceKey);
-                            MCK_CONNECTED_CLIENT_COUNT = result.connectedClientCount;
-                            mckMessageLayout.createContactWithDetail({
-                                'userId': MCK_USER_ID,
-                                'displayName': result.displayName,
-                                'photoLink': result.imageLink
-                            });
-                            $applozic.ajaxPrefilter(function(options) {
-                                if (!options.beforeSend && (options.url.indexOf(MCK_BASE_URL) !== -1)) {
-                                    // _this.manageIdleTime();
-                                    options.beforeSend = function(jqXHR) {
-                                        _this.setHeaders(jqXHR);
-                                    };
+                                return;
+                            } else if (result === 'INVALID_APPID') {
+                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                                    MCK_ON_PLUGIN_INIT({
+                                        'status': 'error',
+                                        'errorMessage': 'INVALID APPLICATION ID'
+                                    });
                                 }
-                            });
-                            _this.appendLauncher();
-                            if (result.betaPackage) {
-                                var poweredByUrl = "https://www.applozic.com/?utm_source=" + w.location.href + "&utm_medium=webplugin&utm_campaign=poweredby";
-                                $applozic(".mck-running-on a").attr('href', poweredByUrl);
-                                $applozic(".mck-running-on").removeClass('n-vis').addClass('vis');
+                                return;
+                            } else if (result === 'error' || result === 'USER_NOT_FOUND') {
+                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                                    MCK_ON_PLUGIN_INIT({
+                                        'status': 'error',
+                                        'errorMessage': 'USER NOT FOUND'
+                                    });
+                                }
+                                return;
+                            } else if (result === 'APPMODULE_NOT_FOUND') {
+                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                                    MCK_ON_PLUGIN_INIT({
+                                        'status': 'error',
+                                        'errorMessage': 'APPMODULE NOT FOUND'
+                                    });
+                                }
+                                return;
                             }
-                            if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
-                                (isReInit) ? mckInitializeChannel.reconnect(): mckInitializeChannel.init();
-                            // mckGroupService.loadGroups();
-                            }
-                            mckMessageLayout.loadTab({
-                                tabId: '',
-                                'isGroup': false
-                            });
-                            var mckContactNameArray = mckStorage.getMckContactNameArray();
-                            if (mckContactNameArray !== null && mckContactNameArray.length > 0) {
-                                for (var i = 0; i < mckContactNameArray.length; i++) {
-                                    var nameMap = mckContactNameArray[i];
-                                    if (nameMap !== null) {
-                                        MCK_CONTACT_NAME_MAP[nameMap[0]] = nameMap[1];
-                                    }
+                            if (typeof result === 'object' && result !== null && result.token) {
+                                if (optns.imageLink) {
+                                    $mck_user_icon.html('<img src=" ' + optns.imageLink + '" />');
+                                    $mck_user_icon.parents('.mck-box-top').removeClass('mck-wt-user-icon');
+                                }
+    			                 result.appId = userPxy.applicationId;
+                                if (MCK_ACCESS_TOKEN) {
+                                	result.accessToken = userPxy.password;
+                                }
+                                _this.onInitApp(result);
+    			                 // mckUtils.manageIdleTime();
+                            } else {
+                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                                    MCK_ON_PLUGIN_INIT({
+                                        'status': 'error',
+                                        'errorMessage': 'UNABLE TO PROCESS REQUEST'
+                                    });
                                 }
                             }
-                            mckUserUtils.checkUserConnectedStatus();
-                            if (typeof MCK_INIT_AUTO_SUGGESTION === 'function') {
-                                MCK_INIT_AUTO_SUGGESTION();
-                            }
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'success'
-                                });
-                            }
-                            mckInit.tabFocused();
-                            if (IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED || $mckChatLauncherIcon.length > 0) {
-                                mckContactService.getUserStatus({
-                                    'callback': mckMessageLayout.updateUnreadCountonChatIcon
-                                });
-                            }
- 			                mckNotificationService.subscribeToServiceWorker();
-                            mckStorage.setAppHeaders(result);
-                            mckGroupService.loadGroups({
-                                apzCallback: mckGroupLayout.loadGroups
-                            });
-                        // mckUtils.manageIdleTime();
-                        } else {
-                            if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        },
+                        error: function() {
+                            mckStorage.clearMckMessageArray();
+                            if (typeof MCK_ON_PLUGIN_INIT === "function") {
                                 MCK_ON_PLUGIN_INIT({
                                     'status': 'error',
                                     'errorMessage': 'UNABLE TO PROCESS REQUEST'
                                 });
                             }
                         }
-                    },
-                    error: function() {
-                        mckStorage.clearMckMessageArray();
-                        if (typeof MCK_ON_PLUGIN_INIT === "function") {
-                            MCK_ON_PLUGIN_INIT({
-                                'status': 'error',
-                                'errorMessage': 'UNABLE TO PROCESS REQUEST'
-                            });
-                        }
+                    });
+                }
+            };
+            _this.onInitApp = function(data) {
+                _this.appendLauncher();
+                _this.setLabels();
+                $applozic('.applozic-launcher').each(function() {
+                    if (!$applozic(this).hasClass('mck-msg-preview')) {
+                        $applozic(this).show();
                     }
                 });
-                /*$applozic(w).on('resize', function() {
-                    var $mck_msg_inner = mckMessageLayout.getMckMessageInner();
-                    if ($applozic('.chat.active-chat').length > 0) {
-                        var scrollHeight = $mck_msg_inner.get(0).scrollHeight;
-                        if ($mck_msg_inner.height() < scrollHeight) {
-                            $mck_msg_inner.animate({
-                                scrollTop: $mck_msg_inner.prop("scrollHeight")
-                            }, 0);
+
+                MCK_TOKEN = data.token;
+		        mckUtils.setEncryptionKey(data.encryptionKey);
+                MCK_USER_ID = data.userId;
+                USER_COUNTRY_CODE = data.countryCode;
+		        USER_DEVICE_KEY = data.deviceKey;
+                MCK_WEBSOCKET_URL = data.websocketUrl;
+		        MCK_IDLE_TIME_LIMIT = data.websocketIdleTimeLimit;
+		        MCK_USER_TIMEZONEOFFSET = data.timeZoneOffset;
+		        MCK_FILE_URL = data.fileBaseUrl;
+                IS_MCK_USER_DEACTIVATED = data.deactivated;       
+                AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
+		        MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
+		        MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
+                if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
+                    (IS_REINITIALIZE) ? mckInitializeChannel.reconnect(): mckInitializeChannel.init();
+                    // mckGroupService.loadGroups();
+                }
+		        mckMessageLayout.createContactWithDetail({
+                    'userId': MCK_USER_ID,
+                    'displayName': data.displayName,
+                    'photoLink': data.imageLink
+                });
+                $applozic.ajaxPrefilter(function(options) {
+                    if (!options.beforeSend && (options.url.indexOf(MCK_BASE_URL) !== -1)) {
+                        // _this.manageIdleTime();
+                        options.beforeSend = function(jqXHR) {
+                            _this.setHeaders(jqXHR);
+                        };
+                    }
+                });
+                if (data.betaPackage) {
+                    var poweredByUrl = "https://www.applozic.com/?utm_source=" + w.location.href + "&utm_medium=webplugin&utm_campaign=poweredby";
+                    $applozic('.mck-running-on a').attr('href', poweredByUrl);
+                    $applozic('.mck-running-on').removeClass('n-vis').addClass('vis');
+                }
+
+                mckMessageLayout.loadTab({
+                    tabId: '',
+                    'isGroup': false
+                });
+                var mckContactNameArray = mckStorage.getMckContactNameArray();
+                if (mckContactNameArray !== null && mckContactNameArray.length > 0) {
+                    for (var i = 0; i < mckContactNameArray.length; i++) {
+                        var nameMap = mckContactNameArray[i];
+                        if (nameMap !== null) {
+                            MCK_CONTACT_NAME_MAP[nameMap[0]] = nameMap[1];
                         }
                     }
-                });*/
-                $applozic(d).on("click", ".fancybox", function(e) {
-                    var $this = $applozic(this);
-                    var contentType = $this.data('type');
-                    if (contentType.indexOf("video") !== -1) {
-                        var videoTag = $this.find('.mck-video-box').html(),
-                            video;
-                        $this.fancybox({
-                            content: videoTag,
-                            title: $this.data('name'),
-                            padding: 0,
-                            'openEffect': 'none',
-                            'closeEffect': 'none',
-                            helpers: {
-                                overlay: {
-                                    locked: false,
-                                    css: {
-                                        'background': 'rgba(0, 0, 0, 0.8)'
-                                    }
-                                }
-                            },
-                            beforeShow: function() {
-                                video = $applozic('.fancybox-inner').find('video').get(0);
-                                video.load();
-                                video.play();
-                            }
-                        });
-                    } else {
-                        var href = $this.data('url');
-                        $applozic(this).fancybox({
-                            'openEffect': 'none',
-                            'closeEffect': 'none',
-                            'padding': 0,
-                            'href': href,
-                            'type': 'image'
-                        });
-                    }
+                }
+                mckUserUtils.checkUserConnectedStatus();
+                if (typeof MCK_INIT_AUTO_SUGGESTION === 'function') {
+                    MCK_INIT_AUTO_SUGGESTION();
+                }
+                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                    MCK_ON_PLUGIN_INIT({
+                        'status': 'success'
+                    });
+                }
+                mckInit.tabFocused();
+	            if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
+                  	$mckChatLauncherIcon.html(MCK_TOTAL_UNREAD_COUNT);
+                }
+                if (IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED || $mckChatLauncherIcon.length > 0) {
+                    mckContactService.getUserStatus({
+                        'callback': mckMessageLayout.updateUnreadCountonChatIcon
+                    });
+                }
+                mckNotificationService.subscribeToServiceWorker();
+                mckStorage.setAppHeaders(data);
+                mckGroupService.loadGroups({
+                    apzCallback: mckGroupLayout.loadGroups
                 });
             };
             _this.validateAppSession = function(userPxy) {
@@ -1797,7 +1767,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     topicId = (typeof topicId !== "undefined" && topicId !== '') ? topicId.toString(): '';
                     var msgText = $applozic(this).data("mck-msg");
                     msgText = (typeof msgText !== "undefined" && msgText !== '') ? msgText.toString(): '';
-                    if (typeof (MCK_GETTOPICDETAIL) === "function" && topicId) {
+                    if (typeof(MCK_GETTOPICDETAIL) === "function" && topicId) {
                         var topicDetail = MCK_GETTOPICDETAIL(topicId);
                         if (typeof topicDetail === 'object' && topicDetail.title !== 'undefined') {
                             MCK_TOPIC_DETAIL_MAP[topicId] = topicDetail;
