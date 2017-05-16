@@ -3563,7 +3563,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<ul>' +
                 '<li><a class="mck-message-forward">${msgForwardExpr}</a></li>' +
                 '<li><a class="mck-message-delete">${msgDeleteExpr}</a></li>' +
-                '<li><a class="mck-message-reply">${msgReplyExpr}</a></li>' +
+                '<li><a class="mck-message-reply n-vis">${msgReplyExpr}</a></li>' +
                 '</ul>' +
                 '</div>' +
                 '</div>';

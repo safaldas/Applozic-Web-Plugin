@@ -2928,9 +2928,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 if (isMessages) {
                                     if (params.startTime) {
-                                        mckMessageLayout.addContactsFromMessageList(data, false);
+                                       // mckMessageLayout.addContactsFromMessageList(data, false);
                                     } else {
-                                        mckMessageLayout.addContactsFromMessageList(data, true);
+                                        mckMessageLayout.addContactsFromMessageList(data, false);
                                         $mck_contacts_inner.animate({
                                             scrollTop: 0
                                         }, 0);
@@ -3531,7 +3531,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<ul>' +
                 '<li><a class="mck-message-forward">${msgForwardExpr}</a></li>' +
                 '<li><a class="mck-message-delete">${msgDeleteExpr}</a></li>' +
-                '<li><a class="mck-message-reply">${msgReplyExpr}</a></li>' +
+                '<li><a class="mck-message-reply n-vis">${msgReplyExpr}</a></li>' +
                 '</ul>' +
                 '</div>' +
                 '</div>';
