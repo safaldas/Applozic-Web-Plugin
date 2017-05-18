@@ -428,7 +428,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
-            mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+            //mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+            mckVideoCallringTone = ringToneService.loadRingTone("https://www.applozic.com/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
             mckNotificationTone = new Audio(MCK_NOTIFICATION_TONE_LINK);
             mckMessageService.init();
             mckFileService.init();
