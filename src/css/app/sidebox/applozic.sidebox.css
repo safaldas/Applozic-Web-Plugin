@@ -24,6 +24,49 @@
 	color: #333;
 }
 
+.mck-msg-reply {
+	background-color: #0073b7;
+            
+}
+
+.mck-msgto {
+    color : red;
+    padding: 3px;
+    text-align: left;
+}
+
+.mck-msglist-msgto {
+    color : white;
+    padding: 3px;
+    text-align: left;
+}
+
+#mck-reply-msg {
+	padding-left: : 3px;
+}
+
+.mck-verticalline {
+  border-left: thick solid white;
+  border-left-width: medium;
+}
+
+.mck-msgreply-border {
+    color : white;
+    padding : 2px;
+    text-align: center;
+}
+
+.mck-download-msg-right {
+	float: right;
+	padding-right: 25px;
+        padding-top: 27px;
+}
+.mck-download-msg-left {
+	float: left;
+	padding-right: 15px;
+        padding-top: 20px;
+}
+
 .mck-sidebox {
 	position: fixed !important;
 	height: 100% !important;
@@ -876,11 +919,18 @@
 	padding: 0 10px;
 }
 
+.mck-box .mck-nav-panel .mck-tabview-item {
+	float: left;
+	text-align: center;
+	width: calc(25% - 22px);
+	padding: 0 10px;
+}
+
 .mck-nav-divider {
 	border-right: 2px solid #e5e5e5;
 }
 
-.mck-box  .mck-nav-panel .mck-nav-link {
+.mck-box  .mck-nav-panel .mck-nav-link, .mck-box .mck-tabview .mck-nav-link {
 	display: block;
 	padding: 5px 0;
 	color: #333;
@@ -888,7 +938,7 @@
 	text-transform: uppercase;
 }
 
-.mck-box  .mck-nav-panel .mck-nav-link:hover, .mck-box .mck-nav-panel .mck-nav-link:focus
+.mck-box  .mck-nav-panel .mck-nav-link:hover, .mck-box .mck-nav-panel .mck-nav-link:focus, .mck-box .mck-tabview .mck-nav-link:hover, .mck-box .mck-tabview .mck-nav-link:focus
 	{
 	color: #11b8bb;
 	background-color: inherit;

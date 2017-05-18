@@ -24,6 +24,48 @@
 	color: #333;
 }
 
+.mck-msg-reply {
+	background-color: #0073b7;
+            
+}
+
+.mck-msgto {
+    color : red;
+    padding: 3px;
+    text-align: left;
+}
+
+.mck-msglist-msgto {
+    color : white;
+    padding: 3px;
+    text-align: left;
+}
+
+#mck-reply-msg {
+	padding-left: : 3px;
+}
+
+.mck-verticalline {
+  border-left: thick solid white;
+  border-left-width: medium;
+}
+
+.mck-write-box{
+	height: 42px;
+}
+
+.mck-msgreply-border {
+    color : white;
+    padding : 2px;
+    text-align: center;
+}
+
+.mck-mic-btn {
+	margin-right :250px;
+	display: inline-block;
+	float: left;
+	margin-top: -27px;
+}
 .mck-sidebox {
 	position: fixed !important;
 	height: 100% !important;
@@ -1325,11 +1367,11 @@ ol, ul {
     outline: none !important;
 }*/
 .mck-btn-text-panel img {
-	height: 25px;
-	width: 25px;
-	margin-top: -3px;
+	height: 18px;
+	width: 19px;
+	/*margin-top: 3px;*/
 	vertical-align: middle;
-	opacity: 0.7;
+	opacity: 0.5;
 }
 
 .mck-text-box-panel.move-right img {
