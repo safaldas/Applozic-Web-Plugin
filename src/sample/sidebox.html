@@ -651,6 +651,16 @@
 			</div>
 		</div>
 	</div>
+
+<!-- Video Call dependencies -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.min.js"></script>
+	<script type="text/javascript" src="../js/app/call/mck-ringtone-service.js"></script>
+	<script type="text/javascript" src="../js/app/call/twilio-video.js"></script>
+	<script type="text/javascript" src="../js/app/call/videocall.js"></script>
+
+
+<!-- Video Call dependencies -->
+
 	<script type="text/javascript" src="../js/applozic.plugins.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.widget.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.emojis.min.js"></script>
@@ -742,7 +752,8 @@
 							maxAttachmentSize : 25, //max attachment size in MB
 							desktopNotification : true,
 							locShare : true,
-							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4"
+							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",
+							video: true
 							/* groupUserCount: false,
 							defaultMessageMetaData: {'eventId' : '123'},
 						     openGroupSettings: {

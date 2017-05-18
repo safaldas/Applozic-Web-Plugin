@@ -399,6 +399,9 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckContactService = new MckContactService();
         var mckNotificationService = new MckNotificationService();
         var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
+        var mckCallService = new MckCallService();
+        var ringToneService = new RingToneService();
+        var mckVideoCallringTone = null;
         var mckNotificationTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
@@ -425,13 +428,15 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
-            mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
+            mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+            mckNotificationTone = new Audio(MCK_NOTIFICATION_TONE_LINK);
             mckMessageService.init();
             mckFileService.init();
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
             mckMessageLayout.initEmojis();
+            mckCallService.init();
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -1140,7 +1145,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var MCK_IDLE_TIME_COUNTER = MCK_IDLE_TIME_LIMIT;
             var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
             _this.getLauncherHtml = function() {
-                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<a href="#" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div></div>';
+                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<a href="#" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div><div id="mck-msg-preview-btns" class="n-vis"><button id="mck-vid-call-accept">Accept</button><button id="mck-vid-call-reject">reject</reject></div></div>';
             };
             _this.initializeApp = function(optns, isReInit) {
                 IS_REINITIALIZE = isReInit;
@@ -1191,6 +1196,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             'Application-Key': MCK_APP_ID
                         },
                         success: function(result) {
+                            if (IS_CALL_ENABLED) {
+                                mckCallService.InitilizeVideoClient(result.userId, result.deviceKey);
+                            }
                             mckStorage.clearMckMessageArray();
                             mckStorage.clearMckContactNameArray();
                             if (result === "INVALID_PASSWORD") {
@@ -3446,6 +3454,55 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
+            _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
+                var message = (msgType == "CALL_MISSED") ? "Missed Call" : (msgType == "CALL_REJECTED") ? "Call Rejected" : "";
+                if (message == "" || message == undefined) {
+                    message = "video message";
+                }
+                var toUser = $mck_msg_to.val();
+                var metadata = {
+                    "MSG_TYPE": msgType,
+                    "CALL_ID": callId,
+                    "CALL_AUDIO_ONLY": audioOnly
+                }
+                var messagePxy = {
+                    "to": toUser,
+                    "type": 5,
+                    "contentType": contentType,
+                    "message": message,
+                    "metadata": metadata,
+                    "senderName": MCK_USER_ID
+                };
+                _this.sendMessage(messagePxy);
+                return messagePxy;
+            };
+            _this.sendVideoCallEndMessage = function(callId, msgType, contentType, audioOnly, callDuration) {
+
+                var callDurationStr = "";
+                if (callDuration) {
+                    callDurationStr = mckDateUtils.convertMilisIntoTime(callDuration);
+                }
+                var message = (msgType == "CALL_MISSED") ? "Missed Call" : (msgType == "CALL_REJECTED") ? "Call Rejected" : (msgType == "CALL_END") ? "Call End \n Duration: " + callDurationStr : "video message";
+                if (message == "" || message == undefined) {
+                    message = "video message";
+                }
+                var toUser = $mck_msg_to.val();
+                var metadata = {
+                    "MSG_TYPE": msgType,
+                    "CALL_ID": callId,
+                    "CALL_AUDIO_ONLY": audioOnly,
+                    "CALL_DURATION": callDuration
+                }
+                var messagePxy = {
+                    "to": toUser,
+                    "type": 5,
+                    "contentType": contentType,
+                    "message": message,
+                    "metadata": metadata
+                };
+                _this.sendMessage(messagePxy);
+                return messagePxy;
+            };
         }
 
         function MckMessageLayout() {
@@ -3701,6 +3758,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_atttachmenu_box.removeClass('vis').addClass('n-vis');
                         $mck_attachfile_box.removeClass('n-vis').addClass('vis');
                     }
+
+                    //Todo: temporarily removing.
+                    /*if(IS_CALL_ENABLED) {
+                        $applozic("#li-mck-video-call").removeClass("n-vis").addClass("vis");
+                    }*/
                     var name = _this.getTabDisplayName(params.tabId, params.isGroup, params.userName);
                     if (_this.isGroupDeleted(params.tabId, params.isGroup)) {
                         $mck_msg_error.html(MCK_LABELS['group.deleted']);
@@ -5106,7 +5168,26 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.populateMessage = function(messageType, message, notifyUser) {
+                var callDuration = mckDateUtils.convertMilisIntoTime(message.metadata.CALL_DURATION);
                 mckContactService.loadUserProfile(message.to);
+
+                if (message.contentType == 103) {
+                    if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                        message.message = "you rejected a Video call from " + message.to;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                        message.message = message.to + "rejected a Video call from you";
+                    } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_END") {
+                        //alert("call ended: duration is:"+message.metadata.CALL_DURATION);
+                        message.message = "you were in a call with " + message.to + "\n call duration : " + callDuration;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_END") {
+                        //alert("call ended: duration is:"+message.metadata.CALL_DURATION);
+                        message.message = "you were in a call with " + message.to + "\n call duration : " + callDuration;
+                    } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                        message.message = "you missed a Video call from " + message.to;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                        message.message = message.to + "missed a Video call from you";
+                    }
+                }
 
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isValidMeta = mckMessageLayout.isValidMetaData(message);
@@ -7830,11 +7911,178 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 return;
                             }
-                            mckMessageLayout.populateMessage(messageType, message, resp.notifyUser);
+                            if (message.contentType == 102) {
+                                //video message Received...
+                                //dont show notification for 102 messages
+                                resp.notifyUser = false;
+                                if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_DIALED") {
+                                    //its a call dialed Message.. Show Receive/Reject option on screen
+                                    var contact = mckMessageLayout.fetchContact(message.to);
+                                    var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+
+                                    var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
+                                    $applozic("#mck-video-call-indicator").data("call-id", message.metadata.CALL_ID);
+                                    $applozic("#mck-video-call-indicator").data("isAudioCall", message.metadata.CALL_AUDIO_ONLY);
+                                    $applozic("#mck-video-call-indicator-txt").html(displayName + " calling...");
+                                    $applozic("#mck-video-call-icon").html(imgSource);
+                                    $applozic("#mck-video-call-indicator").removeClass("n-vis").addClass("vis");
+                                    mckVideoCallringTone.play();
+                                    //timer if user not receive call in 1 minute....
+                                    setTimeout(function() {
+                                        var callReceived = $applozic("#mck-video-call-indicator").data("callReceived");
+                                        if (!callReceived) {
+                                            console.log("call is not answered");
+                                            //no need to notify server... sender is doing this...thank you sender.
+                                            //mckMessageService.sendVideoCallMessage(callId,"CALL_MISSED",102,false);
+                                            mckVideoCallringTone.stop();
+                                            $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass("vis");
+
+                                        }
+                                    }, 60000);
+                                } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                                    //notify server.. content type 103 msgType CALL_REJECTED
+                                    //check is this device is call host
+                                    if ($applozic("#mck-btn-video-call").data("isCallHost")) {
+                                        mckMessageService.sendVideoCallMessage(message.metadata.CALL_ID, "CALL_REJECTED", 103, false);
+                                        mckCallService.ringToneForHost.stop();
+                                        mckCallService.outgoingCallServices.twilioService.leaveRoomIfJoined();
+                                        mckCallService.hideVideoBox();
+                                        if (mckCallService.outgoingCallServices) {
+                                            mckCallService.outgoingCallServices.rejectedByReceiver = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (message.contentType == 103) {
+                                if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                                    //stop ringtone and hide vid-call-indicator
+                                    if (mckVideoCallringTone) {
+                                        mckVideoCallringTone.stop();
+                                    }
+                                    $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass("vis");
+                                }
+                                // no nedd to handle  message.type==4 and metadata.MSG_TYPE=="CALL_Rejected AND contnetType 103"
+                            } else {
+                                mckMessageLayout.populateMessage(messageType, message, resp.notifyUser);
+                            }
                         }
                     }
                 }
             };
         }
+
+        function MckCallService() {
+            var _this = this;
+            _this.token = null;
+            _this.Identity = null;
+            _this.outgoingCallServices = null;
+            _this.incomingCallServices = null;
+            var $mck_vid_box = $applozic(".applozic-vid-container");
+            var $mck_side_box = $applozic("#mck-sidebox");
+            var $mck_video_call_indicator = $applozic("#mck-video-call-indicator");
+            //$mck_msg_preview_btns=$applozic("#mck-msg-preview-btns");
+            //$mck_call_accept_btn = $applozic("#mck-vid-call-accept");
+            //$mck_call_eject_btn=$applozic("mck-vid-call-reject");
+            _this.hideVideoBox = function() {
+                $mck_vid_box.addClass('n-vis').removeClass('vis');
+                $mck_side_box.addClass('vis').removeClass('n-vis');
+                $mck_video_call_indicator.addClass("n-vis").removeClass("vis");
+            };
+            _this.init = function() {
+                _this.token = mckStorage.getAppHeaders() !== null ? mckStorage.getAppHeaders().videoToken : undefined;
+                _this.ringToneForHost = new RingToneService().loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+                //start videocall button in menu
+                $applozic("#mck-btn-video-call").on('click', function(e) {
+                   
+                    if (_this.token) {
+                        var callId = MCK_USER_ID + new Date().getTime().toString() + Math.random().toString(36).slice(2);
+                        //call Id is room name 
+                        //
+                        //when user send the vediocall message connect the user to the room.
+                        //when user acceept the call, connect that user to same room.
+                        var message = mckMessageService.sendVideoCallMessage(callId, "CALL_DIALED", 102, false);
+                        var contact = mckMessageLayout.fetchContact(message.to);
+                        var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+                        var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
+                        var isAudioCall = false;
+                        var isCallHost = true;
+                        var callStartTime = new Date();
+                        var userName = MCK_USER_ID;
+                        _this.outgoingCallServices = new MckCallingService(userName, mckCallService.token, callId, displayName, isCallHost, callStartTime, mckMessageService, imgSource, isAudioCall, _this.ringToneForHost);
+                        _this.outgoingCallServices.startVideoCall();
+                        $applozic("#mck-btn-video-call").data("isCallHost", true);
+                        $applozic("#mck-btn-video-call").data("callStartTime", callStartTime);
+                    } else {
+                        alert("missing token... please refresh page..");
+                    }
+                });
+                //receive call button
+                $applozic("#mck-vid-receive-btn").on('click', function(e) {
+                    console.log("call received");
+                    var callId = $applozic("#mck-video-call-indicator").data("call-id");
+                    var isAudioCall = $applozic("#mck-video-call-indicator").data("isAudioCall");
+                    $applozic("#mck-video-call-indicator").data("callReceived", true);
+                    $applozic("#mck-video-call-indicator").addClass("n-vis");
+                    //send message to reciepient
+                    mckCallService.callReceived(callId, isAudioCall);
+                });
+
+
+                $applozic("#mck-vid-reject-btn").on('click', function(e) {
+                    // receivers is busy
+                    console.log("call rejected");
+                    var callId = $applozic("#mck-video-call-indicator").data("call-id");
+                    var isAudioCall = $applozic("#mck-video-call-indicator").data("isAudioCall");
+                    mckCallService.callRejected(callId, isAudioCall);
+                    $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass('vis');
+                });
+            };
+            //TODO: rename this method into getTwilioTokenFromServer 
+            _this.InitilizeVideoClient = function(userId, deviceKey) {
+                _this.Identity = userId;
+                $applozic.ajax({
+                    url: MCK_BASE_URL + "/twilio/token",
+                    type: 'post',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: { "identity": userId, "device": deviceKey },
+                    success: function(result) {
+                        if (result != null && result != "") {
+                          
+                            _this.token = result.token;
+                            var data = mckStorage.getAppHeaders();
+                            data.videoToken = result.token;
+                            mckStorage.setAppHeaders(data);
+                        }
+                    },
+                    error: function(result) {
+                        console.log("error while getting token" + result);
+                    }
+                });
+            };
+
+            _this.callReceived = function(callId, isAudioCall) {
+                console.log("_this.callReceived");
+                if (mckVideoCallringTone) {
+                    mckVideoCallringTone.stop();
+                }
+                //notify Server    
+                var message = mckMessageService.sendVideoCallMessage(callId, "CALL_ANSWERED", 102, isAudioCall);
+                //var newWindow=   window.open(MCK_BASE_URL+'/video/call', '_blank');
+                var isCallHost = false;
+                _this.incomingCallServices = new MckCallingService(_this.Identity, _this.token, callId, null, isCallHost, null, mckMessageService, null, isAudioCall);
+                _this.incomingCallServices.startVideoCall();
+
+            };
+
+            _this.callRejected = function(callId, isAudioCall) {
+                if (mckVideoCallringTone) {
+                    mckVideoCallringTone.stop();
+                }
+                //notify server content type 102  type REJECT
+                var message = mckMessageService.sendVideoCallMessage(callId, "CALL_REJECTED", 102, isAudioCall);
+            };
+        }
+
     }
 }($applozic, window, document));
