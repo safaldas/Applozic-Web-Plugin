@@ -25,7 +25,7 @@
 }
 
 .mck-download-btn {
-        background-image: url(images/download.png);
+        background-image: url(../../../images/download.png);
 	width: 10px ;
         height: 10px;
         padding:5px;
