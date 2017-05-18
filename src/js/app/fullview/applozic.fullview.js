@@ -2417,7 +2417,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.submitMessage = function(messagePxy, optns) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var randomId = messagePxy.key;
-                var metadata = {};
+                var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus: 4
