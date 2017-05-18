@@ -2247,7 +2247,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
-                var metadata = {};
+                var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
                     metadata.AL_REPLY = msgKeys;
