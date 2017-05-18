@@ -626,138 +626,7 @@
 			}
 		}
 	</script>
-	<script src="../js/Media/MediaStreamRecorder.js"> </script>
-    <script src="https://cdn.WebRTC-Experiment.com/gumadapter.js"></script>
 
-  <!-- <script>
-   function audioRecoder(){
-            function captureUserMedia(mediaConstraints, successCallback, errorCallback) {
-                navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
-            }
-
-            var mediaConstraints = {
-                audio: true
-            };
-
-
-
-            $('.mck-container').on("click", "#start-recording" ,function() {
-                this.disabled = true;
-                captureUserMedia(mediaConstraints, onMediaSuccess, onMediaError);
-            });
-           $('.mck-container').on("click", "#stop-recording" ,function() {
-            
-                this.disabled = true;
-                mediaRecorder.stop();
-                mediaRecorder.stream.stop();
-                 $("#pause-recording").attr("disabled", true);
-                 $("#start-recording").attr("disabled", false);
-            });
-
-            $('.mck-container').on("click", "#pause-recording" ,function() {
-                this.disabled = true;
-                mediaRecorder.pause();
-                $("#resume-recording").attr("disabled", false);
-            });
-             $('.mck-container').on("click", "#resume-recording" ,function() {
-           
-                this.disabled = true;
-                mediaRecorder.resume();
-                 $('#pause-recording').attr("disabled",false);
-            });
-            $('.mck-container').on("click", "#save-recording" ,function() {
-    
-                this.disabled = true;
-                mediaRecorder.save();
-                $( "#audiodiv" ).removeClass( "vis" ).addClass( "n-vis" );
-                
-            });
-
-            var mediaRecorder;
-            function onMediaSuccess(stream) {
-                var audio = document.createElement('audio');
-
-                audio = mergeProps(audio, {
-                    controls: true,
-                    muted: true,
-                    src: URL.createObjectURL(stream)
-                });
-                audio.play();
-
-                audiosContainer.appendChild(audio);
-                audiosContainer.appendChild(document.createElement('hr'));
-
-                mediaRecorder = new MediaStreamRecorder(stream);
-                mediaRecorder.stream = stream;
-                var recorderType = "MediaRecorder API";
-                if (recorderType === 'MediaRecorder API') {
-                    mediaRecorder.recorderType = MediaRecorderWrapper;
-                }
-
-                if (recorderType === 'WebAudio API (WAV)') {
-                    mediaRecorder.recorderType = StereoAudioRecorder;
-                    mediaRecorder.mimeType = 'audio/wav';
-                }
-
-                if (recorderType === 'WebAudio API (PCM)') {
-                    mediaRecorder.recorderType = StereoAudioRecorder;
-                    mediaRecorder.mimeType = 'audio/pcm';
-                }
-
-                // don't force any mimeType; use above "recorderType" instead.
-                // mediaRecorder.mimeType = 'audio/webm'; // audio/ogg or audio/wav or audio/webm
-
-                //mediaRecorder.audioChannels = !!document.getElementById('left-channel').checked ? 1 : 2;
-                /*mediaRecorder.ondataavailable = function(blob) {
-                    var a = document.createElement('a');
-                    a.target = '_blank';
-                    a.innerHTML = 'Open Recorded Audio No. ' + (index++) + ' (Size: ' + bytesToSize(blob.size) + ') Time Length: ' + getTimeLength(timeInterval);
-
-                    a.href = URL.createObjectURL(blob);
-
-                    audiosContainer.appendChild(a);
-                    audiosContainer.appendChild(document.createElement('hr'));
-                };*/
-                var timeInterval =5000;
-                //var timeInterval = document.querySelector('#time-interval').value;
-                if (timeInterval) timeInterval = parseInt(timeInterval);
-                else timeInterval = 5 * 1000;
-
-                // get blob after specific time interval
-                mediaRecorder.start(timeInterval);
-
-                document.querySelector('#stop-recording').disabled = false;
-                document.querySelector('#pause-recording').disabled = false;
-                document.querySelector('#save-recording').disabled = false;
-            }
-
-            function onMediaError(e) {
-                console.error('media error', e);
-            }
-
-            var audiosContainer = document.getElementById('audios-container');
-            var index = 1;
-
-            // below function via: http://goo.gl/B3ae8c
-         /*   function bytesToSize(bytes) {
-                var k = 1000;
-                var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                if (bytes === 0) return '0 Bytes';
-                var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
-                return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
-            }
-
-            // below function via: http://goo.gl/6QNDcI*/
-            function getTimeLength(milliseconds) {
-                var data = new Date(milliseconds);
-                return data.getUTCHours() + " hours, " + data.getUTCMinutes() + " minutes and " + data.getUTCSeconds() + " second(s)";
-            }
-
-            window.onbeforeunload = function() {
-                document.querySelector('#start-recording').disabled = false;
-            };
-        }
-        </script>-->
 	<script type="text/javascript">
 		//var $applozic = jQuery.noConflict(true);
 		//Sample json contains display name and photoLink for userId
@@ -878,8 +747,8 @@
 							//Function to initialize plugin
 							$applozic.fn
 									.applozic({
-								                userId : 'demouser2',
-								                userName : 'Demo User',
+								        userId : 'demouser2',
+								        userName : 'Demo User',
 										appId : 'applozic-sample-app',
 										accessToken: 'demouser2',
 										ojq : $original,
@@ -899,8 +768,6 @@
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4" // replace it with your Google API key
 									// initAutoSuggestions : initAutoSuggestions //  function to enable auto suggestions
 									});
-                                 // audioRecoder();
-
 							// var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}]};
 							// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
 							// $applozic.fn.applozic('loadContacts', contactjson);
