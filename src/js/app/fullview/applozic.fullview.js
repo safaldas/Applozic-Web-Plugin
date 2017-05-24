@@ -2245,7 +2245,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
-                var metadata = {};
+                var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
                     metadata.AL_REPLY = msgKeys;
@@ -2415,7 +2415,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.submitMessage = function(messagePxy, optns) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var randomId = messagePxy.key;
-                var metadata = {};
+                var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus: 4
@@ -7665,13 +7665,19 @@ var MCK_CLIENT_GROUP_MAP = [];
                             'messageKey': resp.message.split(",")[0],
                             'userKey': resp.message.split(",")[1]
                         });
-                    } else if (messageType === "APPLOZIC_06") {
-                        var userId = resp.message;
+                    } else if (messageType === 'APPLOZIC_27') {
+                        var userId = resp.message.split(",")[0];
+                        var topicId = resp.message.split(",")[1];
                         if (typeof userId !== 'undefined') {
                             mckMessageLayout.removeConversationThread(userId, false);
-                            events.onConversationDeleted({
-                                'userKey': userId
-                            });
+                            mckMessageLayout.updateUnreadCount('user_' + userId, 0, true);
+                            var response = {
+                                'userId': userId
+                            };
+                            if (topicId) {
+                                response['topicId'] = topicId;
+                            }
+                            events.onConversationDeleted(response);
                         }
                     } else if (messageType === 'APPLOZIC_11') {
                         var userId = resp.message;
@@ -7729,12 +7735,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                             'userId': userId,
                             'lastSeenAtTime': lastSeenAtTime
                         });
-                    } else if (messageType === "APPLOZIC_09") {
-                        var userId = resp.message;
+                    } else if (messageType === "APPLOZIC_29") {
+                        var userId = resp.message.split(",")[0];
+                        var topicId = resp.message.split(",")[1];
                         var contact = mckMessageLayout.fetchContact(userId);
                         mckMessageLayout.updateUnreadCount('user_' + contact.contactId, 0, true);
-                        $applozic("#li-user-" + contact.htmlId + " .mck-unread-count-text").html(mckMessageLayout.getUnreadCount('user_' + contact.contactId));
-                        $applozic("#li-user-" + contact.htmlId + " .mck-unread-count-box").removeClass("vis").addClass("n-vis");
+                        var tabId = $mck_message_inner.data('mck-id');
+                        if ((typeof tabId === "undefined") || tabId === '') {
+                            $applozic("#li-user-" + contact.htmlId + " .mck-unread-count-text").html(mckMessageLayout.getUnreadCount('user_' + contact.contactId));
+                            $applozic("#li-user-" + contact.htmlId + " .mck-unread-count-box").removeClass('vis').addClass('n-vis');
+                        }
                         var response = {
                             'userId': userId
                         };
