@@ -691,7 +691,7 @@
 			}
 		}
 		//callback function execute after plugin initialize.
-		function onInitialize(status) {
+		function onInitialize(status,data) {
 			if (status === 'success') {
 				//write your logic exectute after plugin initialize.
 			} else if (typeof response === 'object' && response.status === 'error') {
