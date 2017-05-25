@@ -1325,7 +1325,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     MCK_INIT_AUTO_SUGGESTION();
                 }
                 if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                    MCK_ON_PLUGIN_INIT('success',data);
+                    MCK_ON_PLUGIN_INIT({
+                        'status': 'success',
+                    },data);
                 }
                 mckInit.tabFocused();
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
