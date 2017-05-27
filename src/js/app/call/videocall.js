@@ -79,7 +79,7 @@ function MckCallingService(identity, token, callId, toUserDisplayName,
 						"#mck-vid-media > audio", "#local-media > video",
 						"#local-media > audio" ]);
 				$mck_vid_box.addClass('n-vis').removeClass('vis');
-				$mck_side_box.addClass('vis').removeClass('n-vis');
+				//$mck_side_box.addClass('vis').removeClass('n-vis');
 				$mck_video_call_indicator.addClass("n-vis").removeClass("vis");
 			});
 	
@@ -121,7 +121,7 @@ function MckCallingService(identity, token, callId, toUserDisplayName,
 							"#mck-vid-media > audio", "#local-media > video",
 							"#local-media > audio" ]);
 					$mck_vid_box.addClass('n-vis').removeClass('vis');
-					$mckSideBox.addClass("vis").removeClass("n-vis");
+					//$mckSideBox.addClass("vis").removeClass("n-vis");
 
 				}
 			}, 70000); 
@@ -137,7 +137,7 @@ function MckCallingService(identity, token, callId, toUserDisplayName,
 		_this.twilioService.joinCall(isAudioCall);
 
 	
-		$mck_side_box.addClass('n-vis').removeClass('vis');
+		//$mck_side_box.addClass('n-vis').removeClass('vis');
 		$mck_vid_box.removeClass('n-vis').addClass('vis');
 		//reset mute button
 		$mck_unmute_icon.addClass("vis").removeClass("n-vis");
@@ -273,7 +273,7 @@ function TwilioService(identity, token, callId, ringTone, isAudioCall,
 			//right now one to one calling.. if participent disconnect disconnect the call-->leave room if joined.
 			_this.leaveRoomIfJoined();
 			$mck_vid_box.addClass('n-vis').removeClass('vis');
-			$mck_side_box.addClass('vis').removeClass('n-vis');
+			//$mck_side_box.addClass('vis').removeClass('n-vis');
 			$mck_video_call_indicator.addClass('n-vis').removeClass('vis');
 		});
 
