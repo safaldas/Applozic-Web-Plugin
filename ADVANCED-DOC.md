@@ -148,7 +148,7 @@ $applozic.fn.applozic('subscribeToEvents', {
 #### Video Calling
 Beta
 
-Video Call (Beta) is available at Githuh:
+Video Call (Beta) is available at Github:
 https://github.com/AppLozic/Applozic-Web-Plugin/tree/video
 
 Open src/sample/sidebox.html file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
