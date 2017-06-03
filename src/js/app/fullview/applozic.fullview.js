@@ -1634,6 +1634,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_no_gsm_text = $applozic("#mck-no-gsm-text");
             var $mck_msg_inner;
             var MESSAGE_SEND_URL = "/rest/ws/message/send";
+            var UPDATE_REPLY_MAP ="/rest/ws/message/detail"
             var GROUP_CREATE_URL = "/rest/ws/group/create";
             var MESSAGE_LIST_URL = "/rest/ws/message/list";
             var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
@@ -2509,13 +2510,17 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.replyMessage = function(msgKey) {
                 var tabId = $mck_msg_inner.data('mck-id');
-                var message = mckStorage.getMessageByKey(msgKey);
+                var message =  mckMessageService.getReplyMessageByKey(msgKey);
                 $mck_text_box.focus().select();
                 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');
                 var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
 
                 $('#mck-reply-to').html(displayName);
+                if (typeof message.fileMeta === "object" || message.contentType === 2) {
+                $('#mck-reply-msg').html(mckMessageLayout.getImageForMessagePreview(message));
+                 } else {
                 $('#mck-reply-msg').html(message.message);
+                    }
                 $("#mck-text-box").data("AL_REPLY", msgKey);
                 //Todo: move this to init
                 $("#close").click(function() {
@@ -2706,6 +2711,22 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
+_this.getReplyMessageByKey = function(msgkey) {
+    var replyMsg = mckStorage.getMessageByKey(msgkey);
+      if (typeof replyMsg === "undefined" ) {
+                mckUtils.ajax({
+                        url: MCK_BASE_URL + UPDATE_REPLY_MAP,
+                        async: false,
+                        type: 'get',
+                        data: "keys=" + msgkey,
+                        success: function(data) {
+                        mckStorage.updateMckMessageArray(data);
+                          }
+                    });
+}
+      return  mckStorage.getMessageByKey(msgkey) ;
+};
+
             _this.loadMessageList = function(params, callback) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var individual = false;
@@ -3518,7 +3539,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="mck-msglist-msgto">${msgReplyTo} </div>' +
                 '</div>' +
                 '<div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}">' +
-                '<div class="mck-msgreply-border">${msgReply} </div>' +
+                '<div class="mck-msgreply-border ${textreplyVisExpr}">${msgReply}</div>' +
+                '<div class="mck-msgreply-border ${msgpreviewvisExpr}">{{html msgPreview}}</div>' +
                 '</div>' +
                 '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
                 '<div class="mck-file-text notranslate mck-attachment downloadimage ${downloadIconVisibleExpr}" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
@@ -3531,7 +3553,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<ul>' +
                 '<li><a class="mck-message-forward">${msgForwardExpr}</a></li>' +
                 '<li><a class="mck-message-delete">${msgDeleteExpr}</a></li>' +
-                '<li><a class="mck-message-reply n-vis">${msgReplyExpr}</a></li>' +
+                '<li><a class="mck-message-reply ">${msgReplyExpr}</a></li>' +
                 '</ul>' +
                 '</div>' +
                 '</div>';
@@ -3877,13 +3899,32 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var metadatarepiledto = '';
                 var replymessage = '';
                 var replyMsg = '';
-                var msgpreview = '';
+                var msgpreview ='';
+                var textreply ='vis';
+                var msgpreviewVis = 'n-vis';
+                var replyTo='';
+                var  msgReplyToVisible = 'n-vis';
 
-                if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== undefined) {
+                if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== "undefined" ) {
                     metadatarepiledto = msg.metadata.AL_REPLY;
-                    replyMsg = mckStorage.getMessageByKey(metadatarepiledto);
-                    msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
+                    replyMsg = mckMessageService.getReplyMessageByKey(metadatarepiledto);
+                    if (typeof replyMsg!== "undefined" ) {
+                     if((contact.isGroup && replyMsg)||(!(contact.isGroup)) && (typeof replyMsg.fileMeta === 'undefined')){
+                     msgReplyToVisible ='vis';
+                      }
+                    if(replyMsg.type === 5) {
+                      replyTo = 'you';  
+                    } else {
+                    replyTo = _this.getTabDisplayName(replyMsg.to, false);
+                     }
+                   if (typeof replyMsg.fileMeta === "object" || replyMsg.contentType === 2) {
+                    msgpreview =   _this.getImageForReplyMessage(replyMsg);
+                    textreply ='n-vis';
+                    msgpreviewVis = "vis";
+                    msgReplyToVisible ='n-vis';
+                     }  
                 }
+            }
 
                 if (msg.type === 6 || msg.type === 7) {
                     return;
@@ -3969,11 +4010,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
 
                 var msgList = [{
-                    msgReply: replyMsg ? replyMsg.message + "\n" : '',
+                    msgReply: replyMsg   ? replyMsg.message + "\n" : '',
                     msgReplyTo: replyMsg ? replyMsg.to + "\n" : '',
                     msgReplyDivExpr: replyMsg ? 'vis' : 'n-vis',
                     msgReplyToVisibleExpr: (contact.isGroup && replyMsg) ? 'vis' : 'n-vis',
-                    msgPreview: replyMsg ? msgpreview : '',
+                    msgPreview: msgpreview ? _this.getImageForReplyMessage(replyMsg) :"",
+                    msgpreviewvisExpr: msgpreviewVis,
+                    textreplyVisExpr: textreply,
                     msgKeyExpr: msg.key,
                     msgDeliveredExpr: msg.delivered,
                     msgSentExpr: msg.sent,
@@ -4179,6 +4222,49 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 return '';
             };
+
+            _this.getImageForMessagePreview = function(message) {
+            if (typeof message.fileMeta === 'object') {
+                    if (message.fileMeta.contentType.indexOf("image")!== -1) {
+              // return  <img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply move-right"/>';
+            return '<span>photo</span> <img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply move-right"/>';
+
+               } else if (message.fileMeta.contentType.indexOf("audio") !== -1) {
+                        return '<span>audio</span><span class="mck-file-detail move-right"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    } 
+                     else {
+                        return '<span class="mck-file-detail move-right"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                    return '';
+                } 
+                 if (message.contentType === 2) {
+                    var geoLoc = $applozic.parseJSON(message.message);
+            return '<span>location</span><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '" class="mck-image-reply move-right"/>';
+
+                    }  
+            };
+
+             _this.getImageForReplyMessage = function(message) {
+                var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+             if (typeof message.fileMeta === 'object') {
+                    if (message.fileMeta.contentType.indexOf("image")!== -1) {
+            return '<div><div class="mck-imagereply mck-margin"><div class="mck-msgto">'+displayName+ '</div><div><span class="mck-camera"></span><span>image</span></div></div><div class="mck-imagereply"><img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply mck-msg-text mck-msg-content"/></div></div>';
+
+               } else if (message.fileMeta.contentType.indexOf("audio") !== -1) {
+                        return '<div class="mck-attachmentmsgto">'+displayName+ '</div><span class="mck-file-detail mck-msg-text mck-msg-content"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    } 
+                     else {
+                        return '<div class="mck-attachmentmsgto">'+displayName+ '</div><span class="mck-file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                    return '';
+                } 
+                 if (message.contentType === 2) {
+                    var geoLoc = $applozic.parseJSON(message.message);
+            return '<div><div class="mck-imagereply mck-margin"><div class="mck-msgto">'+displayName+ '</div><span class="mck-icon-marker mck-location-icon"></span><span>location</span></div><div class="mck-imagereply"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '" class="mck-image-reply mck-msg-text "/></div></div>';
+
+                    }  
+            };
+
             _this.getFileAttachment = function(msg) {
                 if (typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
