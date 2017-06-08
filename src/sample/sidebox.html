@@ -760,7 +760,7 @@
 			}
 		}
 		//callback function execute after plugin initialize.
-		function onInitialize(status) {
+		function onInitialize(status,data) {
 			if (status === 'success') {
 				//write your logic exectute after plugin initialize.
 			} else if (typeof response === 'object' && response.status === 'error') {
@@ -773,10 +773,10 @@
 					//Function to initialize plugin
 					$applozic.fn
 						.applozic({
-							userId : 'demouser2',
-							userName : 'Demo User',
+							userId : 'demouser5',
+							userName : 'Demo User5',
 							appId : 'applozic-sample-app',
-							accessToken: 'demouser2',
+							accessToken: 'debug2',
 							ojq : $original,
 							obsm : oModal,
 							notificationIconLink : "https://www.applozic.com/resources/images/applozic_icon.png",

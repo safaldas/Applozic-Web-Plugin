@@ -209,14 +209,7 @@
             <div id="audios-container"></div>
         </section>
     </div>-->
-							<div id="mck-write-box" class="blk-lg-12 mck-write-box">
-								<form id="mck-msg-form" class="vertical mck-msg-form">
-									<div class="mck-form-group n-vis">
-										<label class="sr-only placeholder-text control-label"
-											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
-											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
-									</div>
-									<div  id="mck-reply-to-div" class="n-vis">
+                                                        <div  id="mck-reply-to-div" class="n-vis">
 									<button type="button" id="close"
 							class="mck-box-close mck-close-panel move-right">
 							<span aria-hidden="true">&times;</span>
@@ -224,6 +217,14 @@
 											<div id="mck-reply-to" class=" mck-msgto "></div>
                                             <div id="mck-reply-msg"> </div>
                                         </div>
+							<div id="mck-write-box" class="blk-lg-12 mck-write-box">
+								<form id="mck-msg-form" class="vertical mck-msg-form">
+									<div class="mck-form-group n-vis">
+										<label class="sr-only placeholder-text control-label"
+											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
+											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
+									</div>
+									
 									<input id="mck-file-input" class="mck-file-input n-vis"
 										type="file" name="files[]">
 									<div id="mck-btn-attach" class="mck-btn-attach">
@@ -808,7 +809,7 @@
 		      }
 		  }*/
 		//callback function execute after plugin initialize.
-		function onInitialize(response) {
+		function onInitialize(response,data) {
 			if (response.status === 'success') {
 				// $applozic.fn.applozic('loadContacts', {'contacts':contactsJSON});
 				// $applozic.fn.applozic('loadTab', 'shanki.connect');
@@ -878,10 +879,10 @@
 							//Function to initialize plugin
 							$applozic.fn
 									.applozic({
-								                userId : 'demouser2',
-								                userName : 'Demo User',
+								                userId : 'demouser5',
+								                userName : 'Demo User5',
 										appId : 'applozic-sample-app',
-										accessToken: 'demouser2',
+										accessToken: 'debug2',
 										ojq : $original,
 										obsm : oModal,
 										accessToken :'',          //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url

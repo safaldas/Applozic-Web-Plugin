@@ -29,10 +29,20 @@
             
 }
 
+.mck-image-reply {
+	height: 50px;
+	width: 50px;
+}
+
 .mck-msgto {
-    color : red;
+    color : chartreuse;
     padding: 3px;
     text-align: left;
+}
+
+.mck-attachmentmsgto {
+    color : chartreuse;
+    padding: 3px;
 }
 
 .mck-msglist-msgto {
@@ -58,6 +68,7 @@
     color : white;
     padding : 2px;
     text-align: center;
+    overflow: hidden;
 }
 
 .mck-mic-btn {
@@ -2989,6 +3000,33 @@ ol, ul {
 	height: 20px;
 	width: 20px;
 	vertical-align: middle;
+}
+
+.mck-camera {
+	display: inline-block;
+	background-image: url(../../../images/mck-icon-camera.png);
+	background-repeat: no-repeat;
+	height: 20px;
+	width: 20px;
+	margin-right: 5px !important;
+	vertical-align: middle;
+	background-size: 20px;
+	opacity: 0.4;
+}
+
+.mck-location-icon {
+	display: inline-block;
+	vertical-align: middle;
+	background-size: 20px;
+	opacity: 0.4;
+}
+.mck-margin {
+	margin-bottom: 8px;
+}
+
+.mck-imagereply {
+    display: inline-block;	
+    vertical-align: middle;
 }
 
 .mck-audio-player {
