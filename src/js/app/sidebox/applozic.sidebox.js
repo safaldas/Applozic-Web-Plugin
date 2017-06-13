@@ -401,6 +401,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
         var mckCallService = new MckCallService();
         var mckNotificationTone = null;
+        var ringToneService;
+        var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
             'onConnectFailed': function() {},
@@ -434,6 +436,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             mckMapLayout.init();
             mckMessageLayout.initEmojis();
             if (IS_CALL_ENABLED) {
+            ringToneService = new RingToneService();
+            mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
             mckCallService.init();
               }
         };
@@ -8057,8 +8061,6 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.Identity = null;
             _this.outgoingCallServices = null;
             _this.incomingCallServices = null;
-            var ringToneService;
-            var mckVideoCallringTone = null;
             var $mck_vid_box = $applozic(".applozic-vid-container");
             var $mck_side_box = $applozic("#mck-sidebox");
             var $mck_video_call_indicator = $applozic("#mck-video-call-indicator");
@@ -8071,8 +8073,6 @@ _this.getReplyMessageByKey = function(msgkey) {
                 $mck_video_call_indicator.addClass("n-vis").removeClass("vis");
             };
             _this.init = function() {
-                ringToneService = new RingToneService();
-                mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
                 _this.token = mckStorage.getAppHeaders() !== null ? mckStorage.getAppHeaders().videoToken : undefined;
                 _this.ringToneForHost = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
                 //start videocall button in menu

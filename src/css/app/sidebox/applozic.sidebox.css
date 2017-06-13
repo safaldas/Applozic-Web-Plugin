@@ -36,6 +36,13 @@
         cursor: pointer;
 }
 
+#mck-vid-icon img {
+	width: 50px;
+	height: 55px;
+	margin-right: 12px;
+	border-radius: 50% 
+}
+
 .mck-download-btn {
         background-image: url(../../../images/download.png);
 	width: 10px ;
