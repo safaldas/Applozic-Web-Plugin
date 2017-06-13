@@ -3986,9 +3986,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                    var userIdArray = new Array();
                    userIdArray.push(userId);
                     mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                    var UserDetail= mckUserUtils.getUserDetail(userId);
-                    if(typeof UserDetail !== "undefined") {
-                    return UserDetail.displayName;   
+                    var userDetail= mckUserUtils.getUserDetail(userId);
+                    if(typeof userDetail !== "undefined") {
+                    return userDetail.displayName;   
                       } 
                      
                     } else {
