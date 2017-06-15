@@ -4643,7 +4643,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var emoji_template = _this.getMessageTextForContactPreview(message, contact, 100);;
                 var groupUserCount = contact.userCount;
                 var conversationId = '';
-                var isGroupTab = false;
+                var isGroupTab = contact.isGroup ? contact.isGroup:false;
                 MCK_CONTACT_ARRAY.push(contact);
                 if (typeof message !== 'undefined') {
                     if (message.conversationId) {
