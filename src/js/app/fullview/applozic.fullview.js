@@ -2509,12 +2509,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                 window.open(fileurl, "_blank");
             };
             _this.replyMessage = function(msgKey) {
+                var displayName ='';
                 var tabId = $mck_msg_inner.data('mck-id');
                 var message =  mckMessageService.getReplyMessageByKey(msgKey);
                 $mck_text_box.focus().select();
                 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');
-                var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
-
+                if(message.type === 5) {
+                      displayName = 'You';  
+                    } else {
+                    displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+                     }
                 $('#mck-reply-to').html(displayName);
                 if (typeof message.fileMeta === "object" || message.contentType === 2) {
                 $('#mck-reply-msg').html(mckMessageLayout.getImageForMessagePreview(message));
@@ -2522,12 +2526,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $('#mck-reply-msg').html(message.message);
                     }
                 $("#mck-text-box").data("AL_REPLY", msgKey);
-                //Todo: move this to init
-                $("#close").click(function() {
-                    $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
-                    $("#mck-text-box").data("AL_REPLY", '');
-                });
             };
+
+            $("#close").click(function() {
+                $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
+                $("#mck-text-box").data("AL_REPLY", '');
+            });
 
             _this.deleteMessage = function(msgKey) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
@@ -3431,7 +3435,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                                     params.callback(response);
                                 }
                             }
-                            mckStorage.clearMckMessageArray();
+                            //mckStorage.clearMckMessageArray();
                         } else if (data.status === 'error') {
                             if (typeof params.callback === 'function') {
                                 response.status = 'error';
@@ -4729,7 +4733,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 var emoji_template = _this.getMessageTextForContactPreview(message, contact, 100);;
                 var groupUserCount = contact.userCount;
                 var conversationId = '';
-                var isGroupTab = false;
+                var isGroupTab = contact.isGroup ? contact.isGroup:false;
                 MCK_CONTACT_ARRAY.push(contact);
                 if (typeof message !== 'undefined') {
                     if (message.conversationId) {
