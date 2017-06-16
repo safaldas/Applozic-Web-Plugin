@@ -3395,6 +3395,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 params.isGroup = true;
                                 params.prepend = true;
                                 if (params.isMessage) {
+                                     $mck_msg_inner.data('mck-id', group.contactId);
+                                     $mck_msg_inner.data('isgroup', true);
                                     mckMessageLayout.loadTab(params, _this.dispatchMessage);
                                 } else {
                                     mckMessageLayout.loadTab(params);
@@ -5733,7 +5735,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
             var $mck_group_search_list = $applozic("#mck-group-search-list");
             var $mck_group_member_List = $applozic("#mck-group-member-list");
-
+            var $mck_group_update_panel = $applozic("#mck-group-update-panel");
             var $mck_group_create_close = $applozic("#mck-group-create-close");
             var $mck_group_create_title = $applozic("#mck-group-create-title");
             var $mck_group_menu_options = $applozic(".mck-group-menu-options");
@@ -5754,7 +5756,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' +
-                '<div class="blk-lg-4 mck-group-admin-text move-right ${enableAdminMenuExpr} ${isAdminExpr}"><span>${roleExpr}</span></div></div>' +
+                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span>${roleExpr}</span></div></div>' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-10 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' +
                 '<div class="blk-lg-2 mck-group-admin-options ${enableAdminMenuExpr}">' +
@@ -5840,6 +5842,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             });
             $mck_btn_group_update.on('click', function() {
                 var users = [];
+                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 $applozic(".mck-group-change-role-box.vis").each(function(i, elm) {
                     var $this = $applozic(this);
                     var newRole = parseInt($this.find('select').val());
@@ -6316,7 +6319,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.onUpdateGroupInfo = function(response, params) {
-                $mck_loading.removeClass('vis').addClass('n-vis');
+               $mck_loading.removeClass('vis').addClass('n-vis');
+                $mck_btn_group_update.attr('disabled', false).html('Update');
+                $mck_group_update_panel.removeClass('vis').addClass('n-vis');
                 if (typeof response === 'object') {
                     if (response.status === 'error') {
                         alert('Unable to process your request. ' + response.errorMessage);
