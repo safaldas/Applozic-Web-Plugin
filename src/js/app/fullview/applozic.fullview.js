@@ -3421,6 +3421,8 @@ _this.getReplyMessageByKey = function(msgkey) {
                                 params.isGroup = true;
                                 params.prepend = true;
                                 if (params.isMessage) {
+                                     $mck_msg_inner.data('mck-id', group.contactId);
+                                     $mck_msg_inner.data('isgroup', true);
                                     mckMessageLayout.loadTab(params, _this.dispatchMessage);
                                 } else {
                                     mckMessageLayout.loadTab(params);
@@ -4734,7 +4736,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 var emoji_template = _this.getMessageTextForContactPreview(message, contact, 100);;
                 var groupUserCount = contact.userCount;
                 var conversationId = '';
-                var isGroupTab = false;
+                var isGroupTab = contact.isGroup ? contact.isGroup:false;
                 MCK_CONTACT_ARRAY.push(contact);
                 if (typeof message !== 'undefined') {
                     if (message.conversationId) {
@@ -5808,7 +5810,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             var $mck_group_info_tab = $applozic("#mck-group-info-tab");
             var $mck_sidebox_search = $applozic("#mck-sidebox-search");
             var $mck_gm_search_box = $applozic("#mck-goup-search-box");
-
+            var $mck_group_update_panel = $applozic("#mck-group-update-panel");
             var $mck_group_name_edit = $applozic("#mck-group-name-edit");
             var $mck_group_name_save = $applozic("#mck-group-name-save");
             var $mck_sidebox_content = $applozic("#mck-sidebox-content");
@@ -5926,11 +5928,12 @@ _this.getReplyMessageByKey = function(msgkey) {
                 var role = $applozic(this).parents('.mck-li-group-member').data('role');
                 $changeRoleBox.find('select').val(role);
                 $changeRoleBox.removeClass('n-vis').addClass('vis');
-                $mck_group_update_panel.removeClass('n-vis').addClass('vis');
+                $("#mck-group-update-panel").removeClass('n-vis').addClass('vis');
 
             });
             $mck_btn_group_update.on('click', function() {
                 var users = [];
+             $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 $applozic(".mck-group-change-role-box.vis").each(function(i, elm) {
                     var $this = $applozic(this);
                     var newRole = parseInt($this.find('select').val());
@@ -6407,7 +6410,9 @@ _this.getReplyMessageByKey = function(msgkey) {
                 }
             };
             _this.onUpdateGroupInfo = function(response, params) {
-                $mck_loading.removeClass('vis').addClass('n-vis');
+               $mck_loading.removeClass('vis').addClass('n-vis');
+                $mck_btn_group_update.attr('disabled', false).html('Update');
+                $mck_group_update_panel.removeClass('vis').addClass('n-vis');
                 if (typeof response === 'object') {
                     if (response.status === 'error') {
                         alert('Unable to process your request. ' + response.errorMessage);
