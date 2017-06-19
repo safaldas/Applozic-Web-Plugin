@@ -2812,6 +2812,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                                                         }
                                                     }
                                                 }
+                                                  if (userDetail.userName && !params.startTime) {
+                                                    var name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, userDetail.userName);
+                                                    $mck_tab_title.html(name);
+                                                    $mck_tab_title.attr('title', name);
+                                                }
                                             }
                                         });
                                     }
@@ -3576,6 +3581,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
+                 if (typeof MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                   var userIdArray = new Array();
+                   userIdArray.push(params.tabId);
+                   mckContactService.getUsersDetail(userIdArray, { 'async': false });
+               }
                     if ($applozic('.person[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').length == 0) {
                         _this.updateRecentConversationList(params.isGroup ? mckGroupUtils.getGroup(params.tabId) : _this.fetchContact(params.tabId), undefined, true, params.prepend);
                     }
