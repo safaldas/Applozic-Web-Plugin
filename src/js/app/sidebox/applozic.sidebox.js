@@ -7,6 +7,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         fileBaseUrl: 'https://applozic.appspot.com',
         notificationIconLink: '',
         notificationSoundLink: '',
+        mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
         launcher: 'applozic-launcher',
         userId: null,
         appId: null,
@@ -358,7 +359,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
         var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
-        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : "";
+        var MCK_MAP_STATIC_API_KEY = appOptions.mapStaticAPIkey;
+        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : MCK_BASE_URL + "/resources/sidebox/audio/notification_tone.mp3";
         var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : 'NO_ACCESS';
         var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
@@ -432,7 +434,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
-            mckNotificationTone = new Audio(MCK_NOTIFICATION_TONE_LINK);
+           /* ringToneService = new RingToneService();
+            mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK);*/
             mckMessageService.init();
             mckFileService.init();
             mckInit.initializeApp(appOptions, false);
@@ -2586,7 +2589,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                                 CONTACT_SYNCING = false;
                             }
-                            mckStorage.clearMckMessageArray();
                         },
                         error: function() {}
                     });
@@ -4286,11 +4288,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                     try {
                         var geoLoc = $applozic.parseJSON(msg.message);
                         if (geoLoc.lat && geoLoc.lon) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '"/></a>';
+                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '&key='+MCK_MAP_STATIC_API_KEY+'"/></a>';
                         }
                     } catch (ex) {
                         if (msg.message.indexOf(',') !== -1) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '" /></a>';
+                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '&key='+MCK_MAP_STATIC_API_KEY+'" /></a>';
                         }
                     }
                 }
@@ -5957,7 +5959,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' +
-                '<div class="blk-lg-4 mck-group-admin-text move-right ${enableAdminMenuExpr} ${isAdminExpr}"><span>${roleExpr}</span></div></div>' +
+                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span>${roleExpr}</span></div></div>' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' +
                 '<div class="blk-lg-4 mck-group-admin-options move-right ${enableAdminMenuExpr}">' +
@@ -7373,7 +7375,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckContactService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-
+               // var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7388,7 +7390,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.showNewMessageNotification = function(message, contact, displayName) {
-                if (!IS_NOTIFICATION_ENABLED) {
+                if (!IS_NOTIFICATION_ENABLED || message.contentType === 102) {
                     return;
                 }
                 var currTabId = $mck_msg_inner.data('mck-id');
@@ -7430,7 +7432,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_preview_icon.html(imgsrctag);
                 $mck_msg_preview.data('mck-id', contact.contactId);
                 $mck_msg_preview.show();
-                //mckNotificationTone.play();
                 setTimeout(function() {
                     $mck_msg_preview.fadeOut(3000);
                 }, 10000);
@@ -8050,7 +8051,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 } 
                                 return;
                             }
-                            if (message.contentType == 102) {
+                            if (message.contentType == 102 && IS_CALL_ENABLED) {
                                 //video message Received...
                                 //dont show notification for 102 messages
                                 resp.notifyUser = false;

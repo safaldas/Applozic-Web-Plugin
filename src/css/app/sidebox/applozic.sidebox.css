@@ -68,13 +68,13 @@
     text-align: left;
 }
 
-.mck-attachmentmsgto {
+/*.mck-attachmentmsgto {
     color : chartreuse;
     padding: 3px;
-}
+}*/
 
 .mck-msglist-msgto {
-    color : white;
+    color : chartreuse;
     padding: 3px;
     text-align: left;
 }
