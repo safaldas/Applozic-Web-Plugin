@@ -3982,17 +3982,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getContactDisplayName = function(userId) {
          
                    if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
-                    return MCK_CONTACT_NAME_MAP[userId];
-                    } 
-                   else  if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
-                   var userIdArray = new Array();
-                   userIdArray.push(userId);
-                    mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                    var userDetail= mckUserUtils.getUserDetail(userId);
-                    if(typeof userDetail !== "undefined") {
-                    return userDetail.displayName;   
-                      } 
-                     
+                    return MCK_CONTACT_NAME_MAP[userId];            
                     } else {
                     return;
                      }
