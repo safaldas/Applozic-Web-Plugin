@@ -8177,7 +8177,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 $applozic("#mck-vid-receive-btn").on('click', function(e) {
                     console.log("call received");
                     $("#mck-video-call-indicator").addClass('n-vis').removeClass('vis');
-                    $mck_videocall_btn.removeClass('vis').addClass('n-vis');
+                   // $mck_videocall_btn.removeClass('vis').addClass('n-vis');
                     var callId = $applozic("#mck-video-call-indicator").data("call-id");
                     var isAudioCall = $applozic("#mck-video-call-indicator").data("isAudioCall");
                     $applozic("#mck-video-call-indicator").data("callReceived", true);

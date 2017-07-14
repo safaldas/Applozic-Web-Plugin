@@ -28,7 +28,10 @@
 	background-color: #0073b7;
 
 }
-
+.footer-controls {
+    float:right;
+    margin-right: 350px;
+}
 .mck-image-reply {
 	height: 50px;
 	width: 50px;
@@ -3572,6 +3575,5 @@ fill:white;
 	width:30%;
 }
 .mck-vid-scr-controls{
-	width:60%;
 	display:inline-block;
 }
