@@ -26,7 +26,7 @@
 
 .mck-msg-reply {
 	background-color: #0073b7;
-            
+
 }
 .footer-controls {
     float:right;
@@ -62,7 +62,7 @@
 	border-radius: 50%;
 	font-size: 25px;
 	text-align: center;
-	line-height: 50px;  
+	line-height: 50px;
 }
 
 .mck-attachmentmsgto {
@@ -3059,7 +3059,7 @@ ol, ul {
 }
 
 .mck-imagereply {
-    display: inline-block;	
+    display: inline-block;
     vertical-align: middle;
 }
 
@@ -3421,6 +3421,13 @@ ol, ul {
 	margin:5%;
 }
 
+.mck-video-call-indicator-txt{
+	margin-top:15px;
+	margin-bottom:3px;
+	font-size: 15px;
+	color:blanchedalmond;
+}
+
 
 #mck-vid-media{
     top:0;
@@ -3524,7 +3531,7 @@ ol, ul {
 	width:56px;
 	background-color:#DB4437;
 	border:none;
-	
+
 }
 #mck-microfone-mute-btn{
 	border-radius: 50%;
@@ -3542,11 +3549,11 @@ ol, ul {
 }
 .mck-unmute-icon{
 	fill:white;
-	
+
 }
 .mck-mute-icon{
 	fill:black;
-	
+
 }
 .mck-muted{
 	background-color:white !important;
@@ -3555,17 +3562,17 @@ ol, ul {
 	background-color:black !important;
 }
 .mck-disconnect-icon{
-fill:white;	
+fill:white;
 }
 #mck-call-indicator-header{
-	
+
 }
 #mck-call-btn-div{
-	margin-top:2px;
+	margin-top:15px;
 	margin-bottom:2px;
 }
 #mck-vid-receive-btn, #mck-vid-reject-btn{
-	width:40%;
+	width:30%;
 }
 .mck-vid-scr-controls{
 	display:inline-block;
