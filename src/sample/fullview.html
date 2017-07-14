@@ -130,23 +130,18 @@
 
 						</div>
 					</div>
-					<div id="mck-video-call-indicator" class="applozic-launchar n-vis">
-						    <div id="mck-call-indicator-header" class="mck-row">
-						        <div id="mck-video-call-icon" class="blk-lg-3 mck-alpha-contact-image">
+					<div id="mck-video-call-indicator" class="applozic-launchar n-vis row">
+						        <div id="mck-video-call-icon" class="col-lg-3 mck-alpha-contact-image">
 						            <span class="mck-contact-icon"></span>
 						        </div>
-						        <div id="mck-video-call-controls" class="blk-lg-9">
-						            <div id="mck-vid-btn" class="mck-row ">
-						                <div id="mck-video-call-indicator-txt" class="mck-video-call-indicator-txt blk-lg-9"></div>
-						            </div>
-						        </div>
-						    </div>
-						    <div class="mck-row justify-content-md-center">
-						        <div id="mck-call-btn-div" class="mck-centered blk-lg-6">
-						            <button id="mck-vid-receive-btn" class="mck-btn">Accept</button>
-						            <button id="mck-vid-reject-btn" class="mck-btn">Reject</button>
-						        </div>
-						    </div>
+						        <div id="mck-vid-btn" class="row">
+						           <div id="mck-video-call-indicator-txt" class="mck-video-call-indicator-txt"></div>
+											 <div id="mck-call-btn-div" class= "col-lg-8">
+			 						            <button id="mck-vid-receive-btn" class="mck-btn">Accept</button>
+			 						            <button id="mck-vid-reject-btn" class="mck-btn">Reject</button>
+			 						     </div>
+										 </div>
+
 						</div>
 				</div>
 
@@ -244,7 +239,7 @@
 											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
 											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
 									</div>
-									
+
 									<input id="mck-file-input" class="mck-file-input n-vis"
 										type="file" name="files[]">
 									<div id="mck-btn-attach" class="mck-btn-attach">
@@ -277,7 +272,7 @@
 										contenteditable="true" class="mck-text-box mck-text required"></span>
 									<!--<a href="#" id="mck-mike-btn" type="button"
 										class="mck-btn-text-panel mck-mic-btn n-vis"
-										title="Mike"> <img src="../images/mck-mic-btn.png"></a> -->	
+										title="Mike"> <img src="../images/mck-mic-btn.png"></a> -->
 									<a href="#" type="button" id="mck-btn-smiley"
 										class="write-link smiley mck-btn-smiley mck-btn-text-panel"
 										title="Smiley"></a> <a href="#" type="submit"
@@ -715,7 +710,7 @@
                 captureUserMedia(mediaConstraints, onMediaSuccess, onMediaError);
             });
            $('.mck-container').on("click", "#stop-recording" ,function() {
-            
+
                 this.disabled = true;
                 mediaRecorder.stop();
                 mediaRecorder.stream.stop();
@@ -729,17 +724,17 @@
                 $("#resume-recording").attr("disabled", false);
             });
              $('.mck-container').on("click", "#resume-recording" ,function() {
-           
+
                 this.disabled = true;
                 mediaRecorder.resume();
                  $('#pause-recording').attr("disabled",false);
             });
             $('.mck-container').on("click", "#save-recording" ,function() {
-    
+
                 this.disabled = true;
                 mediaRecorder.save();
                 $( "#audiodiv" ).removeClass( "vis" ).addClass( "n-vis" );
-                
+
             });
 
             var mediaRecorder;
@@ -947,14 +942,15 @@
 							//Function to initialize plugin
 							$applozic.fn
 									.applozic({
-										baseUrl : 'https://apps-test.applozic.com',
-								                userId : 'demouser6',
-								                userName : 'Demo User6',
+										baseUrl : 'https://apps.applozic.com',
+								                userId : 'debug454545',
+								                userName : 'test',
 										appId : 'applozic-sample-app',
-										accessToken: 'debug2',
+										accessToken: 'suraj',
 										ojq : $original,
 										obsm : oModal,
-										accessToken :'',          //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+
+										         //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
 										//  authenticationTypeId: 1,    //1 for password verification from Applozic server and 0 for access Token verification from your server
 										//	autoTypeSearchEnabled : false,
 										//  messageBubbleAvator: true,
