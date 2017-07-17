@@ -40,7 +40,7 @@
 	width: 50px;
 	height: 55px;
 	margin-right: 12px;
-	border-radius: 50% 
+	border-radius: 50%
 }
 
 .mck-download-btn {
@@ -54,7 +54,7 @@
 }
 .mck-msg-reply {
 	background-color: #0073b7;
-            
+
 }
 
 .mck-image-reply {
@@ -456,8 +456,8 @@
 }
 
 .footer-controls {
-    float:left;
-    margin-right: 197px;
+    float:right;
+    margin:5% 25% 0% 0%;
 }
 
 .mck-btn-blue {
@@ -1820,7 +1820,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	border-radius: 50%;
 	font-size: 25px;
 	text-align: center;
-	line-height: 50px;  
+	line-height: 50px;
 }
 
 .mck-alpha-contact-image {
@@ -3544,7 +3544,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 }
 #mck-video-call-icon{
 	/*background-color:blue;*/
-	margin:5%;
+	margin:6px;
 }
 #mck-video-call-controls{
 	margin:5%;
@@ -3598,10 +3598,11 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 }
 #local-media{
   /* background-color:blue;*/
-    border:solid;
-    width:20%;
+    /*border:solid;*/
+    width:30%;
    /* height: 100%;*/
-    margin-right:15px;
+    margin-bottom:2%;
+		margin-right: 5%;
     display:inline-block;
 }
 .btn-controls{
@@ -3653,7 +3654,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	width:56px;
 	background-color:#DB4437;
 	border:none;
-	
+
 }
 #mck-microfone-mute-btn{
 	border-radius: 50%;
@@ -3671,11 +3672,11 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 }
 .mck-unmute-icon{
 	fill:white;
-	
+
 }
 .mck-mute-icon{
 	fill:black;
-	
+
 }
 .mck-muted{
 	background-color:white !important;
@@ -3684,19 +3685,39 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	background-color:black !important;
 }
 .mck-disconnect-icon{
-fill:white;	
+fill:white;
 }
 #mck-call-indicator-header{
-	
+	width:50%;
 }
 #mck-call-btn-div{
-	margin-top:2px;
-	margin-bottom:2px;
+	width:65%;
 }
 #mck-vid-receive-btn, #mck-vid-reject-btn{
 	width:40%;
+	padding:3px 5px 3px 5px;
 }
 .mck-vid-scr-controls{
-	width:60%;
-	display:inline-block;
+		display:inline-block;
+		width:70%;
+}
+
+.mck-flex-footer{
+	align-content: center;
+	display:flex;
+	flex-direction: row;
+}
+.mck-local-media-border{
+	border:solid;
+}
+.mck-vid-flex-box{
+
+	align-content: center;
+	display:inline-flex;
+	flex-direction: row;
+}
+#mck-vid-btn{
+	margin:10px 0px 5px 0px;
+	width:85%;
+	float:right;
 }
