@@ -30,7 +30,7 @@
 }
 .footer-controls {
     float:right;
-    margin-right: 350px;
+    margin:5% 25% 0% 0%;
 }
 .mck-image-reply {
 	height: 50px;
@@ -3415,17 +3415,16 @@ ol, ul {
 }
 #mck-video-call-icon{
 	/*background-color:blue;*/
-	margin:5%;
+	margin:6px;
 }
 #mck-video-call-controls{
 	margin:5%;
 }
 
 .mck-video-call-indicator-txt{
-	margin-top:15px;
-	margin-bottom:3px;
 	font-size: 15px;
 	color:blanchedalmond;
+	width:35%
 }
 
 
@@ -3462,7 +3461,6 @@ ol, ul {
     height: 150px;
     /*background-color: rgba(233, 100, 100, 0.5);*/
     bottom: 0;
-    margin-left: 43%;
 }
 
 #mck-vid-div-overlay > .mck-vid-overlay-footer .left {
@@ -3476,10 +3474,10 @@ ol, ul {
 }
 #local-media{
   /* background-color:blue;*/
-    border:solid;
-    width:20%;
+    /*border:solid;*/
+    width:30%;
    /* height: 100%;*/
-    margin-right:15px;
+    margin-bottom:2%;
     display:inline-block;
 }
 .btn-controls{
@@ -3549,6 +3547,7 @@ ol, ul {
 }
 .mck-unmute-icon{
 	fill:white;
+	margin-top:30%;
 
 }
 .mck-mute-icon{
@@ -3568,12 +3567,32 @@ fill:white;
 
 }
 #mck-call-btn-div{
-	margin-top:15px;
-	margin-bottom:2px;
+width:65%;
 }
 #mck-vid-receive-btn, #mck-vid-reject-btn{
-	width:30%;
+	width:40%;
+	padding:3px 5px 3px 5px;
 }
 .mck-vid-scr-controls{
 	display:inline-block;
+	width:70%;
+}
+.mck-vid-flex-box{
+
+	align-content: center;
+	display:inline-flex;
+	flex-direction: row;
+}
+#mck-vid-btn{
+	margin:10px 0px 5px 0px;
+	width:85%;
+	float:right;
+}
+.mck-flex-footer{
+	align-content: center;
+	display:flex;
+	flex-direction: row;
+}
+.mck-local-media-border{
+	border:solid;
 }
