@@ -142,9 +142,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     case 'loadContextualTab':
                         return oInstance.loadTabWithTopic(params);
                         break;
-                   /* case "audioAttach":
+                    case "audioAttach":
                         oInstance.audioAttach(params);
-                        break;*/
+                        break;
                     case 'addWelcomeMessage':
                         oInstance.addWelcomeMessage(params);
                         break;
@@ -618,10 +618,10 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
 
 
-      /*  _this.audioAttach = function(file) {
+        _this.audioAttach = function(file) {
             mckFileService.audioRecoder(file);
 
-        };*/
+        };
         _this.loadGroupTab = function(tabId) {
             if (typeof tabId === 'undefined' || tabId === '') {
                 return 'GroupId required';
@@ -7234,6 +7234,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     return false;
                 }
             };
+
+             _this.audioRecoder = function(params) {
+                    _this.uploadFile(params);
+                   
+                };
             _this.uplaodFileToAWS = function(file, medium) {
                 var data = new FormData();
                 var uploadErrors = [];
