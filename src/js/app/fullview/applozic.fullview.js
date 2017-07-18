@@ -141,9 +141,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     case 'loadContextualTab':
                         return oInstance.loadTabWithTopic(params);
                         break;
-                   /* case "audioAttach":
+                    case "audioAttach":
                         oInstance.audioAttach(params);
-                        break;*/
+                        break;
                     case 'addWelcomeMessage':
                         oInstance.addWelcomeMessage(params);
                         break;
@@ -603,10 +603,10 @@ var MCK_CLIENT_GROUP_MAP = [];
         };
 
 
-      /*  _this.audioAttach = function(file) {
+       _this.audioAttach = function(file) {
             mckFileService.audioRecoder(file);
 
-        };*/
+        };
         _this.loadGroupTab = function(tabId) {
             if (typeof tabId === 'undefined' || tabId === '') {
                 return 'GroupId required';
@@ -3528,7 +3528,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="mck-msgreply-border">${msgReply} </div>' +
                 '</div>' +
                 '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
-                '<div class="mck-file-text notranslate mck-attachment downloadimage n-vis" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
+                '<div class="mck-file-text notranslate mck-attachment downloadimage ${downloadIconVisibleExpr}" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
                 '<div class="mck-msg-text mck-msg-content"></div>' +
                 '</div>' +
                 '</div>' +
@@ -6972,6 +6972,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
+             _this.audioRecoder = function(params) {
+                    _this.uploadFile(params);
+                   
+                };
             _this.uploadFile = function(params) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var file = params.file;

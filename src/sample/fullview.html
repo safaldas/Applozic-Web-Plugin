@@ -252,7 +252,12 @@
 									</div>
 									<a href="#" id="mck-file-up2" type="button"
 										class="write-link attach n-vis mck-file-upload mck-btn-text-panel"
-										title="Attach File"> </a> <span id="mck-text-box"
+										title="Attach File"> </a> 
+										<a href="#" id="mck-mike-btn" type="button"
+										class="mck-mic-btn mck-mike-btn vis"
+										title="Mike"></a> 
+									<a href="#" id="stop-recording" class="mck-stop-btn n-vis "></a>
+										<span id="mck-text-box"
 										contenteditable="true" class="mck-text-box mck-text required"></span>
 									<!--<a href="#" id="mck-mike-btn" type="button"
 										class="mck-btn-text-panel mck-mic-btn n-vis"
@@ -620,6 +625,35 @@
 	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
 	<script type="text/javascript"
 		src="../js/app/fullview/applozic.fullview.js"></script>
+		</script>
+    <script src="../js/Media/recorder.js"></script>
+	<script src="../js/Media/Fr.voice.js"></script>
+	<script src="../js/Media/app.js"></script>
+ <script>
+   function audioRecoder(){
+                $('.mck-container').on("click", "#mck-mike-btn" ,function() {
+               $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
+               $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
+                Fr.voice.record(false, function(){
+                $("#audiodiv").removeClass('n-vis').addClass('vis'); 
+                console.log("recoding started");
+            });
+             });
+            $('.mck-container').on("click", "#stop-recording" ,function() {               
+                  $("#mck-mike-btn").addClass('vis').removeClass('n-vis');
+                  $(".mck-stop-btn").addClass("n-vis").removeClass("vis");
+                  $("#audiodiv").removeClass('vis').addClass('n-vis'); 
+                  Fr.voice.export(function(blob){
+                	 var params = {};
+                  params.file = blob;
+                  params.name = "blob";
+                  $applozic.fn.applozic('audioAttach', params); 
+                  console.log(blob); // The blob data
+                     }, "blob");
+                   Fr.voice.stop();
+               });
+        } 
+        </script>
 	<script type="text/javascript">
 		var oModal = "";
 		if (typeof $original !== 'undefined') {
@@ -778,6 +812,7 @@
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4" // replace it with your Google API key
 									// initAutoSuggestions : initAutoSuggestions //  function to enable auto suggestions
 									});
+									 audioRecoder();
 							// var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}]};
 							// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
 							// $applozic.fn.applozic('loadContacts', contactjson);
