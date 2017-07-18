@@ -19,6 +19,43 @@
 	}
 </script>
 <script src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+        var refreshIntervalId ;
+        function timer() {
+        var minutesLabel = document.getElementById("minutes");
+        var secondsLabel = document.getElementById("seconds");
+        var totalSeconds = 0;
+        refreshIntervalId = setInterval(setTime, 1000);
+        console.log(refreshIntervalId);
+        function setTime()
+        {
+            ++totalSeconds;
+            secondsLabel.innerHTML = pad(totalSeconds%60);
+            minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+        }
+
+        function pad(val)
+        {
+            var valString = val + "";
+            if(valString.length < 2)
+            {
+                return "0" + valString;
+            }
+            else
+            {
+                return valString;
+            }
+        } 
+    }
+         function stoptimer(){
+         	var minutesLabel = document.getElementById("minutes");
+            var secondsLabel = document.getElementById("seconds");
+            secondsLabel.innerHTML = "0";
+            minutesLabel.innerHTML = "0";
+            console.log(refreshIntervalId);
+            clearInterval(refreshIntervalId);
+        }
+    </script>
 </head>
 <body>
 	<div class="mck-container">
@@ -207,24 +244,8 @@
 							</div>
 							<div class="blk-lg-12">
 								<p id="mck-msg-response" class="mck-box-response n-vis"></p>
-							</div>
-							<!--<div id="audiodiv" class="n-vis">
-
-              <button id="start-recording">Start</button>
-            <button id="stop-recording" disabled>Stop</button>
-
-            <button id="pause-recording" disabled>Pause</button>
-            <button id="resume-recording" disabled>Resume</button>
-
-
-            <button id="save-recording" disabled>Send</button>
-        </section>
-
-        <section class="experiment">
-            <div id="audios-container"></div>
-        </section>
-    </div>-->
-                                                        <div  id="mck-reply-to-div" class="n-vis">
+							</div>          
+                             <div  id="mck-reply-to-div" class="n-vis">
 									<button type="button" id="close"
 							class="mck-box-close mck-close-panel move-right">
 							<span aria-hidden="true">&times;</span>
@@ -273,6 +294,9 @@
 										class="mck-mic-btn mck-mike-btn vis"
 										title="Mike"></a> 
 									<a href="#" id="stop-recording" class="mck-stop-btn n-vis "></a>
+									<div id="audiodiv" class="mck-mic-timer n-vis">
+							       <label id="minutes">00</label>:<label id="seconds">00</label>
+                                    </div>
 										 <span id="mck-text-box"
 										contenteditable="true" class="mck-text-box mck-text required"></span>
 									<a href="#" type="button" id="mck-btn-smiley"
@@ -702,12 +726,16 @@
                $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
                $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
                 Fr.voice.record(false, function(){
+                $("#audiodiv").removeClass('n-vis').addClass('vis'); 
+                timer();
                 console.log("recoding started");
             });
              });
             $('.mck-container').on("click", "#stop-recording" ,function() {               
                   $("#mck-mike-btn").addClass('vis').removeClass('n-vis');
                   $(".mck-stop-btn").addClass("n-vis").removeClass("vis");
+                  $("#audiodiv").removeClass('vis').addClass('n-vis'); 
+                stoptimer();
                   Fr.voice.export(function(blob){
                 	 var params = {};
                   params.file = blob;
