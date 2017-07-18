@@ -1647,6 +1647,39 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
             var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
             var offlineblk = '<div id="mck-ofl-blk" class="mck-m-b"><div class="mck-clear"><div class="blk-lg-12 mck-text-light mck-text-muted mck-test-center">${userIdExpr} is offline now</div></div></div>';
+            var refreshIntervalId;//kusum
+            _this.timer = function() {
+                var minutesLabel = document.getElementById("minutes");
+                var secondsLabel = document.getElementById("seconds");
+                var totalSeconds = 0;
+                var that = this;
+                refreshIntervalId = setInterval(function(){
+                    ++totalSeconds;
+                    secondsLabel.innerHTML = that.pad(totalSeconds%60);
+                    minutesLabel.innerHTML = that.pad(parseInt(totalSeconds/60));
+                }, 1000);
+                console.log(refreshIntervalId);
+
+                that.pad = function(val) {
+                    var valString = val + "";
+                    if(valString.length < 2)
+                    {
+                        return "0" + valString;
+                    }
+                    else
+                    {
+                        return valString;
+                    }
+                };
+            };  
+        _this.stoptimer = function() {
+            var minutesLabel = document.getElementById("minutes");
+            var secondsLabel = document.getElementById("seconds");
+            secondsLabel.innerHTML = "0";
+            minutesLabel.innerHTML = "0";
+            console.log(refreshIntervalId);
+            clearInterval(refreshIntervalId);
+        };
             $applozic.template("oflTemplate", offlineblk);
             $applozic(d).on("click", ".mck-message-delete", function() {
                 _this.deleteMessage($applozic(this).parents('.mck-m-b').data("msgkey"));
@@ -2203,7 +2236,30 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(".mck-tabview-item").removeClass('active');
                     $applozic(this).addClass('active');
                 });
-            };
+            };//kusum
+             $('.mck-container').on("click", "#mck-mike-btn" ,function() {
+               $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
+               $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
+                Fr.voice.record(false, function(){
+                $("#audiodiv").removeClass('n-vis').addClass('vis'); 
+                mckMessageService.timer();
+                console.log("recoding started");
+            });
+             });
+            $('.mck-container').on("click", "#stop-recording" ,function() {               
+                  $("#mck-mike-btn").addClass('vis').removeClass('n-vis');
+                  $(".mck-stop-btn").addClass("n-vis").removeClass("vis");
+                  $("#audiodiv").removeClass('vis').addClass('n-vis'); 
+                  mckMessageService.stoptimer();
+                  Fr.voice.export(function(blob){
+                  var params = {};
+                  params.file = blob;
+                  params.name = "blob";
+                  $applozic.fn.applozic('audioAttach', params); 
+                  console.log(blob); // The blob data
+                     }, "blob");
+                   Fr.voice.stop();
+               });
             _this.openChat = function(ele) {
                 var $this = $applozic(ele);
                 var tabId = $this.data("mck-id");

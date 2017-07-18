@@ -19,43 +19,6 @@
 	}
 </script>
 <script src="../js/jquery.min.js"></script>
-<script type="text/javascript">
-        var refreshIntervalId ;
-        function timer() {
-        var minutesLabel = document.getElementById("minutes");
-        var secondsLabel = document.getElementById("seconds");
-        var totalSeconds = 0;
-        refreshIntervalId = setInterval(setTime, 1000);
-        console.log(refreshIntervalId);
-        function setTime()
-        {
-            ++totalSeconds;
-            secondsLabel.innerHTML = pad(totalSeconds%60);
-            minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
-        }
-
-        function pad(val)
-        {
-            var valString = val + "";
-            if(valString.length < 2)
-            {
-                return "0" + valString;
-            }
-            else
-            {
-                return valString;
-            }
-        } 
-    }
-         function stoptimer(){
-         	var minutesLabel = document.getElementById("minutes");
-            var secondsLabel = document.getElementById("seconds");
-            secondsLabel.innerHTML = "0";
-            minutesLabel.innerHTML = "0";
-            console.log(refreshIntervalId);
-            clearInterval(refreshIntervalId);
-        }
-    </script>
 </head>
 <body>
 	<div class="mck-container">
@@ -230,22 +193,6 @@
 							<div class="blk-lg-12">
 								<p id="mck-msg-response" class="mck-box-response n-vis"></p>
 							</div>
-							<!--<div id="audiodiv" class="n-vis">
-
-              <button id="start-recording">Start</button>
-            <button id="stop-recording" disabled>Stop</button>
-
-            <button id="pause-recording" disabled>Pause</button>
-            <button id="resume-recording" disabled>Resume</button>
-
-
-            <button id="save-recording" disabled>Send</button>
-        </section>
-
-        <section class="experiment">
-            <div id="audios-container"></div>
-        </section>
-    </div>-->
 							<div id="mck-write-box" class="blk-lg-12 mck-write-box">
 								<form id="mck-msg-form" class="vertical mck-msg-form">
 									<div class="mck-form-group n-vis">
@@ -682,33 +629,7 @@
     <script src="../js/Media/recorder.js"></script>
 	<script src="../js/Media/Fr.voice.js"></script>
 	<script src="../js/Media/app.js"></script>
-    <script>
-   function audioRecoder(){
-                $('.mck-container').on("click", "#mck-mike-btn" ,function() {
-               $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
-               $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
-                Fr.voice.record(false, function(){
-                $("#audiodiv").removeClass('n-vis').addClass('vis'); 
-                timer();
-                console.log("recoding started");
-            });
-             });
-            $('.mck-container').on("click", "#stop-recording" ,function() {               
-                  $("#mck-mike-btn").addClass('vis').removeClass('n-vis');
-                  $(".mck-stop-btn").addClass("n-vis").removeClass("vis");
-                  $("#audiodiv").removeClass('vis').addClass('n-vis'); 
-                  stoptimer();
-                  Fr.voice.export(function(blob){
-                	 var params = {};
-                  params.file = blob;
-                  params.name = "blob";
-                  $applozic.fn.applozic('audioAttach', params); 
-                  console.log(blob); // The blob data
-                     }, "blob");
-                   Fr.voice.stop();
-               });
-        } 
-        </script>
+ 
 	<script type="text/javascript">
 		//var $applozic = jQuery.noConflict(true);
 		//Sample json contains display name and photoLink for userId
@@ -850,7 +771,6 @@
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4" // replace it with your Google API key
 									// initAutoSuggestions : initAutoSuggestions //  function to enable auto suggestions
 									});
-									 audioRecoder();
 							// var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}]};
 							// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
 							// $applozic.fn.applozic('loadContacts', contactjson);
