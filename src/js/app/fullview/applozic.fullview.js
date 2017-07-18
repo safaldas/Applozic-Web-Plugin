@@ -1647,16 +1647,16 @@ var MCK_CLIENT_GROUP_MAP = [];
             var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
             var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
             var offlineblk = '<div id="mck-ofl-blk" class="mck-m-b"><div class="mck-clear"><div class="blk-lg-12 mck-text-light mck-text-muted mck-test-center">${userIdExpr} is offline now</div></div></div>';
-            var refreshIntervalId;//kusum
+            var refreshIntervalId;
             _this.timer = function() {
-                var minutesLabel = document.getElementById("minutes");
-                var secondsLabel = document.getElementById("seconds");
+                var minutesLabel = document.getElementById("mck_minutes");
+                var secondsLabel = document.getElementById("mck_seconds");
                 var totalSeconds = 0;
                 var that = this;
                 refreshIntervalId = setInterval(function(){
                     ++totalSeconds;
-                    secondsLabel.innerHTML = that.pad(totalSeconds%60);
-                    minutesLabel.innerHTML = that.pad(parseInt(totalSeconds/60));
+                    mck_secondsLabel.innerHTML = that.pad(totalSeconds%60);
+                    mck_minutesLabel.innerHTML = that.pad(parseInt(totalSeconds/60));
                 }, 1000);
                 console.log(refreshIntervalId);
 
@@ -1673,8 +1673,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 };
             };  
         _this.stoptimer = function() {
-            var minutesLabel = document.getElementById("minutes");
-            var secondsLabel = document.getElementById("seconds");
+            var minutesLabel = document.getElementById("mck_minutes");
+            var secondsLabel = document.getElementById("mck_seconds");
             secondsLabel.innerHTML = "0";
             minutesLabel.innerHTML = "0";
             console.log(refreshIntervalId);
@@ -2236,17 +2236,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(".mck-tabview-item").removeClass('active');
                     $applozic(this).addClass('active');
                 });
-            };//kusum
-             $('.mck-container').on("click", "#mck-mike-btn" ,function() {
-               $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
+            };
+             $applozic('.mck-container').on("click", "#mck-mike-btn" ,function() {
+               $("#this").removeClass('vis').addClass('n-vis');
                $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
                 Fr.voice.record(false, function(){
                 $("#audiodiv").removeClass('n-vis').addClass('vis'); 
                 mckMessageService.timer();
-                console.log("recoding started");
             });
              });
-            $('.mck-container').on("click", "#stop-recording" ,function() {               
+            $applozic('.mck-container').on("click", "#stop-recording" ,function() {               
                   $("#mck-mike-btn").addClass('vis').removeClass('n-vis');
                   $(".mck-stop-btn").addClass("n-vis").removeClass("vis");
                   $("#audiodiv").removeClass('vis').addClass('n-vis'); 
@@ -2256,7 +2255,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                   params.file = blob;
                   params.name = "blob";
                   $applozic.fn.applozic('audioAttach', params); 
-                  console.log(blob); // The blob data
                      }, "blob");
                    Fr.voice.stop();
                });
