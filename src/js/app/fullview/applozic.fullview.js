@@ -1649,8 +1649,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             var offlineblk = '<div id="mck-ofl-blk" class="mck-m-b"><div class="mck-clear"><div class="blk-lg-12 mck-text-light mck-text-muted mck-test-center">${userIdExpr} is offline now</div></div></div>';
             var refreshIntervalId;
             _this.timer = function() {
-                var minutesLabel = document.getElementById("mck_minutes");
-                var secondsLabel = document.getElementById("mck_seconds");
+                var minutesLabel = document.getElementById("#mck-minutes");
+                var secondsLabel = document.getElementById("#mck-seconds");
                 var totalSeconds = 0;
                 var that = this;
                 refreshIntervalId = setInterval(function(){
@@ -2238,7 +2238,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
             };
              $applozic('.mck-container').on("click", "#mck-mike-btn" ,function() {
-               $("#this").removeClass('vis').addClass('n-vis');
+               $("this").removeClass('vis').addClass('n-vis');
                $(".mck-stop-btn").addClass("vis").removeClass("n-vis");
                 Fr.voice.record(false, function(){
                 $("#audiodiv").removeClass('n-vis').addClass('vis'); 
