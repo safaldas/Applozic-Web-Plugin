@@ -1655,8 +1655,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var that = this;
                 refreshIntervalId = setInterval(function(){
                     ++totalSeconds;
-                    mck_secondsLabel.innerHTML = that.pad(totalSeconds%60);
-                    mck_minutesLabel.innerHTML = that.pad(parseInt(totalSeconds/60));
+                   secondsLabel.innerHTML = that.pad(totalSeconds%60);
+                   minutesLabel.innerHTML = that.pad(parseInt(totalSeconds/60));
                 }, 1000);
                 console.log(refreshIntervalId);
 
