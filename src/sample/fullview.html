@@ -626,10 +626,26 @@
 	<script type="text/javascript"
 		src="../js/app/fullview/applozic.fullview.js"></script>
 		</script>
+	<script type="text/javascript">
+		var oModal = "";
+		if (typeof $original !== 'undefined') {
+			$ = $original;
+			jQuery = $original;
+			if (typeof $.fn.modal === 'function') {
+				oModal = $.fn.modal.noConflict();
+			}
+		} else {
+			$ = $applozic;
+			jQuery = $applozic;
+			if (typeof $applozic.fn.modal === 'function') {
+				oModal = $applozic.fn.modal.noConflict();
+			}
+		}
+	</script>
     <script src="../js/Media/recorder.js"></script>
 	<script src="../js/Media/Fr.voice.js"></script>
 	<script src="../js/Media/app.js"></script>
- <script>
+    <script>
    function audioRecoder(){
                 $('.mck-container').on("click", "#mck-mike-btn" ,function() {
                $("#mck-mike-btn").removeClass('vis').addClass('n-vis');
@@ -654,23 +670,6 @@
                });
         } 
         </script>
-	<script type="text/javascript">
-		var oModal = "";
-		if (typeof $original !== 'undefined') {
-			$ = $original;
-			jQuery = $original;
-			if (typeof $.fn.modal === 'function') {
-				oModal = $.fn.modal.noConflict();
-			}
-		} else {
-			$ = $applozic;
-			jQuery = $applozic;
-			if (typeof $applozic.fn.modal === 'function') {
-				oModal = $applozic.fn.modal.noConflict();
-			}
-		}
-	</script>
-
 	<script type="text/javascript">
 		//var $applozic = jQuery.noConflict(true);
 		//Sample json contains display name and photoLink for userId
