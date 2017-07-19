@@ -417,7 +417,7 @@ body {
 
 .mck-container .right .write .write-link.smiley:before {
 	display: inline-block;
-	float: left;
+	float: right;
 	width: 24px;
 	height: 40px;
 	content: '';
@@ -437,7 +437,7 @@ body {
 
 .mck-container .right .write .write-link.send:before {
 	display: inline-block;
-	float: left;
+	float: right;
 	width: 22px;
 	height: 40px;
 	margin-left: 11px;
