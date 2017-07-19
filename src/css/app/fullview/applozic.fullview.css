@@ -65,6 +65,13 @@
 	line-height: 50px;
 }
 
+#mck-vid-icon img {
+	width: 50px;
+	height: 55px;
+	margin-right: 12px;
+	border-radius: 50% 
+}
+
 .mck-attachmentmsgto {
     color : chartreuse;
     padding: 3px;
