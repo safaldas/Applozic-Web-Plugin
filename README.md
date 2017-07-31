@@ -119,6 +119,7 @@ Add the below code just after Step 1.
     accessToken: '',                    //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
     locShare: true,
     googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",   // your project google api key 
+    mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
     googleMapScriptLoaded : false,   // true if your app already loaded google maps script
     autoTypeSearchEnabled : true,     // set to false if you don't want to allow sending message to user who is not in the contact list
     loadOwnContacts : false, //set to true if you want to populate your own contact list (see Step 4 for reference)
