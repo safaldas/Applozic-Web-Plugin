@@ -38,6 +38,7 @@ Add the below code just after Step 1.
     locShare: true,
     googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",   // your project google api key 
     googleMapScriptLoaded : false,   // true if your app already loaded google maps script
+    mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
     autoTypeSearchEnabled : true,     // set to false if you don't want to allow sending message to user who is not in the contact list
     loadOwnContacts : false, //set to true if you want to populate your own contact list (see Step 4 for reference)
     olStatus: false,         //set to true for displaying a green dot in chat screen for users who are online
