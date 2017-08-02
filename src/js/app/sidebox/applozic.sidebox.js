@@ -7,6 +7,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         fileBaseUrl: 'https://applozic.appspot.com',
         notificationIconLink: '',
         notificationSoundLink: '',
+        mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
         launcher: 'applozic-launcher',
         userId: null,
         appId: null,
@@ -225,6 +226,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     case 'subscribeToEvents':
                         return oInstance.subscribeToEvents(params);
                         break;
+                    case 'getConversation':
+                        return oInstance.getConversation(params);
+                        break;
                 }
             } else if ($applozic.type(appOptions) === 'object') {
                 oInstance.reInit(appOptions);
@@ -332,6 +336,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_CALL_ENABLED = appOptions.video;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
+        var MCK_ON_TOPIC_DETAILS = appOptions.onTopicDetails;
         var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
         var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
         var MCK_DISPLAY_TEXT = appOptions.displayText;
@@ -354,7 +359,8 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_AUTHENTICATION_TYPE_ID = appOptions.authenticationTypeId;
         var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
-        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : "";
+        var MCK_MAP_STATIC_API_KEY = appOptions.mapStaticAPIkey;
+        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : MCK_BASE_URL + "/resources/sidebox/audio/notification_tone.mp3";
         var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : 'NO_ACCESS';
         var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
@@ -399,7 +405,10 @@ var MCK_CLIENT_GROUP_MAP = [];
         var mckContactService = new MckContactService();
         var mckNotificationService = new MckNotificationService();
         var $mckChatLauncherIcon = $applozic('.chat-launcher-icon');
+        var mckCallService = new MckCallService();
         var mckNotificationTone = null;
+        var ringToneService;
+        var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
             'onConnectFailed': function() {},
@@ -425,13 +434,19 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
-            mckNotificationTone = MCK_NOTIFICATION_TONE_LINK;
+           /* ringToneService = new RingToneService();
+            mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK);*/
             mckMessageService.init();
             mckFileService.init();
             mckInit.initializeApp(appOptions, false);
             mckNotificationService.init();
             mckMapLayout.init();
             mckMessageLayout.initEmojis();
+            if (IS_CALL_ENABLED) {
+             ringToneService = new RingToneService();
+             mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+            mckCallService.init();
+              }
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
@@ -476,6 +491,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             IS_MCK_LOCSHARE = optns.locShare;
             IS_CALL_ENABLED = appOptions.video;
             MCK_ON_PLUGIN_INIT = optns.onInit;
+            MCK_ON_TOPIC_DETAILS = optns.onTopicDetails;
             MCK_CONTACT_NAME_MAP = new Array();
             MCK_UNREAD_COUNT_MAP = new Array();
             MCK_ON_PLUGIN_CLOSE = optns.onClose;
@@ -1129,6 +1145,12 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
         };
 
+        _this.getConversation = function(params) {
+            mckMessageService.getTopicId({
+                'conversationId': params.conversationId
+            });
+        };
+
         function MckInit() {
             var _this = this;
             var IS_REINITIALIZE = false;
@@ -1140,7 +1162,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var MCK_IDLE_TIME_COUNTER = MCK_IDLE_TIME_LIMIT;
             var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
             _this.getLauncherHtml = function() {
-                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<a href="#" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div></div>';
+                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<a href="#" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div><div id="mck-msg-preview-btns" class="n-vis"><button id="mck-vid-call-accept">Accept</button><button id="mck-vid-call-reject">reject</reject></div></div>';
             };
             _this.initializeApp = function(optns, isReInit) {
                 IS_REINITIALIZE = isReInit;
@@ -1191,6 +1213,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             'Application-Key': MCK_APP_ID
                         },
                         success: function(result) {
+                            if (IS_CALL_ENABLED) {
+                                mckCallService.InitilizeVideoClient(result.userId, result.deviceKey);
+                            }
                             mckStorage.clearMckMessageArray();
                             mckStorage.clearMckContactNameArray();
                             if (result === "INVALID_PASSWORD") {
@@ -1252,7 +1277,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                             }
                         }
                     });
-                }
+                } else {
+                        if (IS_CALL_ENABLED) {
+                                mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
+                            }
+                   }
             };
             _this.onInitApp = function(data) {
                 _this.appendLauncher();
@@ -1308,7 +1337,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 mckUserUtils.checkUserConnectedStatus();
                 if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                    MCK_ON_PLUGIN_INIT('success');
+                    MCK_ON_PLUGIN_INIT('success',data);
                 }
                 mckInit.tabFocused();
                 if ($mckChatLauncherIcon.length > 0 && MCK_TOTAL_UNREAD_COUNT > 0) {
@@ -1618,6 +1647,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var MESSAGE_SEND_URL = "/rest/ws/message/send";
             var GROUP_CREATE_URL = "/rest/ws/group/create";
             var MESSAGE_LIST_URL = "/rest/ws/message/list";
+            var UPDATE_REPLY_MAP ="/rest/ws/message/detail"
             var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
             var MESSAGE_DELETE_URL = "/rest/ws/message/delete";
             var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
@@ -2222,7 +2252,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
-                if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
+                if (typeof msgKeys !== 'undefined' && msgKeys !== '' && !(messagePxy.forward)) {
                     metadata.AL_REPLY = msgKeys;
                 }
 
@@ -2333,10 +2363,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var messagePxy = {
                     "type": 5,
                     "contentType": forwardMessage.contentType,
-                    "message": forwardMessage.message
+                    "message": forwardMessage.message,
+                    "forward": "forward"
                 };
                 if (forwardMessage.metadata) {
-                    messagePxy.metadata = forwardMessage.metadata;
+                   if(forwardMessage.metadata.AL_REPLY) {
+                       forwardMessage.metadata.AL_REPLY ='';
+                      }
+                 messagePxy.metadata = forwardMessage.metadata;
                 }
                 var conversationId = $mck_msg_inner.data('mck-conversationid');
                 var topicId = $mck_msg_inner.data('mck-topicid');
@@ -2390,13 +2424,14 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.submitMessage = function(messagePxy, optns) {
                 var randomId = messagePxy.key;
                 var metadata = messagePxy.metadata ? messagePxy.metadata : {};
+
                 if (MCK_CHECK_USER_BUSY_STATUS) {
                     messagePxy.metadata = {
                         userStatus: 4
                     };
                 }
                 var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
-                if (typeof msgKeys !== 'undefined' && msgKeys !== '') {
+                if (typeof msgKeys !== 'undefined' && msgKeys !== '' && !(messagePxy.forward)) {
                     metadata.AL_REPLY = msgKeys;
                     $applozic("#mck-text-box").data("AL_REPLY", '');
                 }
@@ -2481,14 +2516,22 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
 
             _this.replyMessage = function(msgKey) {
+                var displayName ='';
                 var tabId = $mck_msg_inner.data('mck-id');
-                var message = mckStorage.getMessageByKey(msgKey);
+                var message =  mckMessageService.getReplyMessageByKey(msgKey);
                 $mck_text_box.focus().select();
                 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');
-                var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
-
+                if(message.type === 5) {
+                      displayName = 'You';
+                    } else {
+                    displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+                     }
                 $('#mck-reply-to').html(displayName);
+                if (typeof message.fileMeta === "object" || message.contentType === 2) {
+                $('#mck-reply-msg').html(mckMessageLayout.getImageForMessagePreview(message));
+                 } else {
                 $('#mck-reply-msg').html(message.message);
+                    }
                 $("#mck-text-box").data("AL_REPLY", msgKey);
             };
 
@@ -2546,7 +2589,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                                 CONTACT_SYNCING = false;
                             }
-                            mckStorage.clearMckMessageArray();
                         },
                         error: function() {}
                     });
@@ -2667,6 +2709,22 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
+ _this.getReplyMessageByKey = function(msgkey) {
+    var replyMsg = mckStorage.getMessageByKey(msgkey);
+      if (typeof replyMsg === "undefined" ) {
+                mckUtils.ajax({
+                        url: MCK_BASE_URL + UPDATE_REPLY_MAP,
+                        async: false,
+                        type: 'get',
+                        data: "keys=" + msgkey,
+                        success: function(data) {
+                        mckStorage.updateMckMessageArray(data);
+                          }
+                    });
+}
+      return  mckStorage.getMessageByKey(msgkey) ;
+};
+
             _this.loadMessageList = function(params, callback) {
                 var individual = false;
                 var isConvReq = false;
@@ -3251,6 +3309,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                                             mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
                                         }
                                     }
+
+                                    if (typeof params.callback === 'function') {
+                                        params.callback(conversationPxy);
+                                    }
                                 }
                             }
                         },
@@ -3425,7 +3487,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     params.callback(response);
                                 }
                             }
-                            mckStorage.clearMckMessageArray();
                         } else if (data.status === 'error') {
                             if (typeof params.callback === 'function') {
                                 response.status = 'error';
@@ -3445,6 +3506,55 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 });
+            };
+            _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
+                var message = (msgType == "CALL_MISSED") ? "Missed Call" : (msgType == "CALL_REJECTED") ? "Call Rejected" : "";
+                if (message == "" || message == undefined) {
+                    message = "video message";
+                }
+                var toUser = $mck_msg_to.val();
+                var metadata = {
+                    "MSG_TYPE": msgType,
+                    "CALL_ID": callId,
+                    "CALL_AUDIO_ONLY": audioOnly
+                }
+                var messagePxy = {
+                    "to": toUser,
+                    "type": 5,
+                    "contentType": contentType,
+                    "message": message,
+                    "metadata": metadata,
+                    "senderName": MCK_USER_ID
+                };
+                _this.sendMessage(messagePxy);
+                return messagePxy;
+            };
+            _this.sendVideoCallEndMessage = function(callId, msgType, contentType, audioOnly, callDuration) {
+
+                var callDurationStr = "";
+                if (callDuration) {
+                    callDurationStr = mckDateUtils.convertMilisIntoTime(callDuration);
+                }
+                var message = (msgType == "CALL_MISSED") ? "Missed Call" : (msgType == "CALL_REJECTED") ? "Call Rejected" : (msgType == "CALL_END") ? "Call End \n Duration: " + callDurationStr : "video message";
+                if (message == "" || message == undefined) {
+                    message = "video message";
+                }
+                var toUser = $mck_msg_to.val();
+                var metadata = {
+                    "MSG_TYPE": msgType,
+                    "CALL_ID": callId,
+                    "CALL_AUDIO_ONLY": audioOnly,
+                    "CALL_DURATION": callDuration
+                }
+                var messagePxy = {
+                    "to": toUser,
+                    "type": 5,
+                    "contentType": contentType,
+                    "message": message,
+                    "metadata": metadata
+                };
+                _this.sendMessage(messagePxy);
+                return messagePxy;
             };
         }
 
@@ -3488,6 +3598,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_group_search_list = $applozic("#mck-group-search-list");
             var $mck_group_search_tabview = $applozic("#mck-group-search-tabview");
             var $mck_group_menu_options = $applozic(".mck-group-menu-options");
+            var $mck_videocall_btn = $applozic(".mck-videocall-btn");
             var $mck_group_search_input = $applozic("#mck-group-search-input");
             var $mck_group_search_input_box = $applozic("#mck-group-search-input-box");
 
@@ -3548,10 +3659,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="mck-msg-box ${msgClassExpr}">' +
                 '<div class= "move-right mck-msg-text"></div>' +
                 '<div class ="mck-msg-reply mck-verticalLine ${msgReplyToVisibleExpr}">' +
-                '<div class="mck-msglist-msgto">${msgReplyTo} </div>' +
+                '<div class="mck-msgto">${msgReplyTo} </div>' +
                 '</div>' +
                 '<div class ="mck-msg-reply mck-verticalLine ${msgReplyDivExpr}">' +
-                '<div class="mck-msgreply-border">${msgReply} </div>' +
+                '<div class="mck-msgreply-border ${textreplyVisExpr}">${msgReply}</div>' +
+                '<div class="mck-msgreply-border ${msgpreviewvisExpr}">{{html msgPreview}}</div>' +
                 '</div>' +
                 '<div class="${nameTextExpr} ${showNameExpr}"><span class="mck-ol-status ${contOlExpr}"><span class="mck-ol-icon" title="${onlineLabel}"></span>&nbsp;</span>${msgNameExpr}</div>' +
                 '<div class="mck-file-text notranslate mck-attachment downloadimage ${downloadIconVisibleExpr}" data-filemetakey="${fileMetaKeyExpr}" data-filename="${fileNameExpr}" data-fileurl= "${fileUrlExpr}" data-filesize="${fileSizeExpr}"><div>{{html fileExpr}}</div> {{html downloadMediaUrlExpr}}</div>' +
@@ -3564,7 +3676,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<ul>' +
                 '<li><a class="mck-message-forward">${msgForwardExpr}</a></li>' +
                 '<li><a class="mck-message-delete">${msgDeleteExpr}</a></li>' +
-                '<li><a class="mck-message-reply n-vis">${msgReplyExpr}</a></li>' +
+                '<li><a class="mck-message-reply">${msgReplyExpr}</a></li>' +
                 '</ul>' +
                 '</div>' +
                 '</div>';
@@ -3668,9 +3780,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_msg_inner.addClass('mck-group-inner');
                         $li_mck_block_user.removeClass('vis').addClass('n-vis');
                         $li_mck_video_call.removeClass('vis').addClass('n-vis');
+                        $mck_videocall_btn.removeClass('vis').addClass('n-vis');
                     } else {
                         $li_mck_block_user.removeClass('n-vis').addClass('vis');
                         $li_mck_video_call.removeClass('n-vis').addClass('vis')
+                        if(IS_CALL_ENABLED) {
+                        $mck_videocall_btn.removeClass('n-vis').addClass('vis');
+                         }
                     }
                     if (!params.topicId && params.conversationId) {
                         var conversationPxy = MCK_CONVERSATION_MAP[params.conversationId];
@@ -3686,7 +3802,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 $mck_conversation_header.html(topicDetail.title);
                                 $mck_conversation_header.removeClass('n-vis');
                             } else if (IS_MCK_TOPIC_BOX) {
-                                _this.setProductProperties(topicDetail);
+                                _this.setProductProperties(topicDetail, params.topicId);
                                 $product_box_caret.addClass('n-vis');
                                 $mck_product_box.addClass('mck-product-box-wc');
                                 $mck_conversation_list.addClass('n-vis');
@@ -3701,6 +3817,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                         $mck_atttachmenu_box.removeClass('vis').addClass('n-vis');
                         $mck_attachfile_box.removeClass('n-vis').addClass('vis');
                     }
+
+                    //Todo: temporarily removing.
+                    /*if(IS_CALL_ENABLED) {
+                        $applozic("#li-mck-video-call").removeClass("n-vis").addClass("vis");
+                    }*/
                     var name = _this.getTabDisplayName(params.tabId, params.isGroup, params.userName);
                     if (_this.isGroupDeleted(params.tabId, params.isGroup)) {
                         $mck_msg_error.html(MCK_LABELS['group.deleted']);
@@ -3766,7 +3887,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckMessageService.loadMessageList(params, callback);
                 _this.openConversation();
             };
-            _this.setProductProperties = function(topicDetail) {
+            _this.setProductProperties = function(topicDetail, topicId) {
                 $mck_product_title.html(topicDetail.title);
                 $mck_product_icon.html(_this.getTopicLink(topicDetail.link));
                 var subtitle = (topicDetail.subtitle) ? topicDetail.subtitle : '';
@@ -3779,6 +3900,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var value2 = (topicDetail.value2) ? ":" + topicDetail.value2 : '';
                 $mck_product_down_key.html(key2);
                 $mck_product_down_value.html(value2);
+
+                if (typeof MCK_ON_TOPIC_DETAILS === 'function') {
+                    topicDetail.topicId = topicId;
+                    MCK_ON_TOPIC_DETAILS(topicDetail);
+                }
             };
             _this.getTopicLink = function(topicLink) {
                 return (topicLink) ? '<img src="' + topicLink + '">' : '<span class="mck-icon-no-image"></span>';
@@ -3854,23 +3980,43 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.getContactDisplayName = function(userId) {
-                if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
+
+                   if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
                     return MCK_CONTACT_NAME_MAP[userId];
-                } else {
+                    } else {
                     return;
-                }
+                     }
             };
             _this.addMessage = function(msg, contact, append, scroll, appendContextMenu) {
                 var metadatarepiledto = '';
                 var replymessage = '';
                 var replyMsg = '';
-                var msgpreview = '';
-
-                if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== undefined) {
+                var msgpreview ='';
+                var textreply ='vis';
+                var msgpreviewVis = 'n-vis';
+                var replyTo = '';
+                var  msgReplyToVisible = 'n-vis';
+                if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== "undefined" ) {
                     metadatarepiledto = msg.metadata.AL_REPLY;
-                    replyMsg = mckStorage.getMessageByKey(metadatarepiledto);
-                    msgpreview = mckMessageLayout.getTextForMessagePreview(replyMsg, contact);
+                    replyMsg = mckMessageService.getReplyMessageByKey(metadatarepiledto);
+                    if (typeof replyMsg!== "undefined" ) {
+                     if((contact.isGroup && replyMsg)||(!(contact.isGroup)) && (typeof replyMsg.fileMeta === 'undefined')){
+                     msgReplyToVisible ='vis';
+                      }
+                   if(replyMsg.type === 5) {
+                      replyTo = 'You';
+                    } else {
+                    replyTo = mckMessageLayout.getTabDisplayName(replyMsg.to, false);
+                     }
+                   if (typeof replyMsg.fileMeta === "object" || replyMsg.contentType === 2) {
+                    msgpreview =   _this.getImageForReplyMessage(replyMsg);
+                    textreply ='n-vis';
+                    msgpreviewVis = "vis";
+                    msgReplyToVisible ='n-vis';
+                     }
                 }
+            }
+
                 if (msg.type === 6 || msg.type === 7) {
                     return;
                 }
@@ -3953,10 +4099,12 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                 var msgList = [{
                     msgReply: replyMsg ? replyMsg.message + "\n" : '',
-                    msgReplyTo: replyMsg ? replyMsg.to + "\n" : '',
+                    msgReplyTo: replyMsg ? replyTo + "\n" : '',
                     msgReplyDivExpr: replyMsg ? 'vis' : 'n-vis',
-                    msgReplyToVisibleExpr: (contact.isGroup && replyMsg) ? 'vis' : 'n-vis',
-                    msgPreview: replyMsg ? msgpreview : '',
+                    msgReplyToVisibleExpr: msgReplyToVisible,
+                    msgPreview: msgpreview ? _this.getImageForReplyMessage(replyMsg) :"",
+                    msgpreviewvisExpr: msgpreviewVis,
+                    textreplyVisExpr: textreply,
                     msgKeyExpr: msg.key,
                     msgDeliveredExpr: msg.delivered,
                     msgSentExpr: msg.sent,
@@ -4015,7 +4163,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             var topicDetail = MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId];
                             if (typeof topicDetail === "object") {
                                 if (IS_MCK_TOPIC_BOX) {
-                                    _this.setProductProperties(topicDetail);
+                                    _this.setProductProperties(topicDetail, conversationPxy.topicId);
                                 } else if (IS_MCK_TOPIC_HEADER) {
                                     $mck_conversation_header.html(topicDetail.title);
                                 }
@@ -4130,11 +4278,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                     try {
                         var geoLoc = $applozic.parseJSON(msg.message);
                         if (geoLoc.lat && geoLoc.lon) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '"/></a>';
+                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '&key='+MCK_MAP_STATIC_API_KEY+'"/></a>';
                         }
                     } catch (ex) {
                         if (msg.message.indexOf(',') !== -1) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '" /></a>';
+                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '&key='+MCK_MAP_STATIC_API_KEY+'" /></a>';
                         }
                     }
                 }
@@ -4158,6 +4306,48 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 return '';
             };
+        _this.getImageForMessagePreview = function(message) {
+            if (typeof message.fileMeta === 'object') {
+                    if (message.fileMeta.contentType.indexOf("image")!== -1) {
+            return '<span>photo</span> <img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply move-right"/>';
+
+               } else if (message.fileMeta.contentType.indexOf("audio") !== -1) {
+                        return '<span>audio</span><span class="mck-file-detail move-right"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                     else {
+                        return '<span class="mck-file-detail move-right"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                    return '';
+                }
+                 if (message.contentType === 2) {
+                    var geoLoc = $applozic.parseJSON(message.message);
+            return '<span>location</span><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '" class="mck-image-reply move-right"/>';
+
+                    }
+            };
+
+         _this.getImageForReplyMessage = function(message) {
+                var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+             if (typeof message.fileMeta === 'object') {
+                    if (message.fileMeta.contentType.indexOf("image")!== -1) {
+            return '<div><div class="mck-imagereply mck-margin"><div class="mck-msgto">'+displayName+ '</div><div><span class="mck-icon-camera mck-camera"></span><span>Photo</span></div></div><div class="mck-imagereply"><img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply mck-msg-text mck-msg-content"/></div></div>';
+
+               } else if (message.fileMeta.contentType.indexOf("audio") !== -1) {
+                        return '<div class="mck-attachmentmsgto">'+displayName+ '</div><span class="mck-file-detail mck-msg-text mck-msg-content"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                     else {
+                        return '<div class="mck-attachmentmsgto">'+displayName+ '</div><span class="mck-file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + message.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(message.fileMeta.size) + '</span></span>';
+                    }
+                    return '';
+                }
+                 if (message.contentType === 2) {
+                    var geoLoc = $applozic.parseJSON(message.message);
+            return '<div><div class="mck-imagereply mck-margin"><div class="mck-msgto">'+displayName+ '</div><span class="mck-icon-marker mck-location-icon"></span><span>Location</span></div><div class="mck-imagereply"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '" class="mck-image-reply mck-msg-text "/></div></div>';
+
+                    }
+            };
+
+
             _this.getFileAttachment = function(msg) {
                 if (typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
@@ -4196,7 +4386,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (contact.isGroup && contact.type !== 7) {
                     imgsrctag = mckGroupLayout.getGroupImage(contact.imageUrl);
                 } else {
-                    if (contact.isGroup && contact.type === 7) {
+                    if (contact.isGroup && contact.type === 7 && contact.members.length > 1) {
                         contact = _this.getContactFromGroupOfTwo(contact);
                     }
                     if (typeof(MCK_GETUSERIMAGE) === "function") {
@@ -4230,9 +4420,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var letters = /^[a-zA-Z]+$/;
                 if (first_alpha.match(letters)) {
                     first_alpha = first_alpha.toUpperCase();
-                    return '<div class="mck-alpha-contact-image alpha_' + first_alpha + '"><span class="mck-contact-icon">' + first_alpha + '</span></div>';
+                    return '<div class="mck-videocall-image alpha_' + first_alpha + '"><span class="mck-contact-icon">' + first_alpha + '</span></div>';
                 } else {
-                    return '<div class="mck-alpha-contact-image alpha_user"><span class="mck-icon-user"></span></div>';
+                    return '<div class="mck-videocall-image alpha_user"><span class="mck-icon-user"></span></div>';
                 }
             };
             _this.getNameTextClassByAlphabet = function(name) {
@@ -4639,7 +4829,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     olStatus = 'vis';
                     prepend = true;
                 }
-                if (contact.type === 7) {
+                if (contact.type === 7 && contact.members.length > 1) {
                     var group = mckGroupUtils.getGroup(message.groupId);
                     var contacts = mckMessageLayout.getContactFromGroupOfTwo(group);
                     if (isGroupTab && IS_MCK_OL_STATUS && w.MCK_OL_MAP[contacts.contactId]) {
@@ -5106,7 +5296,26 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.populateMessage = function(messageType, message, notifyUser) {
+                var callDuration = mckDateUtils.convertMilisIntoTime(message.metadata.CALL_DURATION);
                 mckContactService.loadUserProfile(message.to);
+
+                if (message.contentType == 103) {
+                    if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                        message.message = "you rejected a Video call from " + message.to;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                        message.message = message.to + "rejected a Video call from you";
+                    } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_END") {
+                        //alert("call ended: duration is:"+message.metadata.CALL_DURATION);
+                        message.message = "you were in a call with " + message.to + "\n call duration : " + callDuration;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_END") {
+                        //alert("call ended: duration is:"+message.metadata.CALL_DURATION);
+                        message.message = "you were in a call with " + message.to + "\n call duration : " + callDuration;
+                    } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                        message.message = "you missed a Video call from " + message.to;
+                    } else if (message.type == 5 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                        message.message = message.to + "missed a Video call from you";
+                    }
+                }
 
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isValidMeta = mckMessageLayout.isValidMetaData(message);
@@ -5206,7 +5415,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     }
                                     mckMessageService.sendDeliveryUpdate(message);
                                 }
-                                if (notifyUser) {
+                                if (notifyUser && contact.type!== 6) {
                                     mckNotificationService.notifyUser(message);
                                 }
                             }
@@ -5260,7 +5469,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 if (typeof message.fileMeta === 'object') {
                     var file = $applozic.extend({}, message.fileMeta);
+                    if (typeof file.url === 'undefined' || file.url === '') {
                     file.url = MCK_FILE_URL + '/rest/ws/aws/file/' + message.fileMeta.blobKey;
+                         }
                     delete file.blobKey;
                     messageFeed.file = file;
                 }
@@ -5738,7 +5949,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 '<div class="blk-lg-3">{{html contImgExpr}}</div>' + '<div class="blk-lg-9">' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-cont-name mck-truncate"><strong>${contNameExpr}</strong></div>' +
-                '<div class="blk-lg-4 mck-group-admin-text move-right ${enableAdminMenuExpr} ${isAdminExpr}"><span>${roleExpr}</span></div></div>' +
+                '<div class="blk-lg-4 mck-group-admin-text move-right vis"><span>${roleExpr}</span></div></div>' +
                 '<div class="mck-row">' +
                 '<div class="blk-lg-8 mck-truncate mck-last-seen-status" title="${contLastSeenExpr}">${contLastSeenExpr}</div>' +
                 '<div class="blk-lg-4 mck-group-admin-options move-right ${enableAdminMenuExpr}">' +
@@ -7154,7 +7365,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckContactService.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
-
+               // var notificationsound = mckNotificationTone;
                 _this.showNewMessageNotification(message, contact, displayName);
                 if (IS_MCK_NOTIFICATION && !IS_MCK_TAB_FOCUSED) {
                     var iconLink = MCK_NOTIFICATION_ICON_LINK;
@@ -7169,7 +7380,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
             };
             _this.showNewMessageNotification = function(message, contact, displayName) {
-                if (!IS_NOTIFICATION_ENABLED) {
+                if (!IS_NOTIFICATION_ENABLED || message.contentType === 102) {
                     return;
                 }
                 var currTabId = $mck_msg_inner.data('mck-id');
@@ -7211,7 +7422,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_preview_icon.html(imgsrctag);
                 $mck_msg_preview.data('mck-id', contact.contactId);
                 $mck_msg_preview.show();
-                //mckNotificationTone.play();
                 setTimeout(function() {
                     $mck_msg_preview.fadeOut(3000);
                 }, 10000);
@@ -7821,6 +8031,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     'messageType': messageType,
                                     'notifyUser': resp.notifyUser
                                 };
+
                                 if (message.groupId) {
                                     mckGroupLayout.getGroupFeedFromMessage(params);
                                 } else {
@@ -7830,11 +8041,181 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 }
                                 return;
                             }
-                            mckMessageLayout.populateMessage(messageType, message, resp.notifyUser);
+                            if (message.contentType == 102 && IS_CALL_ENABLED) {
+                                //video message Received...
+                                //dont show notification for 102 messages
+                                resp.notifyUser = false;
+                                if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_DIALED") {
+                                    //its a call dialed Message.. Show Receive/Reject option on screen
+                                    var contact = mckMessageLayout.fetchContact(message.to);
+                                    var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+
+                                    var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
+                                    $applozic("#mck-video-call-indicator").data("call-id", message.metadata.CALL_ID);
+                                    $applozic("#mck-video-call-indicator").data("isAudioCall", message.metadata.CALL_AUDIO_ONLY);
+                                    $applozic("#mck-video-call-indicator-txt").html(displayName + " calling...");
+                                    $applozic("#mck-video-call-icon").html(imgSource);
+                                    $applozic("#mck-video-call-indicator").removeClass("n-vis").addClass("vis");
+                                    mckVideoCallringTone.play();
+                                    //timer if user not receive call in 1 minute....
+                                    setTimeout(function() {
+                                        var callReceived = $applozic("#mck-video-call-indicator").data("callReceived");
+                                        if (!callReceived) {
+                                            console.log("call is not answered");
+                                            //no need to notify server... sender is doing this...thank you sender.
+                                            //mckMessageService.sendVideoCallMessage(callId,"CALL_MISSED",102,false);
+                                            mckVideoCallringTone.stop();
+                                            $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass("vis");
+
+                                        }
+                                    }, 60000);
+                                } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                                    //notify server.. content type 103 msgType CALL_REJECTED
+                                    //check is this device is call host
+                                    if ($applozic("#mck-btn-video-call").data("isCallHost")) {
+                                        mckMessageService.sendVideoCallMessage(message.metadata.CALL_ID, "CALL_REJECTED", 103, false);
+                                        mckCallService.ringToneForHost.stop();
+                                        mckCallService.outgoingCallServices.twilioService.leaveRoomIfJoined();
+                                        mckCallService.hideVideoBox();
+                                        if (mckCallService.outgoingCallServices) {
+                                            mckCallService.outgoingCallServices.rejectedByReceiver = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (message.contentType == 103) {
+                                if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                                    //stop ringtone and hide vid-call-indicator
+                                     $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass("vis");
+                                    if (mckVideoCallringTone) {
+                                        mckVideoCallringTone.stop();
+                                    }
+                                    }
+                                // no nedd to handle  message.type==4 and metadata.MSG_TYPE=="CALL_Rejected AND contnetType 103"
+                            } else {
+                                mckMessageLayout.populateMessage(messageType, message, resp.notifyUser);
+                            }
                         }
                     }
                 }
             };
         }
+
+        function MckCallService() {
+            var _this = this;
+            _this.token = null;
+            _this.Identity = null;
+            _this.outgoingCallServices = null;
+            _this.incomingCallServices = null;
+            var $mck_videocall_btn = $applozic(".mck-videocall-btn");
+            var $mck_vid_box = $applozic(".applozic-vid-container");
+            var $mck_side_box = $applozic("#mck-sidebox");
+            var $mck_video_call_indicator = $applozic("#mck-video-call-indicator");
+            //$mck_msg_preview_btns=$applozic("#mck-msg-preview-btns");
+            //$mck_call_accept_btn = $applozic("#mck-vid-call-accept");
+            //$mck_call_eject_btn=$applozic("mck-vid-call-reject");
+            _this.hideVideoBox = function() {
+                $mck_vid_box.addClass('n-vis').removeClass('vis');
+                $mck_side_box.addClass('vis').removeClass('n-vis');
+                $mck_video_call_indicator.addClass("n-vis").removeClass("vis");
+            };
+            _this.init = function() {
+                _this.token = mckStorage.getAppHeaders() !== null ? mckStorage.getAppHeaders().videoToken : undefined;
+                _this.ringToneForHost = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
+                //start videocall button in menu
+                $applozic("#mck-btn-video-call").on('click', function(e) {
+
+                    if (_this.token) {
+                        var callId = MCK_USER_ID + new Date().getTime().toString() + Math.random().toString(36).slice(2);
+                        //call Id is room name
+                        //
+                        //when user send the vediocall message connect the user to the room.
+                        //when user acceept the call, connect that user to same room.
+                        var message = mckMessageService.sendVideoCallMessage(callId, "CALL_DIALED", 102, false);
+                        var contact = mckMessageLayout.fetchContact(message.to);
+                        var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+                        var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
+                        var isAudioCall = false;
+                        var isCallHost = true;
+                        var callStartTime = new Date();
+                        var userName = MCK_USER_ID;
+                        _this.outgoingCallServices = new MckCallingService(userName, mckCallService.token, callId, displayName, isCallHost, callStartTime, mckMessageService, imgSource, isAudioCall, _this.ringToneForHost);
+                        _this.outgoingCallServices.startVideoCall();
+                        $applozic("#mck-btn-video-call").data("isCallHost", true);
+                        $applozic("#mck-btn-video-call").data("callStartTime", callStartTime);
+                    } else {
+                        alert("missing token... please refresh page..");
+                    }
+                });
+                //receive call button
+                $applozic("#mck-vid-receive-btn").on('click', function(e) {
+                    console.log("call received");
+                    $("#mck-video-call-indicator").addClass('n-vis').removeClass('vis');
+                    $mck_videocall_btn.removeClass('vis').addClass('n-vis');
+                    var callId = $applozic("#mck-video-call-indicator").data("call-id");
+                    var isAudioCall = $applozic("#mck-video-call-indicator").data("isAudioCall");
+                    $applozic("#mck-video-call-indicator").data("callReceived", true);
+                    $applozic("#mck-video-call-indicator").addClass("n-vis");
+                    //send message to reciepient
+                    mckCallService.callReceived(callId, isAudioCall);
+                });
+
+
+                $applozic("#mck-vid-reject-btn").on('click', function(e) {
+                    // receivers is busy
+                    console.log("call rejected");
+                    var callId = $applozic("#mck-video-call-indicator").data("call-id");
+                    var isAudioCall = $applozic("#mck-video-call-indicator").data("isAudioCall");
+                    mckCallService.callRejected(callId, isAudioCall);
+                    $applozic("#mck-video-call-indicator").addClass("n-vis").removeClass('vis');
+                });
+            };
+            //TODO: rename this method into getTwilioTokenFromServer
+            _this.InitilizeVideoClient = function(userId, deviceKey) {
+                _this.Identity = userId;
+                $applozic.ajax({
+                    url: MCK_BASE_URL + "/twilio/token",
+                    type: 'post',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: { "identity": userId, "device": deviceKey },
+                    success: function(result) {
+                        if (result != null && result != "") {
+
+                            _this.token = result.token;
+                            var data = mckStorage.getAppHeaders();
+                            data.videoToken = result.token;
+                            mckStorage.setAppHeaders(data);
+                        }
+                    },
+                    error: function(result) {
+                        console.log("error while getting token" + result);
+                    }
+                });
+            };
+
+            _this.callReceived = function(callId, isAudioCall) {
+                console.log("_this.callReceived");
+                if (mckVideoCallringTone) {
+                    mckVideoCallringTone.stop();
+                }
+                //notify Server
+                var message = mckMessageService.sendVideoCallMessage(callId, "CALL_ANSWERED", 102, isAudioCall);
+                //var newWindow=   window.open(MCK_BASE_URL+'/video/call', '_blank');
+                var isCallHost = false;
+                _this.incomingCallServices = new MckCallingService(_this.Identity, _this.token, callId, null, isCallHost, null, mckMessageService, null, isAudioCall);
+                _this.incomingCallServices.startVideoCall();
+
+            };
+
+            _this.callRejected = function(callId, isAudioCall) {
+                if (mckVideoCallringTone) {
+                    mckVideoCallringTone.stop();
+                }
+                //notify server content type 102  type REJECT
+                var message = mckMessageService.sendVideoCallMessage(callId, "CALL_REJECTED", 102, isAudioCall);
+            };
+          }
+
     }
 }($applozic, window, document));
