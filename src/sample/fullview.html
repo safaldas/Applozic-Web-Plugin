@@ -100,7 +100,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="blk-lg-4 move-right">
+						<div id="mck-btn-video-call" class="mck-videocall-btn  blk-lg-2 n-vis"></div>
+						<div class="blk-lg-2 move-right">
 							<div id="mck-tab-menu" class="mck-menu-item mck-text-right">
 								<div class="mck-dropdown-toggle" data-toggle="mckdropdown"
 									aria-expanded="true">
@@ -129,7 +130,21 @@
 
 						</div>
 					</div>
+					<div id="mck-video-call-indicator" class="applozic-launchar n-vis row">
+						        <div id="mck-video-call-icon" class="col-lg-3 mck-alpha-contact-image">
+						            <span class="mck-contact-icon"></span>
+						        </div>
+						        <div id="mck-vid-btn" class="mck-vid-flex-box">
+						           <div id="mck-video-call-indicator-txt" class="mck-video-call-indicator-txt"></div>
+											 <div id="mck-call-btn-div" class= "col-lg-8">
+			 						            <button id="mck-vid-receive-btn" class="mck-btn">Accept</button>
+			 						            <button id="mck-vid-reject-btn" class="mck-btn">Reject</button>
+			 						     </div>
+										 </div>
+
+						</div>
 				</div>
+
 				<div id="mck-product-group"
 					class="mck-tab-panel mck-btn-group mck-product-group">
 					<div id="mck-product-box"
@@ -193,14 +208,7 @@
 							<div class="blk-lg-12">
 								<p id="mck-msg-response" class="mck-box-response n-vis"></p>
 							</div>
-							<div id="mck-write-box" class="blk-lg-12 mck-write-box">
-								<form id="mck-msg-form" class="vertical mck-msg-form">
-									<div class="mck-form-group n-vis">
-										<label class="sr-only placeholder-text control-label"
-											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
-											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
-									</div>
-									<div  id="mck-reply-to-div" class="n-vis">
+                             <div  id="mck-reply-to-div" class="n-vis">
 									<button type="button" id="close"
 							class="mck-box-close mck-close-panel move-right">
 							<span aria-hidden="true">&times;</span>
@@ -208,6 +216,14 @@
 											<div id="mck-reply-to" class=" mck-msgto "></div>
                                             <div id="mck-reply-msg"> </div>
                                         </div>
+							<div id="mck-write-box" class="blk-lg-12 mck-write-box">
+								<form id="mck-msg-form" class="vertical mck-msg-form">
+									<div class="mck-form-group n-vis">
+										<label class="sr-only placeholder-text control-label"
+											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
+											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
+									</div>
+
 									<input id="mck-file-input" class="mck-file-input n-vis"
 										type="file" name="files[]">
 									<div id="mck-btn-attach" class="mck-btn-attach">
@@ -236,22 +252,22 @@
 									</div>
 									<a href="#" id="mck-file-up2" type="button"
 										class="write-link attach n-vis mck-file-upload mck-btn-text-panel"
-										title="Attach File"> </a> 
+										title="Attach File"> </a>
 										<a href="#" id="mck-mike-btn" type="button"
 										class="mck-mic-btn mck-mike-btn vis"
-										title="Mike"></a> 
+										title="Mike"></a>
 									<a href="#" id="stop-recording" class="mck-stop-btn n-vis "></a>
 									<div id="audiodiv" class="mck-mic-timer n-vis">
 							       <label id="mck-minutes">00</label>:<label id="mck-seconds">00</label>
                                     </div>
-										<span id="mck-text-box"
+										 <span id="mck-text-box"
 										contenteditable="true" class="mck-text-box mck-text required"></span>
 										<a href="#" type="submit"
 										id="mck-msg-sbmt" class="write-link send mck-btn-text-panel"
 										title="Send Message"></a>
 									<a href="#" type="button" id="mck-btn-smiley"
 										class="write-link smiley mck-btn-smiley mck-btn-text-panel"
-										title="Smiley"></a> 
+										title="Smiley"></a>
 								</form>
 							</div>
 							<div class="blk-lg-12">
@@ -588,10 +604,49 @@
 			</div>
 		</div>
 	</div>
+<div id="mck-video-box">
+	    <div class="container applozic-vid-container n-vis">
+	        <div class="row">
+	            <div id="mck-vid-media" class="col-lg-12">
+	                <div id="mck-audio-call-icon center-block"></div>
+	            </div>
+	        </div>
+	    </div>
+	    <div id="mck-vid-div-overlay" class="container applozic-vid-container n-vis">
+	        <div class="row mck-vid-overlay-header">
+	            <div id="mck-vid-icon" class="centered n-vis"><span></span></div>
+	        </div>
+	        <div class="row mck-vid-overlay-footer mck-flex-footer">
+	            <div class="mck-vid-scr-controls">
+	                <div class="footer-controls pull-right">
+	                    <button id="mck-microfone-mute-btn" class="btn-controls">
+	                        <svg id="mck-unmute-icon" class="mck-unmute-icon" focusable="false" height="24px" viewBox="0 0 24 24" width="24px" xmlns="http://www.w3.org/2000/svg">
+	                            <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z" />
+	                        </svg>
+	                        <svg id="mck-mute-icon" class="mck-mute-icon" focusable="false" height="24px" viewBox="0 0 24 24" width="24px" xmlns="http://www.w3.org/2000/svg">
+	                            <path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z" />
+	                        </svg>
+	                    </button>
+	                    <button id="mck-vid-disconnect" class="btn-controls">
+	                        <svg class="mck-disconnect-icon" xmlns="http://www.w3.org/2000/svg" focusable="false" width="24px" height="24px" viewBox="0 0 24 24" class=" A1NRff">
+	                            <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"></path>
+	                        </svg>
+	                    </button>
+	                </div>
+	            </div>
+								<div id="local-media" class="n-vis"></div>
 
+	        </div>
+	    </div>
+	</div>
 	<!-- Dummy div as js is dependent on mck-sidebox -->
 	<div id="mck-sidebox"></div>
-
+<!-- Video Call dependencies -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.min.js"></script>
+	<script type="text/javascript" src="../js/app/call/mck-ringtone-service.js"></script>
+	<script type="text/javascript" src="../js/app/call/twilio-video.js"></script>
+	<script type="text/javascript" src="../js/app/call/videocall.js"></script>
+<!-- Video Call dependencies -->
 	<script type="text/javascript" src="../js/applozic.plugins.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.widget.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.emojis.min.js"></script>
@@ -610,7 +665,6 @@
 	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
 	<script type="text/javascript"
 		src="../js/app/fullview/applozic.fullview.js"></script>
-		</script>
 	<script type="text/javascript">
 		var oModal = "";
 		if (typeof $original !== 'undefined') {
@@ -630,7 +684,6 @@
     <script src="../js/Media/recorder.js"></script>
 	<script src="../js/Media/Fr.voice.js"></script>
 	<script src="../js/Media/app.js"></script>
- 
 	<script type="text/javascript">
 		//var $applozic = jQuery.noConflict(true);
 		//Sample json contains display name and photoLink for userId
@@ -681,7 +734,7 @@
 		      }
 		  }*/
 		//callback function execute after plugin initialize.
-		function onInitialize(response) {
+		function onInitialize(response,data) {
 			if (response.status === 'success') {
 				// $applozic.fn.applozic('loadContacts', {'contacts':contactsJSON});
 				// $applozic.fn.applozic('loadTab', 'shanki.connect');
@@ -751,27 +804,34 @@
 							//Function to initialize plugin
 							$applozic.fn
 									.applozic({
-								        userId : 'demouser6',
-								        userName : 'Demo User6',
-										appId : 'applozic-sample-app',
-										accessToken: 'debug2',
+
+										baseUrl : 'https://apps.applozic.com',
+								    userId : 'debug454545', //TODO: replace userId with actual UserId
+								    userName : 'test',			//TODO: replace userId with actual UserName
+										appId : 'applozic-sample-app',			//TODO: replace appId with your applicationId
+										accessToken: 'suraj',								//TODO: set user access token.for new user it will create new access token
+
 										ojq : $original,
 										obsm : oModal,
-										accessToken :'',          //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
+
+										         //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url
 										//  authenticationTypeId: 1,    //1 for password verification from Applozic server and 0 for access Token verification from your server
 										//	autoTypeSearchEnabled : false,
 										//  messageBubbleAvator: true,
 										notificationIconLink : "https://www.applozic.com/resources/images/applozic_icon.png",
-										notificationSoundLink : "https://www.applozic.com/resources/audio/notification_sound.wav",
+										notificationSoundLink : "",
 										readConversation : readMessage, // readMessage function defined above
 										onInit : onInitialize, //callback function execute on plugin initialize
 										maxAttachmentSize : 25, //max attachment size in MB
 										desktopNotification : true,
 										locShare : true,
+										video:true,
 										topicBox : true,
+										mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4" // replace it with your Google API key
 									// initAutoSuggestions : initAutoSuggestions //  function to enable auto suggestions
 									});
+
 							// var contactjson = {"contacts": [{"userId": "user1", "displayName": "Devashish", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user2", "displayName": "Adarsh", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}, {"userId": "user3", "displayName": "Shanki", "imageLink": "https://www.applozic.com/resources/images/applozic_icon.png"}]};
 							// To load contact list use below function and pass contacts json in format shown above in variable 'contactjson'.
 							// $applozic.fn.applozic('loadContacts', contactjson);
