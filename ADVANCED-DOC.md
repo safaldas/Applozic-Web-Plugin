@@ -152,7 +152,7 @@ https://github.com/AppLozic/Applozic-Web-Plugin
 
 Open src/sample/sidebox.html file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
 
-Files you can modify: CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/sidebox/applozic.sidebox.css
-JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/js/app/sidebox/applozic.sidebox.js
+Files you can modify: CSS:https://github.com/AppLozic/Applozic-Web-Plugin/blob/video/src/css/app/sidebox/applozic.sidebox.css
+JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/video/src/js/app/sidebox/applozic.sidebox.js
 
 You can modify css and js files based on your design, files are present under src/css/app/ and src/js folders.
