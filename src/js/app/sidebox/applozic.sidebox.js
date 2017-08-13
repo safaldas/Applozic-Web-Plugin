@@ -4301,7 +4301,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
                         return '<a href="#" target="_self"><audio controls class="mck-audio-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/ogg">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
                     } else {
-                        return '<a href="#" role="link" class="file-preview-link" target="_self"></a>';
+                        return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';
                     }
                 }
                 return '';
