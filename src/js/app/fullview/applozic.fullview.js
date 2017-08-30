@@ -5202,10 +5202,14 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             if (mckUtils.startsWith(msg, "<img")) {
                                 return '<span class="mck-icon-camera"></span>&nbsp;<span>image</span>';
                             } else {
+                              if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                                 emoji_template = w.emoji.replace_unified(msg);
                                 emoji_template = w.emoji.replace_colons(emoji_template);
                                 emoji_template = (emoji_template.indexOf('</span>') !== -1) ? emoji_template.substring(0, emoji_template.lastIndexOf('</span>')) : emoji_template.substring(0, size);
-                            }
+                              }else {
+                              	emoji_template = msg;
+                                   }
+                              	}
                             if (!contact.isGroup) {
                                 if (emoji_template.indexOf('emoji-inner') === -1 && message.contentType === 0) {
                                     var x = d.createElement('p');
