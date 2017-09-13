@@ -752,19 +752,19 @@ var MCK_CLIENT_GROUP_MAP = [];
           IS_LOGGED_IN = false;
       };
 
-      _this.createOpenFriendContactlist = function(params) {
-         return mckContactService.createOpenFriendlist(params);
+      _this.createFriendContactlist = function(params) {
+         return mckContactService.createFriendlist(params);
       };
-      _this.getOpenFriendContactlist = function(groupname) {
-       var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
-        var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
-          return mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+      _this.getFriendContactlist = function(params) {
+        var FriendlistGroupname= params.groupName;
+        var FriendlistGroupType = params.groupType;
+          return mckContactService.getFriendlist(FriendlistGroupname,FriendlistGroupType);
       };
       _this.removeUserFromFriendContactlist = function(param) {
         return mckContactService.removeUserFromFriendlist(param);
      };
-     _this.DeleteFriendContactlist = function(param) {
-          return mckContactService.DeleteFriendlist(param);
+     _this.deleteFriendContactlist = function(param) {
+          return mckContactService.deleteFriendlist(param);
       };
         _this.setOnline = function() {
             if (typeof mckInitializeChannel !== 'undefined') {
@@ -1731,10 +1731,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 mckMessageLayout.initSearchAutoType();
                 $mck_contact_search.click(function() {
                   var contactList;
-                	var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
-                  var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
-                	  if(typeof OpenFriendlistGroupname !==undefined&&OpenFriendlistGroupname!==""){
-                       contactList= mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+                  var FriendlistGroupname= mckStorage.FriendlistGroupname;
+                  var FriendlistGroupType = mckStorage.FriendlistGroupType;
+                	  if(typeof FriendlistGroupname !== undefined && FriendlistGroupname!==""){
+                       contactList= mckContactService.getFriendlist(FriendlistGroupname,FriendlistGroupType);
                       }
                     mckMessageLayout.addContactsToContactSearchList(contactList);
                 });
@@ -2088,7 +2088,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_group_add_member.on('click', function(e) {
                     e.preventDefault();
                     var contactList;
-                   var OpenFriendlistGroup=localStorage.getItem("OpenFriendlistGroupname");
+                    var FriendlistGroup= mckstorage.FriendlistGroupname;
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (groupId) {
                         var group = mckGroupUtils.getGroup(groupId);
@@ -4939,8 +4939,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_group_create_tab.removeClass('vis').addClass('n-vis');
                 $mck_sidebox_search.removeClass('n-vis').addClass('vis');
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
-                var OpenFriendlistGroup=localStorage.getItem("OpenFriendlistGroupname");
-               if (MCK_CONTACT_ARRAY.length !== 0 ||(typeof OpenFriendlistGroupname !=="undefined"&&OpenFriendlistGroupname!=="")) {
+
+                var FriendlistGroup=localStorage.getItem("FriendlistGroupname");
+               if (MCK_CONTACT_ARRAY.length !== 0 ||(typeof FriendlistGroupname !=="undefined" && FriendlistGroupname!=="")) {
                    mckMessageLayout.addContactsToSearchList(contactList);
                } else if (!IS_MCK_OWN_CONTACTS) {
                     mckContactService.loadContacts();
@@ -5809,20 +5810,18 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
                 _this.getUsersDetail(userIdArray, { 'async': false });
             };
-            _this.createOpenFriendlist = function(params) {
+            _this.createFriendlist = function(params) {
             	var formData={};
             	formData.groupMemberList=params.groupMemberList;
-            	if(params.type){
-            		formData.type=params.type;
+            	if(params.groupType){
+            		formData.groupType=params.groupType;
                     $applozic.ajax({
-                                  url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+"/add/members",
+                                  url: MCK_BASE_URL +FRIENDLIST_URL+params.groupName+"/add/members",
                                   type: "post",
                                   data: JSON.stringify(formData),
                                   contentType: "application/json",
                                   success: function(response) {
                                     if(response.status==='success'){
-                                    	localStorage.setItem("OpenFriendlistGroupname",params.groupname);
-                                    	localStorage.setItem("OpenFriendlistType",params.type);
                                     console.log("open friendlist created");
                                         }
                                     }
@@ -5833,29 +5832,30 @@ var MCK_CLIENT_GROUP_MAP = [];
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
                 $applozic.ajax({
-                              url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+"/add",
+                              url: MCK_BASE_URL +FRIENDLIST_URL+params.groupName+"/add",
                               type: "post",
                               data: JSON.stringify(groupMembersArray),
                               contentType: "application/json",
                               success: function(response) {
                                 if(response.status==='success'){
-                                	localStorage.setItem("OpenFriendlistGroupname",params.groupname);
-                                	localStorage.setItem("OpenFriendlistType",params.type);
+
                                     }
                                 }
                            });
                 }
                  };
 
-           _this.getOpenFriendlist = function(OpenFriendlistGroupname,OpenFriendlistGroupType) {
+           _this.getFriendlist = function(FriendlistGroupname,FriendlistGroupType) {
         	    var groupmemberdetail=[];
-        	    var getFriendlisturl = OpenFriendlistGroupType?"/get?groupType=9":"/get"
+        	    var getFriendlisturl = FriendlistGroupType?"/get?groupType=9":"/get"
                        $applozic.ajax({
-                                 url: MCK_BASE_URL +FRIENDLIST_URL+OpenFriendlistGroupname+getFriendlisturl,
+                                 url: MCK_BASE_URL +FRIENDLIST_URL+FriendlistGroupname+getFriendlisturl,
                                  type: "get",
                                  async:false,
                                  contentType: "application/json",
                                  success: function(response) {
+                                   mckStorage.FriendlistGroupname = params.groupName;
+                                   mckStorage.FriendlistGroupType = params.groupType;
                                  for(var i = 0, size = (response.response.membersId).length; i < size ; i++){
                                 	 groupmemberdetail.push((response.response.membersId)[i]);
                                  }
@@ -5864,9 +5864,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                        return groupmemberdetail;
                   };
                   _this.removeUserFromFriendlist = function(params) {
-                       	    var getFriendlisturl = params.type?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
+                       	    var getFriendlisturl = params.groupType?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
                                       $applozic.ajax({
-                                                url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
+                                                url: MCK_BASE_URL +FRIENDLIST_URL+params.groupName+getFriendlisturl,
                                                 type: "get",
                                                 async:false,
                                                 contentType: "application/json",
@@ -5874,16 +5874,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                                                 }
                                              });
                                  };
-                        _this.DeleteFriendlist = function(params) {
-                      	    var getFriendlisturl = params.type?"/delete?groupType=9":"/delete";
+                        _this.deleteFriendlist = function(params) {
+                      	    var getFriendlisturl = params.groupType?"/delete?groupType=9":"/delete";
                                      $applozic.ajax({
-                                               url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
+                                               url: MCK_BASE_URL +FRIENDLIST_URL+params.groupName+getFriendlisturl,
                                                type: "get",
                                                async:false,
                                                contentType: "application/json",
                                                success: function(response) {
-                                            	   localStorage.setItem("OpenFriendlistGroupname",'');
-                                                localStorage.setItem("OpenFriendlistType",'');
+                                                 mckStorage.FriendlistGroupname = '';
+                                                 mckStorage.FriendlistGroupType = '';
                                                    }
                                             });
             _this.getUsersDetail = function(userIdArray, params) {
@@ -6771,13 +6771,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var group = mckGroupUtils.getGroup(groupId);
                     var contactArray = MCK_GROUP_MEMBER_SEARCH_ARRAY;
                     var searchArray = [];
-                    var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
-                    var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
-                        if((typeof OpenFriendlistGroupname !==undefined &&OpenFriendlistGroupname!=="") && (typeof OpenFriendlistType !==undefined && OpenFriendlistGroupType !=="")){
-                        contactArray= mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+                    var FriendlistGroupname= mckStorage.FriendlistGroupname;
+                    var FriendlistGroupType = mckStorage.FriendlistGroupType;
+                        if((typeof FriendlistGroupname !==undefined && FriendlistGroupname!=="") && (typeof FriendlistType !==undefined && FriendlistGroupType !=="")){
+                        contactArray= mckContactService.getFriendlist(FriendlistGroupname,FriendlistGroupType);
                        }
-                        if(typeof OpenFriendlistType ===undefined && OpenFriendlistType===""){
-                     contactArray= mckContactService.getOpenFriendlist(OpenFriendlistGroupname);
+                        if(typeof FriendlistType ===undefined && FriendlistType===""){
+                     contactArray= mckContactService.getFriendlist(FriendlistGroupname);
                     }
                     contactArray = contactArray.filter(function(item, pos) {
                         return contactArray.indexOf(item) === pos;
@@ -6901,6 +6901,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             var MCK_MESSAGE_ARRAY = [];
             var MCK_MESSAGE_MAP = [];
             var MCK_CONTACT_NAME_ARRAY = [];
+            var FriendlistGroupname;
+            var FriendlistType;
 
             _this.updateLatestMessage = function(message) {
                 var messageArray = [];
