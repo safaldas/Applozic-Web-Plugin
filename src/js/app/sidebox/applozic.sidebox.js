@@ -5863,17 +5863,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                               });
                        return groupmemberdetail;
                   };
-            _this.removeUserFromFriendlist = function(params) {
-              	    var getFriendlisturl = params.type?"/remove?groupType=9":"/remove";
-                             $applozic.ajax({
-                                       url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
-                                       type: "get",
-                                       async:false,
-                                       contentType: "application/json",
-                                       success: function(response) {
-                                           }
-                                    });
-                        };
+                  _this.removeUserFromFriendlist = function(params) {
+                       	    var getFriendlisturl = params.type?"/remove?userId="+params.userId+"&params.type=9":"/remove?userId="+params.userId;
+                                      $applozic.ajax({
+                                                url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
+                                                type: "get",
+                                                async:false,
+                                                contentType: "application/json",
+                                                success: function(response) {
+                                                }
+                                             });
+                                 };
                         _this.DeleteFriendlist = function(params) {
                       	    var getFriendlisturl = params.type?"/delete?groupType=9":"/delete";
                                      $applozic.ajax({
@@ -5882,7 +5882,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                                async:false,
                                                contentType: "application/json",
                                                success: function(response) {
-                                            	  localStorage.setItem("OpenFriendlistGroupname",'');
+                                            	   localStorage.setItem("OpenFriendlistGroupname",'');
                                                 localStorage.setItem("OpenFriendlistType",'');
                                                    }
                                             });
