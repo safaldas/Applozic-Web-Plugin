@@ -194,6 +194,18 @@ var MCK_CLIENT_GROUP_MAP = [];
                         oInstance.logout();
                         return 'success';
                         break;
+                    case 'createOpenFriendContactlist':
+                        return oInstance.createOpenFriendContactlist(params);
+                        break;
+                    case 'getOpenFriendContactlist':
+                        return oInstance.getOpenFriendContactlist(params);;
+                        break;
+                    case 'removeUserFromFriendContactlist':
+                        return oInstance.removeUserFromFriendContactlist(params);;
+                        break;
+                    case 'DeleteFriendContactlist':
+                        return oInstance.DeleteFriendContactlist(params);;
+                          break;
                     case 'getUserDetail':
                         oInstance.getUserStatus(params);
                         return 'success';
@@ -738,6 +750,21 @@ var MCK_CLIENT_GROUP_MAP = [];
               $applozic("#mck-sidebox-launcher").hide();
           }
           IS_LOGGED_IN = false;
+      };
+
+      _this.createOpenFriendContactlist = function(params) {
+         return mckContactService.createOpenFriendlist(params);
+      };
+      _this.getOpenFriendContactlist = function(groupname) {
+       var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
+        var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
+          return mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+      };
+      _this.removeUserFromFriendContactlist = function(param) {
+        return mckContactService.removeUserFromFriendlist(param);
+     };
+     _this.DeleteFriendContactlist = function(param) {
+          return mckContactService.DeleteFriendlist(param);
       };
         _this.setOnline = function() {
             if (typeof mckInitializeChannel !== 'undefined') {
@@ -1703,7 +1730,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
                 mckMessageLayout.initSearchAutoType();
                 $mck_contact_search.click(function() {
-                    mckMessageLayout.addContactsToContactSearchList();
+                  var contactList;
+                	var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
+                  var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
+                	  if(typeof OpenFriendlistGroupname !==undefined&&OpenFriendlistGroupname!==""){
+                       contactList= mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+                      }
+                    mckMessageLayout.addContactsToContactSearchList(contactList);
                 });
                 $mck_group_search.click(function() {
                     mckMessageLayout.addGroupsToGroupSearchList();
@@ -2054,6 +2087,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
                 $mck_group_add_member.on('click', function(e) {
                     e.preventDefault();
+                    var contactList;
+                   var OpenFriendlistGroup=localStorage.getItem("OpenFriendlistGroupname");
                     var groupId = $mck_group_info_tab.data('mck-id');
                     if (groupId) {
                         var group = mckGroupUtils.getGroup(groupId);
@@ -2061,7 +2096,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             $mck_group_member_search_list.html('');
                             $mck_gm_search_box.mckModal();
                             $mck_gms_loading.removeClass('n-vis').addClass('vis');
-                            if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0) {
+                             if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0||typeof OpenFriendlistGroup!=="undefined") {
                                 mckGroupLayout.addMembersToGroupSearchList();
                             } else if (IS_MCK_OWN_CONTACTS) {
                                 if (MCK_CONTACT_ARRAY.length > 0) {
@@ -4904,9 +4939,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_group_create_tab.removeClass('vis').addClass('n-vis');
                 $mck_sidebox_search.removeClass('n-vis').addClass('vis');
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
-                if (MCK_CONTACT_ARRAY.length !== 0) {
-                    mckMessageLayout.addContactsToSearchList();
-                } else if (!IS_MCK_OWN_CONTACTS) {
+                var OpenFriendlistGroup=localStorage.getItem("OpenFriendlistGroupname");
+               if (MCK_CONTACT_ARRAY.length !== 0 ||(typeof OpenFriendlistGroupname !=="undefined"&&OpenFriendlistGroupname!=="")) {
+                   mckMessageLayout.addContactsToSearchList(contactList);
+               } else if (!IS_MCK_OWN_CONTACTS) {
                     mckContactService.loadContacts();
                 } else {
                     $mck_search_loading.removeClass('vis').addClass('n-vis');
@@ -5121,14 +5157,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                             if (mckUtils.startsWith(msg, "<img")) {
                                 return '<span class="mck-icon-camera"></span>&nbsp;<span>image</span>';
                             } else {
-                              if (w.emoji !== null && typeof w.emoji !== 'undefined') {
                                 emoji_template = w.emoji.replace_unified(msg);
                                 emoji_template = w.emoji.replace_colons(emoji_template);
                                 emoji_template = (emoji_template.indexOf('</span>') !== -1) ? emoji_template.substring(0, emoji_template.lastIndexOf('</span>')) : emoji_template.substring(0, size);
-                              }else {
-                              	emoji_template = msg;
-                                   }
-                              	}
+                            }
                             if (!contact.isGroup) {
                                 if (emoji_template.indexOf('emoji-inner') === -1 && message.contentType === 0) {
                                     var x = d.createElement('p');
@@ -5682,6 +5714,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
+            var FRIENDLIST_URL ="/rest/ws/group/";
             _this.getContactDisplayName = function(userIdArray) {
                 var mckContactNameArray = [];
                 if (userIdArray.length > 0 && userIdArray[0]) {
@@ -5776,6 +5809,83 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
                 _this.getUsersDetail(userIdArray, { 'async': false });
             };
+            _this.createOpenFriendlist = function(params) {
+            	var formData={};
+            	formData.groupMemberList=params.groupMemberList;
+            	if(params.type){
+            		formData.type=params.type;
+                    $applozic.ajax({
+                                  url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+"/add/members",
+                                  type: "post",
+                                  data: JSON.stringify(formData),
+                                  contentType: "application/json",
+                                  success: function(response) {
+                                    if(response.status==='success'){
+                                    	localStorage.setItem("OpenFriendlistGroupname",params.groupname);
+                                    	localStorage.setItem("OpenFriendlistType",params.type);
+                                    console.log("open friendlist created");
+                                        }
+                                    }
+                               });
+            	} else {
+            		var groupMembersArray =[];
+            		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
+            			groupMembersArray.push((params.groupMemberList)[i]);
+                       }
+                $applozic.ajax({
+                              url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+"/add",
+                              type: "post",
+                              data: JSON.stringify(groupMembersArray),
+                              contentType: "application/json",
+                              success: function(response) {
+                                if(response.status==='success'){
+                                	localStorage.setItem("OpenFriendlistGroupname",params.groupname);
+                                	localStorage.setItem("OpenFriendlistType",params.type);
+                                    }
+                                }
+                           });
+                }
+                 };
+
+           _this.getOpenFriendlist = function(OpenFriendlistGroupname,OpenFriendlistGroupType) {
+        	    var groupmemberdetail=[];
+        	    var getFriendlisturl = OpenFriendlistGroupType?"/get?groupType=9":"/get"
+                       $applozic.ajax({
+                                 url: MCK_BASE_URL +FRIENDLIST_URL+OpenFriendlistGroupname+getFriendlisturl,
+                                 type: "get",
+                                 async:false,
+                                 contentType: "application/json",
+                                 success: function(response) {
+                                 for(var i = 0, size = (response.response.membersId).length; i < size ; i++){
+                                	 groupmemberdetail.push((response.response.membersId)[i]);
+                                 }
+                                     }
+                              });
+                       return groupmemberdetail;
+                  };
+            _this.removeUserFromFriendlist = function(params) {
+              	    var getFriendlisturl = params.type?"/remove?groupType=9":"/remove";
+                             $applozic.ajax({
+                                       url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
+                                       type: "get",
+                                       async:false,
+                                       contentType: "application/json",
+                                       success: function(response) {
+                                           }
+                                    });
+                        };
+                        _this.DeleteFriendlist = function(params) {
+                      	    var getFriendlisturl = params.type?"/delete?groupType=9":"/delete";
+                                     $applozic.ajax({
+                                               url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
+                                               type: "get",
+                                               async:false,
+                                               contentType: "application/json",
+                                               success: function(response) {
+                                            	  localStorage.setItem("OpenFriendlistGroupname",'');
+                                                localStorage.setItem("OpenFriendlistType",'');
+                                                   }
+                                            });
             _this.getUsersDetail = function(userIdArray, params) {
                 if (typeof userIdArray === 'undefined' || userIdArray.length < 1) {
                     return;
@@ -6661,6 +6771,14 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var group = mckGroupUtils.getGroup(groupId);
                     var contactArray = MCK_GROUP_MEMBER_SEARCH_ARRAY;
                     var searchArray = [];
+                    var OpenFriendlistGroupname=localStorage.getItem("OpenFriendlistGroupname");
+                    var OpenFriendlistGroupType=localStorage.getItem("OpenFriendlistType");
+                        if((typeof OpenFriendlistGroupname !==undefined &&OpenFriendlistGroupname!=="") && (typeof OpenFriendlistType !==undefined && OpenFriendlistGroupType !=="")){
+                        contactArray= mckContactService.getOpenFriendlist(OpenFriendlistGroupname,OpenFriendlistGroupType);
+                       }
+                        if(typeof OpenFriendlistType ===undefined && OpenFriendlistType===""){
+                     contactArray= mckContactService.getOpenFriendlist(OpenFriendlistGroupname);
+                    }
                     contactArray = contactArray.filter(function(item, pos) {
                         return contactArray.indexOf(item) === pos;
                     });
