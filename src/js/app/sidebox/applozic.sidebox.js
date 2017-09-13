@@ -5864,7 +5864,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                        return groupmemberdetail;
                   };
                   _this.removeUserFromFriendlist = function(params) {
-                       	    var getFriendlisturl = params.type?"/remove?userId="+params.userId+"&params.groupType=9":"/remove?userId="+params.userId;
+                       	    var getFriendlisturl = params.type?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
                                       $applozic.ajax({
                                                 url: MCK_BASE_URL +FRIENDLIST_URL+params.groupname+getFriendlisturl,
                                                 type: "get",
