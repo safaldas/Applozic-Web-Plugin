@@ -4942,7 +4942,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_group_create_tab.removeClass('vis').addClass('n-vis');
                 $mck_sidebox_search.removeClass('n-vis').addClass('vis');
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
-                var friendListGroup = mckStorage.getfriendListGroupName();
+                var friendListGroup = mckStorage.getFriendListGroupName();
                if (MCK_CONTACT_ARRAY.length !== 0 ||friendListGroup) {
                    mckMessageLayout.addContactsToSearchList(contactList);
                } else if (!IS_MCK_OWN_CONTACTS) {
