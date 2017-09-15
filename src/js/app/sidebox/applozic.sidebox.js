@@ -761,7 +761,7 @@ var MCK_CLIENT_GROUP_MAP = [];
           friendListGroupName = params.groupName;
         };
         var friendListGroupType;
-        if (typeof params.groupType !== 'undefined') {
+        if (params.groupType) {
           friendListGroupType = params.groupType;
         };
            mckContactService.getFriendList(friendListGroupName,friendListGroupType);
@@ -1738,10 +1738,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_contact_search.click(function() {
                   var contactList;
                   var friendListGroupName= mckStorage.getFriendListGroupName();
-                  var friendListGroupType;
-                  if(typeof friendListGroupType !=="undefined"){
-                    friendListGroupType = mckStorage.getFriendListGroupType();
-                  }
+                  var friendListGroupType= mckStorage.getFriendListGroupType();
                 	  if(friendListGroupName){
                        contactList= mckContactService.getFriendList(friendListGroupName,friendListGroupType);
                       }
@@ -5838,7 +5835,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                                   success: function(response) {
                                     if(response.status==='success'){
                                     mckStorage.setFriendListGroupName(params.groupName);
-                                    mckStorage.setFriendListGroupType(params.type);
+                                    var friendListGroupType;
+                                    if (typeof params.groupType !== 'undefined') {
+                                      mckStorage.setFriendListGroupType(params.type);
+                                    };
+
                                         }
                                     }
                                });
@@ -5854,7 +5855,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                               contentType: "application/json",
                               success: function(response) {
                                 mckStorage.setFriendListGroupName(params.groupName);
-                                if(typeof friendListGroupType !=="undefined") {
+                                if(typeof friendListGroupType !=='undefined') {
                                   mckStorage.setFriendListGroupType(friendListGroupType);
                                   }
                                 }
@@ -5864,7 +5865,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
-        	    var getFriendListUrl = (typeof friendListGroupType !== "undefined")?"/get?groupType=9":"/get";
+        	    var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
                        $applozic.ajax({
                                  url: MCK_BASE_URL +FRIEND_LIST_URL+friendListGroupName+getFriendListUrl,
                                  type: "get",
@@ -5873,7 +5874,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                  success: function(response) {
 
                                    mckStorage.setFriendListGroupName(friendListGroupName);
-                                   if(typeof friendListGroupType !=="undefined") {
+                                   if(typeof friendListGroupType !=='undefined') {
                                      mckStorage.setFriendListGroupType(friendListGroupType);
                                      }
                                  for(var i = 0, size = (response.response.membersId).length; i < size ; i++){
@@ -5884,7 +5885,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                        return groupmemberdetail;
                   };
                   _this.removeUserFromFriendList = function(params) {
-                       	    var getFriendListUrl = (typeof params.type !=="undefined")?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
+                       	    var getFriendListUrl = (params.type)?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
                                       $applozic.ajax({
                                                 url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                 type: "get",
@@ -5895,7 +5896,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                              });
                                  };
                         _this.deleteFriendList = function(params) {
-                      	    var getFriendListUrl =(typeof params.type !=="undefined")?"/delete?groupType=9":"/delete";
+                      	    var getFriendListUrl =(params.type)?"/delete?groupType=9":"/delete";
                                      $applozic.ajax({
                                                url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                type: "get",
@@ -6793,15 +6794,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var contactArray = MCK_GROUP_MEMBER_SEARCH_ARRAY;
                     var searchArray = [];
                     var friendListGroupName= mckStorage.getFriendListGroupName();
-                    var friendListGroupType ;
-                    var friendListGroupType;
-                    if(typeof friendListGroupType !=='undefined'){
-                      friendListGroupType = mckStorage.getFriendListGroupType();
-                    }
+                    var friendListGroupType = mckStorage.getFriendListGroupType();
+
                         if(friendListGroupName && friendListGroupType){
                         contactArray= mckContactService.getFriendList(friendListGroupName,friendListGroupType);
                        }
-                        if(friendListGroupName && typeof friendListGroupType ==='undefined'){
+                        if(friendListGroupName && (friendListGroupType ==='undefined')){
                      contactArray= mckContactService.getFriendList(friendListGroupName);
                     }
                     contactArray = contactArray.filter(function(item, pos) {
