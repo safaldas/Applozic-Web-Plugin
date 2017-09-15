@@ -6799,7 +6799,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         if(friendListGroupName && friendListGroupType){
                         contactArray= mckContactService.getFriendList(friendListGroupName,friendListGroupType);
                        }
-                        if(friendListGroupName && (friendListGroupType ==='undefined')){
+                        if(friendListGroupName && (!friendListGroupType)){
                      contactArray= mckContactService.getFriendList(friendListGroupName);
                     }
                     contactArray = contactArray.filter(function(item, pos) {
