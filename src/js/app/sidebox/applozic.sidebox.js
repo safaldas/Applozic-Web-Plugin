@@ -4674,7 +4674,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                     userIdArray.push(contact.contactId);
                 });
                 if(typeof contactList !=="undefined"){
-                  	userIdArray =contactList;
+                    var params = {};
+                  params.async=false;
+                  params.userIds =contactList;
+                  mckContactService.getUsersDetail(params.userIds,params);
+                  userIdArray = contactList;
                   }
                 var uniqueUserIdArray = userIdArray.filter(function(item, pos) {
                     return userIdArray.indexOf(item) === pos;
