@@ -5843,6 +5843,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     if (typeof params.groupType !== 'undefined') {
                                       mckStorage.setFriendListGroupType(params.type);
                                     };
+                                    if(params.callback){
+                                      params.callback();
+                                    }
 
                                         }
                                     }
