@@ -24,6 +24,32 @@
 	color: #333;
 }
 
+.mck-mike-btn {
+        background-image: url(../../../images/mck-mike.png);
+        background-repeat: no-repeat;
+        float :left !important;
+        margin-top: 7px;
+        height:18px;
+        width:19px;
+	      overflow: hidden;
+        background-size: 20px;
+        cursor: pointer;
+}
+
+.mck-stop-btn {
+        background-image: url(../../../images/mck-stop.png);
+        background-repeat: no-repeat;
+        float :left !important;
+       /* margin-top: 4px;*/
+        height:27px;
+        width:25px;
+	      overflow: hidden;
+        /*opacity: 0.4;*/
+        background-size: 25px;
+        cursor: pointer;
+}
+
+
 .mck-videocall-btn {
         background-image: url(../../../images/mck-videocall-icon.png);
 	background-repeat: no-repeat;
@@ -1406,7 +1432,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 	max-height: 78px;
 	resize: none;
 	background-color: #E7F1F5;
-	width: calc(100% - 93px) !important;
+	width: calc(100% - 120px) !important;
 	outline: none;
 	margin: 0px;
 	font-size: 14px;
@@ -2496,7 +2522,7 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 }
 
 .mck-audio-player {
-	width: 240px;
+	width: 180px;
 	height: 40px;
 	overflow: hidden;
 	outline: none;

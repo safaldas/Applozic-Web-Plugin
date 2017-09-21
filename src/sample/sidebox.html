@@ -199,6 +199,10 @@
 											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
 											id="mck-msg-to" name="mck-msg-to" placeholder="To" required>
 									</div>
+									<div id="mck-audio" class="mck-mic-timer n-vis">
+		<a href="#" id="mck-stop-recording" class="mck-stop-btn n-vis "></a>
+		<label id="mck-minutes">00</label>:<label id="mck-seconds">00</label>
+			 </div>
 <div  id="mck-reply-to-div" class="n-vis">
 											<button type="button" id="close"
 								            class="mck-box-close mck-close-panel move-right">
@@ -256,6 +260,9 @@
 													</button>
 												</div>
 											</div>
+											<a href="#" id="mck-mike-btn" type="button"
+										class="mck-mic-btn mck-mike-btn vis"
+										title="Mike"></a>
 											<div id="mck-text-box" contenteditable="true"
 												class="mck-blk-8 mck-text-box mck-text required"></div>
 											<div class="mck-blk-2 mck-text-box-panel move-right">
@@ -716,6 +723,9 @@
 			}
 		}
 	</script>
+	<script src="../js/Media/recorder.js"></script>
+<script src="../js/Media/Fr.voice.js"></script>
+<script src="../js/Media/app.js"></script>
 	<script type="text/javascript">
 		//var $applozic = jQuery.noConflict(true);
 		//Sample json contains display name and photoLink for userId
@@ -766,7 +776,6 @@
 
 					$applozic.fn
 						.applozic({
-							//baseUrl:"https://apps-test.applozic.com"
 							userId : 'debug3', //TODO: replace with actual userId
 							userName : 'debug3',    //TODO: replace with actual userName
 							appId : 'applozic-sample-app',  //TODO: replace with actual appId
