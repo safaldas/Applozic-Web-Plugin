@@ -284,7 +284,7 @@ function MckGroupUtils() {
             'clientGroupId': '',
             'isGroup': true,
             'deletedAtTime':''
-            
+
         };
         MCK_GROUP_MAP[groupId] = group;
         return group;
@@ -826,7 +826,7 @@ function MckDateUtils() {
         seconds = parseInt((millisec/1000)%60),
         minutes = parseInt((millisec/(1000*60))%60),
         hours = parseInt((millisec/(1000*60*60))%24);
-         
+
         if(hours>0){
         	duration= hours + " Hr " + minutes + " Min " + seconds + " Sec";
         }else if(minutes>0){
