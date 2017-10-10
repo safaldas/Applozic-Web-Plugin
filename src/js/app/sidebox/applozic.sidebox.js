@@ -1246,7 +1246,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 USER_DEVICE_KEY = '';
                 var isValidated = _this.validateAppSession(userPxy);
                 if (!isValidated) {
-                    $applozic.ajax({
+                    mckUtils.ajax({
                         url: MCK_BASE_URL + INITIALIZE_APP_URL,
                         type: 'post',
                         data: w.JSON.stringify(userPxy),
@@ -5883,7 +5883,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             	formData.groupMemberList=params.groupMemberList;
             	if(params.type){
             		formData.type=params.type;
-                    $applozic.ajax({
+                    mckUtils.ajax({
                                   url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add/members",
                                   type: "post",
                                   data: JSON.stringify(formData),
@@ -5907,7 +5907,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
-                $applozic.ajax({
+                mckUtils.ajax({
                               url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add",
                               type: "post",
                               data: JSON.stringify(groupMembersArray),
@@ -5925,7 +5925,7 @@ var MCK_CLIENT_GROUP_MAP = [];
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
         	    var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
-                       $applozic.ajax({
+                       mckUtils.ajax({
                                  url: MCK_BASE_URL +FRIEND_LIST_URL+friendListGroupName+getFriendListUrl,
                                  type: "get",
                                  async:false,
@@ -5945,7 +5945,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                   };
                   _this.removeUserFromFriendList = function(params) {
                        	    var getFriendListUrl = (params.type)?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
-                                      $applozic.ajax({
+                                      mckUtils.ajax({
                                                 url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                 type: "get",
                                                 async:false,
@@ -5956,7 +5956,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                  };
                         _this.deleteFriendList = function(params) {
                       	    var getFriendListUrl =(params.type)?"/delete?groupType=9":"/delete";
-                                     $applozic.ajax({
+                                     mckUtils.ajax({
                                                url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                type: "get",
                                                async:false,
@@ -7292,7 +7292,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                    $file_remove.trigger('click');
                                }
                            });
-                           $applozic.ajax({
+                           mckUtils.ajax({
                                type : "GET",
                                url : MCK_FILE_URL + FILE_UPLOAD_URL,
                                global : false,
@@ -7392,7 +7392,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 $file_remove.trigger('click');
                             }
                         });
-                        $applozic.ajax({
+                        mckUtils.ajax({
                             type: "GET",
                             url: MCK_FILE_URL + FILE_UPLOAD_URL,
                             global: false,
@@ -7745,7 +7745,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             //TODO: rename this method into getTwilioTokenFromServer
             _this.InitilizeVideoClient = function(userId, deviceKey) {
                 _this.Identity = userId;
-                $applozic.ajax({
+                mckUtils.ajax({
                     url: MCK_BASE_URL + "/twilio/token",
                     type: 'post',
                     contentType: 'application/x-www-form-urlencoded',
