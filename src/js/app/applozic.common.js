@@ -100,7 +100,7 @@ function MckGroupUtils() {
             'clientGroupId': '',
             'isGroup': true,
             'deletedAtTime':''
-            
+
         };
         MCK_GROUP_MAP[groupId] = group;
         return group;
@@ -452,4 +452,8 @@ function MckGroupService() {
             }
         });
     };
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 4f5b1fad373d59b8a01bcde5cecbe05f87331b74
