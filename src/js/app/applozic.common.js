@@ -452,8 +452,4 @@ function MckGroupService() {
             }
         });
     };
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 4f5b1fad373d59b8a01bcde5cecbe05f87331b74
