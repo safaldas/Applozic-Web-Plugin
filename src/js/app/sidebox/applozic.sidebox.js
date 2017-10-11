@@ -310,11 +310,9 @@ var MCK_CLIENT_GROUP_MAP = [];
     };
     $applozic.fn.applozic.defaults = default_options;
 
+
     function Applozic(appOptions) {
         var _this = this;
-
-        var ALApiService = Applozic.ALApiService;
-
         var MCK_TOKEN;
         var AUTH_CODE;
         MCK_GROUP_MAP = [];
@@ -1248,8 +1246,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var isValidated = _this.validateAppSession(userPxy);
                 if (!isValidated) {
                     userPxy.applicationId =  MCK_APP_ID;
-                    ALApiService.initServerUrl(MCK_BASE_URL);
-                    ALApiService.login(userPxy, function(result) {
+                    window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
+                    window.Applozic.ALApiService.login(userPxy, function(result) {
                         _this.onLoginSuccess(result, userPxy);
                       }, _this.onLoginFailure);
                 } else {

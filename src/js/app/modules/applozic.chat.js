@@ -2,9 +2,8 @@
     'use strict';
     function define_Applozic(){
         var Applozic = {};
-        var name = "Timmy";
-        Applozic.greet = function(){
-            alert("Hello from the " + name + " library.");
+        Applozic.init = function(){
+          
         }
         return Applozic;
     }
