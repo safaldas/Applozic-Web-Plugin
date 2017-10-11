@@ -3848,7 +3848,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_response_text.html('');
                 $mck_msg_response.removeClass('vis').addClass('n-vis');
                 //$mck_msg_form[0].reset();
-                $("#mck-text-box").html("");
+                $applozic("#mck-text-box").html("");
                 $mck_msg_form.removeClass('n-vis').addClass('vis');
                 $mck_msg_inner.html('');
                 $mck_msg_error.removeClass('mck-no-mb');
