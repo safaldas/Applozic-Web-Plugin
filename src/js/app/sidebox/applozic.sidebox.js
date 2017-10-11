@@ -448,8 +448,6 @@ var MCK_CLIENT_GROUP_MAP = [];
             return appOptions;
         };
         _this.init = function() {
-           /* ringToneService = new RingToneService();
-            mckNotificationTone = ringToneService.loadRingTone(MCK_NOTIFICATION_TONE_LINK);*/
             mckMessageService.init();
             mckFileService.init();
             mckInit.initializeApp(appOptions, false);
@@ -459,8 +457,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             if (IS_CALL_ENABLED) {
              ringToneService = new RingToneService();
              mckVideoCallringTone = ringToneService.loadRingTone(MCK_BASE_URL + "/resources/sidebox/audio/applozic_video_call_ring_tone.mp3");
-            mckCallService.init();
-              }
+             mckCallService.init();
+            }
         };
         _this.reInit = function(optns) {
             if ($applozic.type(optns) === 'object') {
