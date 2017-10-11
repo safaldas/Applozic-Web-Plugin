@@ -1,5 +1,4 @@
 (function(window){
-    //I recommend this
     'use strict';
     function define_Applozic(){
         var Applozic = {};

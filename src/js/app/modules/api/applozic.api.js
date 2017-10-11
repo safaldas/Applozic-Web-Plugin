@@ -35,7 +35,7 @@
     }
     //define globally if it doesn't already exist
     if(typeof(ALApiService) === 'undefined'){
-        window.ALApiService = define_ALApiService();
+        window.Applozic.ALApiService = define_ALApiService();
     }
     else{
         console.log("ALApiService already defined.");

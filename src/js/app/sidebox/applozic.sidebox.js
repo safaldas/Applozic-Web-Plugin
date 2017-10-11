@@ -312,6 +312,9 @@ var MCK_CLIENT_GROUP_MAP = [];
 
     function Applozic(appOptions) {
         var _this = this;
+
+        var ALApiService = Applozic.ALApiService;
+
         var MCK_TOKEN;
         var AUTH_CODE;
         MCK_GROUP_MAP = [];
