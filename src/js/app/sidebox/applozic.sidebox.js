@@ -1473,9 +1473,9 @@ window.onload = function() {
 				
                 var $this = $applozic(this);
 				var href = $this.data('url');
-				
+				console.log(href);
 				var options = {
-					url:String(href),
+					url:'data-url',
 					zIndex:220000000000,
 					navbar:false,
 					title:false,
@@ -4383,7 +4383,7 @@ window.onload = function() {
                         } else if (msg.contentType === 5) {
                             return '<img href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + msg.fileMeta.blobKey + '" area-hidden="true">';
                         } else {
-                            return '<img href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" area-hidden="true">';
+                            return '<img href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true">';
                         }
                     } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
                         return '<a href= "#" target="_self"><video controls class="mck-video-player">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/mp4">' + '<source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="video/ogg"></video></a>';
