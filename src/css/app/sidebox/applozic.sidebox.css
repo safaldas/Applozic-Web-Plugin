@@ -2271,7 +2271,6 @@ mck-sidebox .mck-dropdown-menu>li>a:focus, .mck-dropup-menu>li>a:focus,
 .fancybox-overlay {
 	z-index: 22455000 !important;
 }
-
 .mck-file-text .file-preview-link {
 	text-decoration: none;
 	width: 100%
