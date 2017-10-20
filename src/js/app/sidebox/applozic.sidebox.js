@@ -2532,8 +2532,9 @@ window.onload = function() {
                     messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
                 messagePxy.metadata = metadata;
-                window.Applozic.ALApiService.sendMessage(messagePxy,
-                    function(data) {
+                window.Applozic.ALApiService.sendMessage({
+                    message: messagePxy,
+                    success: function(data) {
                         var currentTabId = $mck_msg_inner.data('mck-id');
                         if (typeof data === 'object') {
                             var messageKey = data.messageKey;
@@ -2583,7 +2584,7 @@ window.onload = function() {
                         }
                         // mckInitializeChannel.checkConnected(true);
                     },
-                    function() {
+                    error: function(error) {
                         $mck_msg_error.html('Unable to process your request. Please try again.');
                         $mck_msg_error.removeClass('n-vis').addClass('vis');
                         if ($mck_msg_div) {
@@ -2593,7 +2594,7 @@ window.onload = function() {
                             $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                         }
                     }
-                );
+                });
                 $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
             };
 

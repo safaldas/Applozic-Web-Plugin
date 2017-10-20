@@ -110,7 +110,6 @@ function MckGroupUtils() {
 
 function MckGroupService() {
     var _this = this;
-    var GROUP_LIST_URL = "/rest/ws/group/list";
     var GROUP_FEED_URL = "/rest/ws/group/info";
     var GROUP_LEAVE_URL = "/rest/ws/group/left";
     var GROUP_UPDATE_INFO_URL = "/rest/ws/group/update";

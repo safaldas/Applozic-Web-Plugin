@@ -66,22 +66,22 @@
             });
         }
 
-        ALApiService.sendMessage = function(messagePxy, successCallback, errorCallback) {
+        ALApiService.sendMessage = function(options) {
             mckUtils.ajax({
                 type: 'POST',
                 url: MCK_BASE_URL + MESSAGE_SEND_URL,
                 global: false,
-                data: w.JSON.stringify(messagePxy),
+                data: w.JSON.stringify(options.message),
                 contentType: 'application/json',
                 success: function(response) {
-                  if (successCallback) {
-                      successCallback(response);
-                  }
+                    if (options.success) {
+                      options.success(response);
+                    }
                 },
-                error: function() {
-                  if (errorCallback) {
-                      errorCallback(response);
-                  }
+                error: function(response) {
+                    if (options.error) {
+                      options.error(response);
+                    }
                 }
             });
         }
