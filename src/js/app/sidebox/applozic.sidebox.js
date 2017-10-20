@@ -1247,9 +1247,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (!isValidated) {
                     userPxy.applicationId =  MCK_APP_ID;
                     window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
-                    window.Applozic.ALApiService.login(userPxy, function(result) {
-                        _this.onLoginSuccess(result, userPxy);
-                      }, _this.onLoginFailure);
+                    window.Applozic.ALApiService.login(
+                        {
+                            alUser: userPxy,
+                            success: function(result) {
+                                _this.onLoginSuccess(result, userPxy);
+                            },
+                            error: function(response) {
+                                _this.onLoginFailure();
+                            }
+                        }
+                    );
                 } else {
                         if (IS_CALL_ENABLED) {
                                 mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
@@ -1683,17 +1691,11 @@ var MCK_CLIENT_GROUP_MAP = [];
             var $mck_gm_search_box = $applozic('#mck-gm-search-box');
             var $mck_group_member_search_list = $applozic("#mck-group-member-search-list");
             var $mck_no_gsm_text = $applozic("#mck-no-gsm-text");
-            var MESSAGE_SEND_URL = "/rest/ws/message/send";
-            var GROUP_CREATE_URL = "/rest/ws/group/create";
             var MESSAGE_LIST_URL = "/rest/ws/message/list";
-            var UPDATE_REPLY_MAP ="/rest/ws/message/detail"
             var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
-            var MESSAGE_DELETE_URL = "/rest/ws/message/delete";
             var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
-            var MESSAGE_READ_UPDATE_URL = "/rest/ws/message/read";
             var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
             var MESSAGE_ADD_INBOX_URL = "/rest/ws/message/add/inbox";
-            var MESSAGE_DELIVERY_UPDATE_URL = "/rest/ws/message/delivered";
             var CONVERSATION_CLOSE_UPDATE_URL = "/rest/ws/conversation/close";
             var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
             var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
@@ -2538,13 +2540,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
                 messagePxy.metadata = metadata;
-                mckUtils.ajax({
-                    type: 'POST',
-                    url: MCK_BASE_URL + MESSAGE_SEND_URL,
-                    global: false,
-                    data: w.JSON.stringify(messagePxy),
-                    contentType: 'application/json',
-                    success: function(data) {
+                window.Applozic.ALApiService.sendMessage(messagePxy,
+                    function(data) {
                         var currentTabId = $mck_msg_inner.data('mck-id');
                         if (typeof data === 'object') {
                             var messageKey = data.messageKey;
@@ -2594,7 +2591,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                         // mckInitializeChannel.checkConnected(true);
                     },
-                    error: function() {
+                    function() {
                         $mck_msg_error.html('Unable to process your request. Please try again.');
                         $mck_msg_error.removeClass('n-vis').addClass('vis');
                         if ($mck_msg_div) {
@@ -2604,7 +2601,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                         }
                     }
-                });
+                );
                 $('#mck-reply-to-div').removeClass('vis').addClass('n-vis');
             };
 
@@ -2640,9 +2637,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.deleteMessage = function(msgKey) {
                 var tabId = $mck_msg_inner.data('mck-id');
                 if (typeof tabId !== 'undefined') {
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + msgKey,
-                        type: 'get',
+                    window.Applozic.ALApiService.deleteMessage({
+                        key: msgKey,
                         success: function(data) {
                             if (data === 'success') {
                                 var currentTabId = $mck_msg_inner.data('mck-id');
@@ -2670,10 +2666,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         data += "&conversationId=" + conversationId;
                     }
                     CONTACT_SYNCING = true;
-                    mckUtils.ajax({
-                        type: "get",
-                        url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
-                        global: false,
+                    window.Applozic.ALApiService.deleteConversation({
                         data: data,
                         success: function() {
                             var currentTabId = $mck_msg_inner.data('mck-id');
@@ -2711,29 +2704,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                     reqData += "&mainPageSize=100";
                 }
-                var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
-                    type: 'get',
-                    success: function(data) {
-                        response.status = "success";
-                        response.data = data;
-                        if (params.callback) {
-                            params.callback(response);
-                        }
-                        return;
-                    },
-                    error: function(xhr, desc, err) {
-                        if (xhr.status === 401) {
-                            sessionStorage.clear();
-                            console.log('Please reload page.');
-                        }
-                        response.status = "error";
-                        if (params.callback) {
-                            params.callback(response);
-                        }
-                    }
-                });
+                window.Applozic.ALApiService.getConversations(reqData, params.callback, params.callback);
             };
             _this.getMessageList = function(params) {
                 var tabId = params.id;
@@ -2806,21 +2777,18 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
- _this.getReplyMessageByKey = function(msgkey) {
-    var replyMsg = ALStorage.getMessageByKey(msgkey);
-      if (typeof replyMsg === "undefined" ) {
-                mckUtils.ajax({
-                        url: MCK_BASE_URL + UPDATE_REPLY_MAP,
-                        async: false,
-                        type: 'get',
-                        data: "keys=" + msgkey,
-                        success: function(data) {
-                        ALStorage.updateMckMessageArray(data);
-                          }
-                    });
-}
-      return  ALStorage.getMessageByKey(msgkey) ;
-};
+            _this.getReplyMessageByKey = function(msgkey) {
+                var replyMsg = ALStorage.getMessageByKey(msgkey);
+                if (typeof replyMsg === "undefined" ) {
+                    window.Applozic.ALApiService.updateReplyMessage({
+                            data: "keys=" + options.key,
+                            success: function(data) {
+                                ALStorage.updateMckMessageArray(data);
+                            }
+                        });
+                    }
+                    return  ALStorage.getMessageByKey(msgkey) ;
+                };
 
             _this.loadMessageList = function(params, callback) {
                 var individual = false;
@@ -3162,24 +3130,16 @@ var MCK_CLIENT_GROUP_MAP = [];
                 });
             };
             _this.sendDeliveryUpdate = function(message) {
-                var data = "key=" + message.pairedMessageKey;
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
-                    data: data,
-                    global: false,
-                    type: 'get',
+                window.Applozic.ALApiService.sendDeliveryUpdate({
+                    key: message.pairedMessageKey,
                     success: function() {},
                     error: function() {}
                 });
             };
             _this.sendReadUpdate = function(key) {
                 if (typeof key !== "undefined" && key !== '') {
-                    var data = "key=" + key;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
+                    window.Applozic.ALApiService.sendReadUpdate({
+                        key: key,
                         success: function() {},
                         error: function() {}
                     });
@@ -3533,12 +3493,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                 groupInfo.metadata = MCK_LABELS['group.metadata'];
                 var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + GROUP_CREATE_URL,
-                    global: false,
+
+                window.Applozic.ALApiService.createGroup({
                     data: w.JSON.stringify(groupInfo),
-                    type: 'post',
-                    contentType: 'application/json',
                     success: function(data) {
                         if (params.isInternal) {
                             $mck_btn_group_create.attr('disabled', false).html(MCK_LABELS['create.group.title']);

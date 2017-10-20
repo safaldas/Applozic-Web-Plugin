@@ -118,10 +118,7 @@ function MckGroupService() {
     var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
     _this.loadGroups = function(params) {
         var response = new Object();
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_LIST_URL,
-            type: 'get',
-            global: false,
+        window.Applozic.ALApiService.loadGroups({
             success: function(data) {
                 if (data.status === 'success') {
                     response.status = 'success';
@@ -136,10 +133,7 @@ function MckGroupService() {
                     params.callback(response);
                 }
             },
-            error: function(xhr, desc, err) {
-                 if (xhr.status === 401) {
-                    sessionStorage.clear();
-                }
+            error: function() {
                 console.log('Unable to load groups. Please reload page.');
                 response.status = 'error';
                 if (params.callback) {
