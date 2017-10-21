@@ -44,11 +44,21 @@
             });
         }
 
+        function getAsUriParameters(data) {
+            var url = '';
+            for (var prop in data) {
+               url += encodeURIComponent(prop) + '=' + 
+                   encodeURIComponent(data[prop]) + '&';
+            }
+            return url.substring(0, url.length - 1)
+         }
+
         ALApiService.getMessages = function(options) {
+            var data = getAsUriParameters(options.data);
             var response = new Object();
             mckUtils.ajax({
                 url: MCK_BASE_URL + MESSAGE_LIST_URL,
-                data: options.data,
+                data: data,
                 type: 'get',
                 success: function(data) {
                     response.status = "success";

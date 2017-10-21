@@ -2677,53 +2677,66 @@ window.onload = function() {
                 }
             };
             _this.getMessages = function(params) {
-                var reqData = 'startIndex=0';                
+                var data = {};
+                if (params.startTime) {
+                    data.endTime = params.startTime;
+                }           
                 if (typeof params.userId !== 'undefined' && params.userId !== '') {
-                    reqData = (params.isGroup) ? "&groupId=" + params.userId : "&userId=" + encodeURIComponent(params.userId);
-                    if (params.startTime) {
-                        reqData += "&endTime=" + params.startTime;
+                    if (params.isGroup) {
+                        data.groupId = params.userId;
+                    } else {
+                        data.userId = params.userId;
                     }
-                    reqData += "&pageSize=30";
+                    data.pageSize = 30;
                     if ((IS_MCK_TOPIC_HEADER || IS_MCK_TOPIC_BOX) && params.conversationId) {
-                        reqData += "&conversationId=" + params.conversationId;
+                        data.conversationId = params.conversationId;
                         if (typeof MCK_TAB_CONVERSATION_MAP[params.userId] === 'undefined') {
-                            reqData += "&conversationReq=true";
+                            data.conversationReq = true;
                         }
                     }
                 } else {
-                    if (params.startTime) {
-                        reqData += "&endTime=" + params.startTime;
-                    }
-                    reqData += "&mainPageSize=100";
+                    data.mainPageSize = 100;
                 }
-                window.Applozic.ALApiService.getMessages({data: reqData, success: params.callback, error: params.callback});
+                window.Applozic.ALApiService.getMessages({data: data, success: params.callback, error: params.callback});
             };
             _this.getMessageList = function(params) {
                 var tabId = params.id;
-                var reqData = "startIndex=0";
+                var data = {};
                 var resp = {};
+
+                if (params.startTime) {
+                    data.endTime = params.startTime;                        
+                }
+
                 if (typeof params.clientGroupId !== "undefined" && params.clientGroupId !== '') {
-                    reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
-                    reqdata += "&clientGroupId=" + params.clientGroupId;
-                    if (params.startTime) {
-                        reqdata += "&endTime=" + params.startTime;
+                    if (params.pageSize) {
+                        data.pageSize = params.pageSize;
+                    } else {
+                        data.pageSize = 50;
                     }
+                    data.clientGroupId = params.clientGroupId;
                     resp = {
                         'clientGroupId': params.clientGroupId
                     };
                 } else if (typeof tabId !== "undefined" && tabId !== '') {
-                    reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
-                    reqdata += ('' + params.isGroup === 'true') ? "&groupId=" + tabId : "&userId=" + tabId;
-                    if (params.startTime) {
-                        reqdata += "&endTime=" + params.startTime;
+                    if (params.pageSize) {
+                        data.pageSize = params.pageSize;
+                    } else {
+                        data.pageSize = 50;
+                    }
+                    if ('' + params.isGroup === 'true') {
+                        data.groupId = tabId;
+                    } else {
+                        data.userId = tabId;
                     }
                     resp = {
                         'id': tabId
                     };
                 } else {
-                    reqdata = (params.pageSize) ? "&mainPageSize=" + params.pageSize : "&mainPageSize=50";
-                    if (params.startTime) {
-                        reqdata += "&endTime=" + params.startTime;
+                    if (params.mainPageSize) {
+                        data.mainPageSize = params.pageSize;
+                    } else {
+                        data.mainPageSize = 50;
                     }
                     resp = {
                         'id': ''
@@ -2731,14 +2744,14 @@ window.onload = function() {
                 }
                 if (params.topicId && (tabId || params.clientGroupId)) {
                     if (params.conversationId) {
-                        reqdata += "&conversationId=" + params.conversationId;
+                        data.conversationId = params.conversationId;
                     }
                     if (params.topicId) {
                         resp['topicId'] = params.topicId;
                     }
                 }
                 window.Applozic.ALApiService.getMessages({
-                    data: reqData,
+                    data: data,
                     success: function(response) {
                         var data = response.data;
                         resp.status = "success";
@@ -2786,19 +2799,23 @@ window.onload = function() {
             _this.loadMessageList = function(params, callback) {
                 var individual = false;
                 var isConvReq = false;
-                var reqData = 'startIndex=0';
+                var data = {};
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
-                    reqData = (params.isGroup) ? "&groupId=" + params.tabId : "&userId=" + encodeURIComponent(params.tabId);
+                    if (params.isGroup) {
+                        data.groupId = params.tabId;
+                    } else {
+                        data.userId = params.tabId;
+                    }
                     individual = true;
                     if (params.startTime) {
-                        reqData += '&endTime=' + params.startTime;
+                        data.endTime = params.startTime;
                     }
-                    reqData += "&pageSize=30";
+                    data.pageSize = 30;
                     if ((IS_MCK_TOPIC_HEADER || IS_MCK_TOPIC_BOX) && params.conversationId) {
-                        reqData += "&conversationId=" + params.conversationId;
+                        data.conversationId = params.conversationId;
                         if (typeof MCK_TAB_CONVERSATION_MAP[params.tabId] === 'undefined') {
                             isConvReq = true;
-                            reqData += "&conversationReq=true";
+                            data.conversationReq = true;
                         } else {
                             mckMessageLayout.addConversationMenu(params.tabId, params.isGroup);
                         }
@@ -2806,16 +2823,16 @@ window.onload = function() {
                 } else {
                     CONTACT_SYNCING = true;
                     if (params.startTime) {
-                        reqData += "&endTime=" + params.startTime;
+                        data.endTime = params.startTime;
                     }
-                    reqData += "&mainPageSize=60";
+                    data.mainPageSzie = 60;
                 }
                 if (!params.startTime) {
                     $mck_msg_inner.html('');
                 }
                 $mck_loading.removeClass('n-vis').addClass('vis');
                 window.Applozic.ALApiService.getMessages({
-                    data: reqData,
+                    data: data,
                     success: function(response) {
                         var data = response.data;
                         var isMessages = true;
@@ -3091,10 +3108,15 @@ window.onload = function() {
                 });
             };
             _this.updateContactList = function(tabId, isGroup) {
-                var tabExpr = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
-                var paramData = "startIndex=0&pageSize=1&" + tabExpr;
+                var data = {};
+                if (isGroup) {
+                    data.groupId = tabId;
+                } else {
+                    data.userId = tabId;
+                }
+                data.pageSize=1;
                 window.Applozic.ALApiService.getMessages({
-                    data: paramData,
+                    data: data,
                     success: function(response) {
                         var data = response.data;
                         if (data + '' === "null" || typeof data.message === "undefined" || data.message.length === 0) {
