@@ -30,6 +30,12 @@
             MCK_BASE_URL = serverUrl;
         }
 
+
+        /**
+         * Login user to the chat session, must be done once in a session.
+         * Usage Example:
+         * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', accessToken: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
+         */
         ALApiService.login = function(options) {
             MCK_APP_ID = options.data.alUser.applicationId;
             mckUtils.ajax({
@@ -53,6 +59,19 @@
             });
         }
 
+        /**
+         * Get messages list.
+         * 
+         * Usage Examples:
+         * 
+         * Get latest messages group by users and groups:
+         * Applozic.ALApiService.getMessages({data: {}, success: function(response) {console.log(response);}, error: function() {}});
+         * 
+         * Messages between logged in user and a specific userId:
+         * Applozic.ALApiService.getMessages({data: {userId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
+         * Messages between logged in user and a specific groupId:
+         * Applozic.ALApiService.getMessages({data: {groupId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
+         */
         ALApiService.getMessages = function(options) {
             var data = getAsUriParameters(options.data);
             var response = new Object();

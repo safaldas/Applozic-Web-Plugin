@@ -2826,7 +2826,7 @@ window.onload = function() {
                     if (params.startTime) {
                         data.endTime = params.startTime;
                     }
-                    data.mainPageSzie = 60;
+                    data.mainPageSize = 60;
                 }
                 if (!params.startTime) {
                     $mck_msg_inner.html('');
