@@ -10,13 +10,13 @@ function MckInitializeChannel($this) {
     var checkConnectedIntervalId;
     var sendConnectedStatusIntervalId;
     var SOCKET = '';
-    var $mck_sidebox = $applozic("#mck-sidebox");
-    var $mck_tab_title = $applozic("#mck-tab-title");
-    var $mck_typing_box = $applozic('.mck-typing-box');
-    var $mck_tab_status = $applozic("#mck-tab-status");
-    var $mck_offline_message_box = $applozic("#mck-offline-message-box");
-    var $mck_typing_label = $applozic('#mck-typing-label');
-    var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner");
+    var $mck_sidebox = document.getElementById("mck-sidebox");
+    var $mck_tab_title = document.getElementById("mck-tab-title");
+    var $mck_typing_box = document.getElementsByClassName('mck-typing-box')[0];
+    var $mck_tab_status = document.getElementById("mck-tab-status");
+    var $mck_offline_message_box = document.getElementById("mck-offline-message-box");
+    var $mck_typing_label = document.getElementById("mck-typing-label");
+    var $mck_message_inner = document.getElementById("mck-message-cell").getElementsByClassName("mck-message-inner")[0];
     _this.init = function(appId) {
         _this.MCK_APP_ID = appId;
         if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
@@ -269,7 +269,7 @@ function MckInitializeChannel($this) {
             } else if (messageType === "APPLOZIC_01" || messageType === "APPLOZIC_02" || messageType === "MESSAGE_RECEIVED") {
                 ALStorage.updateLatestMessage(message);
                 var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
-                var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+                var $mck_sidebox_content = document.getElementById("mck-sidebox-content");
                 var tabId = $mck_message_inner.data('mck-id');
                 if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                     var messageFeed = mckMessageLayout.getMessageFeed(message);
@@ -523,7 +523,7 @@ function MckInitializeChannel($this) {
                 } else if (messageType === "APPLOZIC_01" || messageType === "APPLOZIC_02" || messageType === "MESSAGE_RECEIVED") {
                     ALStorage.updateLatestMessage(message);
                     var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
-                    var $mck_sidebox_content = $applozic("#mck-sidebox-content");
+                    var $mck_sidebox_content = document.getElementById("mck-sidebox-content");
                     var tabId = $mck_message_inner.data('mck-id');
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                         var messageFeed = mckMessageLayout.getMessageFeed(message);
