@@ -69,10 +69,19 @@
          * 
          * Messages between logged in user and a specific userId:
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
+         * 
          * Messages between logged in user and a specific groupId:
          * Applozic.ALApiService.getMessages({data: {groupId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
+         * 
+         * Messages history before a timestamp, for loading message list, pass the endTime = createdAt of the last message received in the message list api response
+         * Applozic.ALApiService.getMessages({data: {userId: 'debug4', endTime: 1508177918406}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.getMessages = function(options) {
+            if ((options.data.userId || options.data.groupId) && typeof options.data.pageSize === 'undefined') {
+                options.data.pageSize = 30;
+            } else if (typeof options.data.mainPageSize === 'undefined') {
+                options.data.mainPageSize = 60;
+            }
             var data = getAsUriParameters(options.data);
             var response = new Object();
             mckUtils.ajax({
