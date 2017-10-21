@@ -1683,7 +1683,6 @@ window.onload = function() {
             var $mck_gm_search_box = $applozic('#mck-gm-search-box');
             var $mck_group_member_search_list = $applozic("#mck-group-member-search-list");
             var $mck_no_gsm_text = $applozic("#mck-no-gsm-text");
-            var MESSAGE_LIST_URL = "/rest/ws/message/list";
             var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
             var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
             var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
@@ -2787,7 +2786,7 @@ window.onload = function() {
             _this.loadMessageList = function(params, callback) {
                 var individual = false;
                 var isConvReq = false;
-                var reqData = '';
+                var reqData = 'startIndex=0';
                 if (typeof params.tabId !== 'undefined' && params.tabId !== '') {
                     reqData = (params.isGroup) ? "&groupId=" + params.tabId : "&userId=" + encodeURIComponent(params.tabId);
                     individual = true;
@@ -2815,11 +2814,10 @@ window.onload = function() {
                     $mck_msg_inner.html('');
                 }
                 $mck_loading.removeClass('n-vis').addClass('vis');
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
-                    type: 'get',
-                    global: false,
-                    success: function(data) {
+                window.Applozic.ALApiService.getMessages({
+                    data: reqData,
+                    success: function(response) {
+                        var data = response.data;
                         var isMessages = true;
                         var currTabId = $mck_msg_inner.data('mck-id');
                         var isGroupTab = $mck_msg_inner.data('isgroup');
@@ -3085,11 +3083,7 @@ window.onload = function() {
                             $mck_msg_new.data('forwardMessageKey', '');
                         }
                     },
-                    error: function(xhr, desc, err) {
-                        if (xhr.status === 401) {
-                            sessionStorage.clear();
-                            console.log('Please reload page.');
-                        }
+                    error: function(error) {
                         CONTACT_SYNCING = false;
                         $mck_loading.removeClass('vis').addClass('n-vis');
                         w.console.log('Unable to load messages. Please reload page.');
@@ -3099,12 +3093,10 @@ window.onload = function() {
             _this.updateContactList = function(tabId, isGroup) {
                 var tabExpr = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
                 var paramData = "startIndex=0&pageSize=1&" + tabExpr;
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_LIST_URL,
+                window.Applozic.ALApiService.getMessages({
                     data: paramData,
-                    global: false,
-                    type: 'get',
-                    success: function(data) {
+                    success: function(response) {
+                        var data = response.data;
                         if (data + '' === "null" || typeof data.message === "undefined" || data.message.length === 0) {
                             mckMessageLayout.clearContactMessageData(tabId, isGroup);
                         } else {
@@ -3114,11 +3106,7 @@ window.onload = function() {
                             }
                         }
                     },
-                    error: function(xhr, desc, err) {
-                        if (xhr.status === 401) {
-                            sessionStorage.clear();
-                            console.log('Please reload page.');
-                        }
+                    error: function(error) {
                         mckMessageLayout.clearContactMessageData(tabId, isGroup);
                     }
                 });
