@@ -47,7 +47,8 @@
         ALApiService.getMessages = function(options) {
             var response = new Object();
             mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + options.params,
+                url: MCK_BASE_URL + MESSAGE_LIST_URL,
+                data: options.data,
                 type: 'get',
                 success: function(data) {
                     response.status = "success";

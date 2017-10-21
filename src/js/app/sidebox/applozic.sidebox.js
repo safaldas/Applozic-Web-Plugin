@@ -2678,7 +2678,7 @@ window.onload = function() {
                 }
             };
             _this.getMessages = function(params) {
-                var reqData = '';
+                var reqData = 'startIndex=0';                
                 if (typeof params.userId !== 'undefined' && params.userId !== '') {
                     reqData = (params.isGroup) ? "&groupId=" + params.userId : "&userId=" + encodeURIComponent(params.userId);
                     if (params.startTime) {
@@ -2697,34 +2697,36 @@ window.onload = function() {
                     }
                     reqData += "&mainPageSize=100";
                 }
-                window.Applozic.ALApiService.getMessages({params: reqData, success: params.callback, error: params.callback});
+                window.Applozic.ALApiService.getMessages({data: reqData, success: params.callback, error: params.callback});
             };
             _this.getMessageList = function(params) {
                 var tabId = params.id;
+                var reqData = "startIndex=0";
+                var resp = {};
                 if (typeof params.clientGroupId !== "undefined" && params.clientGroupId !== '') {
-                    var reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
+                    reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
                     reqdata += "&clientGroupId=" + params.clientGroupId;
                     if (params.startTime) {
                         reqdata += "&endTime=" + params.startTime;
                     }
-                    var resp = {
+                    resp = {
                         'clientGroupId': params.clientGroupId
                     };
                 } else if (typeof tabId !== "undefined" && tabId !== '') {
-                    var reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
+                    reqdata = (params.pageSize) ? "&pageSize=" + params.pageSize : "&pageSize=50";
                     reqdata += ('' + params.isGroup === 'true') ? "&groupId=" + tabId : "&userId=" + tabId;
                     if (params.startTime) {
                         reqdata += "&endTime=" + params.startTime;
                     }
-                    var resp = {
+                    resp = {
                         'id': tabId
                     };
                 } else {
-                    var reqdata = (params.pageSize) ? "&mainPageSize=" + params.pageSize : "&mainPageSize=50";
+                    reqdata = (params.pageSize) ? "&mainPageSize=" + params.pageSize : "&mainPageSize=50";
                     if (params.startTime) {
                         reqdata += "&endTime=" + params.startTime;
                     }
-                    var resp = {
+                    resp = {
                         'id': ''
                     };
                 }
@@ -2736,11 +2738,10 @@ window.onload = function() {
                         resp['topicId'] = params.topicId;
                     }
                 }
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqdata,
-                    type: 'get',
-                    global: false,
-                    success: function(data) {
+                window.Applozic.ALApiService.getMessages({
+                    data: reqData,
+                    success: function(response) {
+                        var data = response.data;
                         resp.status = "success";
                         if (typeof data.message === "undefined" || data.message.length === 0) {
                             resp.messages = [];
