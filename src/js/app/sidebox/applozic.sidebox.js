@@ -1252,7 +1252,7 @@ window.onload = function() {
                     window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
                     window.Applozic.ALApiService.login(
                         {
-                            alUser: userPxy,
+                            data: {alUser: userPxy},
                             success: function(result) {
                                 _this.onLoginSuccess(result, userPxy);
                             },
@@ -2532,7 +2532,7 @@ window.onload = function() {
                 }
                 messagePxy.metadata = metadata;
                 window.Applozic.ALApiService.sendMessage({
-                    message: messagePxy,
+                    data: {message: messagePxy},
                     success: function(data) {
                         var currentTabId = $mck_msg_inner.data('mck-id');
                         if (typeof data === 'object') {
@@ -2630,7 +2630,7 @@ window.onload = function() {
                 var tabId = $mck_msg_inner.data('mck-id');
                 if (typeof tabId !== 'undefined') {
                     window.Applozic.ALApiService.deleteMessage({
-                        key: msgKey,
+                        data : {key: msgKey},
                         success: function(data) {
                             if (data === 'success') {
                                 var currentTabId = $mck_msg_inner.data('mck-id');
@@ -2653,9 +2653,14 @@ window.onload = function() {
                 var isGroup = $mck_msg_inner.data("isgroup");
                 var conversationId = $mck_msg_inner.data('mck-conversationid');
                 if (typeof tabId !== 'undefined') {
-                    var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
+                    var data = {};
+                    if (isGroup) {
+                        data.groupId = tabId;
+                    } else {
+                        data.userId = tabId;
+                    }
                     if (conversationId) {
-                        data += "&conversationId=" + conversationId;
+                        data.conversationId = conversationId;
                     }
                     CONTACT_SYNCING = true;
                     window.Applozic.ALApiService.deleteConversation({
@@ -2773,11 +2778,7 @@ window.onload = function() {
                         }
                         params.callback(resp);
                     },
-                    error: function(xhr, desc, err) {
-                        if (xhr.status === 401) {
-                            sessionStorage.clear();
-                            console.log('Please reload page.');
-                        }
+                    error: function(error) {
                         resp.status = "error";
                         params.callback(resp);
                     }
@@ -2787,7 +2788,7 @@ window.onload = function() {
                 var replyMsg = ALStorage.getMessageByKey(msgkey);
                 if (typeof replyMsg === "undefined" ) {
                     window.Applozic.ALApiService.updateReplyMessage({
-                            data: "keys=" + options.key,
+                            data: {key: msgKey},
                             success: function(data) {
                                 ALStorage.updateMckMessageArray(data);
                             }
@@ -3135,7 +3136,7 @@ window.onload = function() {
             };
             _this.sendDeliveryUpdate = function(message) {
                 window.Applozic.ALApiService.sendDeliveryUpdate({
-                    key: message.pairedMessageKey,
+                    data : {key: message.pairedMessageKey},
                     success: function() {},
                     error: function() {}
                 });
@@ -3143,7 +3144,7 @@ window.onload = function() {
             _this.sendReadUpdate = function(key) {
                 if (typeof key !== "undefined" && key !== '') {
                     window.Applozic.ALApiService.sendReadUpdate({
-                        key: key,
+                        data: {key: key},
                         success: function() {},
                         error: function() {}
                     });
@@ -3499,7 +3500,7 @@ window.onload = function() {
                 var response = new Object();
 
                 window.Applozic.ALApiService.createGroup({
-                    data: w.JSON.stringify(groupInfo),
+                    data: {group: groupInfo},
                     success: function(data) {
                         if (params.isInternal) {
                             $mck_btn_group_create.attr('disabled', false).html(MCK_LABELS['create.group.title']);

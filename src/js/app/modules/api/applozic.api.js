@@ -15,18 +15,27 @@
         var UPDATE_REPLY_MAP ="/rest/ws/message/detail"
         var MESSAGE_DELETE_URL = "/rest/ws/message/delete";
         var MESSAGE_READ_UPDATE_URL = "/rest/ws/message/read";
-        var MESSAGE_DELIVERY_UPDATE_URL = "/rest/ws/message/delivered";    
+        var MESSAGE_DELIVERY_UPDATE_URL = "/rest/ws/message/delivered"; 
+
+        function getAsUriParameters(data) {
+            var url = '';
+            for (var prop in data) {
+               url += encodeURIComponent(prop) + '=' + 
+                   encodeURIComponent(data[prop]) + '&';
+            }
+            return url.substring(0, url.length - 1)
+        }
 
         ALApiService.initServerUrl = function(serverUrl) {
             MCK_BASE_URL = serverUrl;
         }
 
         ALApiService.login = function(options) {
-            MCK_APP_ID = options.alUser.applicationId;
+            MCK_APP_ID = options.data.alUser.applicationId;
             mckUtils.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',
-                data: w.JSON.stringify(options.alUser),
+                data: w.JSON.stringify(options.data.alUser),
                 contentType: 'application/json',
                 headers: {
                     'Application-Key': MCK_APP_ID
@@ -43,15 +52,6 @@
                 }
             });
         }
-
-        function getAsUriParameters(data) {
-            var url = '';
-            for (var prop in data) {
-               url += encodeURIComponent(prop) + '=' + 
-                   encodeURIComponent(data[prop]) + '&';
-            }
-            return url.substring(0, url.length - 1)
-         }
 
         ALApiService.getMessages = function(options) {
             var data = getAsUriParameters(options.data);
@@ -82,7 +82,7 @@
                 type: 'POST',
                 url: MCK_BASE_URL + MESSAGE_SEND_URL,
                 global: false,
-                data: w.JSON.stringify(options.message),
+                data: w.JSON.stringify(options.data.message),
                 contentType: 'application/json',
                 success: function(response) {
                     if (options.success) {
@@ -102,7 +102,7 @@
                 url: MCK_BASE_URL + UPDATE_REPLY_MAP,
                 async: false,
                 type: 'get',
-                data: "keys=" + options.key,
+                data: "keys=" + options.data.key,
                 success: function(response) {
                     if (options.success) {
                       options.success(response);
@@ -119,7 +119,7 @@
         ALApiService.sendReadUpdate = function(options) {            
             mckUtils.ajax({
                 url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
-                data: "key=" + options.key,
+                data: "key=" + options.data.key,
                 global: false,
                 type: 'get',
                 success: function() {},
@@ -130,7 +130,7 @@
         ALApiService.sendDeliveryUpdate = function(options) {
             mckUtils.ajax({
                 url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
-                data: "key=" + options.key,
+                data: "key=" + options.data.key,
                 global: false,
                 type: 'get',
                 success: function() {},
@@ -140,7 +140,7 @@
 
         ALApiService.deleteMessage = function(options) {
             mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.key,
+                url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.data.key,
                 global: false,                
                 type: 'get',
                 success: function(response) {
@@ -161,7 +161,7 @@
                 type: "get",
                 url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
                 global: false,
-                data: options.data,
+                data: getAsUriParameters(options.data),
                 success: function(response) {
                     if (options.success) {
                       options.success(response);
@@ -179,7 +179,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_CREATE_URL,
                 global: false,
-                data: options.data,
+                data: w.JSON.stringify(options.data.group),
                 type: 'post',
                 contentType: 'application/json',
                 success: function(response) {
