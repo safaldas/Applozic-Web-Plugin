@@ -44,23 +44,23 @@
             });
         }
 
-        ALApiService.getConversations = function(reqData, successCallback, errorCallback) {
+        ALApiService.getMessages = function(options) {
             var response = new Object();
             mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
+                url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + options.params,
                 type: 'get',
                 success: function(data) {
                     response.status = "success";
                     response.data = data;
-                    if (successCallback) {
-                        successCallback(response);
+                    if (options.success) {
+                        options.success(response);
                     }
                     return;
                 },
                 error: function(xhr, desc, err) {
                     response.status = "error";
-                    if (errorCallback) {
-                        errorCallback(response);
+                    if (options.error) {
+                        options.error(response);
                     }
                 }
             });

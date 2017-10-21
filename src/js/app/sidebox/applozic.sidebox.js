@@ -2697,7 +2697,7 @@ window.onload = function() {
                     }
                     reqData += "&mainPageSize=100";
                 }
-                window.Applozic.ALApiService.getConversations(reqData, params.callback, params.callback);
+                window.Applozic.ALApiService.getMessages({params: reqData, success: params.callback, error: params.callback});
             };
             _this.getMessageList = function(params) {
                 var tabId = params.id;
