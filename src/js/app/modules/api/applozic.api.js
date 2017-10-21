@@ -71,7 +71,7 @@
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
          * 
          * Messages between logged in user and a specific groupId:
-         * Applozic.ALApiService.getMessages({data: {groupId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.getMessages({data: {groupId: 5694841}, success: function(response) {console.log(response);}, error: function() {}});
          * 
          * Messages history before a timestamp, for loading message list, pass the endTime = createdAt of the last message received in the message list api response
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4', endTime: 1508177918406}, success: function(response) {console.log(response);}, error: function() {}});
@@ -105,6 +105,15 @@
             });
         }
 
+        /**
+         * Usage Example:
+         * Applozic.ALApiService.sendMessage({data: {message: {"type":5,"contentType":0,"message":"hi","to":"debug4","metadata":{},"key":"mpfj2","source":1}}, success: function(response) {console.log(response);}, error: function() {}});
+         * type: 5 - Sent Message, 4 - Received Message
+         * contentType: 0 - Standard Chat Message
+         * to: userId to whom the message is to be sent
+         * metadata: Additional key value pairs
+         * source (optional): 1 - WEB, 5 - DESKTOP_BROWSER, 6 - MOBILE_BROWSER
+         */
         ALApiService.sendMessage = function(options) {
             mckUtils.ajax({
                 type: 'POST',
@@ -125,6 +134,66 @@
             });
         }
 
+        /**
+         * Send delivery report for a message.
+         * Usage Example:
+         * Applozic.ALApiService.sendDeliveryUpdate({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.sendDeliveryUpdate = function(options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
+                data: "key=" + options.data.key,
+                global: false,
+                type: 'get',
+                success: function() {},
+                error: function() {}
+            });
+        }
+
+        /**
+         * Send read report for a message.
+         * Usage Example:
+         * Applozic.ALApiService.sendReadUpdate({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.sendReadUpdate = function(options) {            
+            mckUtils.ajax({
+                url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
+                data: "key=" + options.data.key,
+                global: false,
+                type: 'get',
+                success: function() {},
+                error: function() {}
+            });
+        }
+
+        /**
+         * Delete message
+         * Usage Example:
+         * Applozic.ALApiService.deleteMessage({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.deleteMessage = function(options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.data.key,
+                global: false,                
+                type: 'get',
+                success: function(response) {
+                    if (options.success) {
+                      options.success(response);
+                    }
+                },
+                error: function(response) {
+                    if (options.error) {
+                      options.error(response);
+                    }
+                }
+            });
+        }
+
+        /**
+         * Reply to a particular message
+         * Usage Example:
+         * Applozic.ALApiService.updateReplyMessage({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
+         */
         ALApiService.updateReplyMessage = function(options) {
             mckUtils.ajax({
                 url: MCK_BASE_URL + UPDATE_REPLY_MAP,
@@ -144,46 +213,15 @@
             });
         }
 
-        ALApiService.sendReadUpdate = function(options) {            
-            mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
-                data: "key=" + options.data.key,
-                global: false,
-                type: 'get',
-                success: function() {},
-                error: function() {}
-            });
-        }
-
-        ALApiService.sendDeliveryUpdate = function(options) {
-            mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
-                data: "key=" + options.data.key,
-                global: false,
-                type: 'get',
-                success: function() {},
-                error: function() {}
-            });
-        }
-
-        ALApiService.deleteMessage = function(options) {
-            mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.data.key,
-                global: false,                
-                type: 'get',
-                success: function(response) {
-                    if (options.success) {
-                      options.success(response);
-                    }
-                },
-                error: function(response) {
-                    if (options.error) {
-                      options.error(response);
-                    }
-                }
-            });
-        }
-
+        /**
+         * Delete conversation thread of the logged in user with a particular user or group.
+         * Usage Example:
+         * 
+         * Delete by userId
+         * Applozic.ALApiService.deleteConversation({data: {userId: 'debug2'}, success: function(response) {console.log(response);}, error: function() {}});
+         * Delete by groupId
+         * Applozic.ALApiService.deleteConversation({data: {groupId: 5694841}, success: function(response) {console.log(response);}, error: function() {}});
+         */
         ALApiService.deleteConversation = function(options) {
             mckUtils.ajax({
                 type: "get",
@@ -203,6 +241,11 @@
             });
         }
 
+        /**
+         * Create group
+         * Usage Example:
+         * Applozic.ALApiService.createGroup({data: {group: {"groupName":"test","users":[{'userId': 'debug3'}, {'userId': 'debug4'}],"type":2,"metadata":{"CREATE_GROUP_MESSAGE":":adminName created group :groupName","REMOVE_MEMBER_MESSAGE":":adminName removed :userName","ADD_MEMBER_MESSAGE":":adminName added :userName","JOIN_MEMBER_MESSAGE":":userName joined","GROUP_NAME_CHANGE_MESSAGE":"Group name changed to :groupName","GROUP_ICON_CHANGE_MESSAGE":"Group icon changed","GROUP_LEFT_MESSAGE":":userName left","DELETED_GROUP_MESSAGE":":adminName deleted group","GROUP_USER_ROLE_UPDATED_MESSAGE":":userName is :role now","GROUP_META_DATA_UPDATED_MESSAGE":"","ALERT":"","HIDE":""}} }, success: function(response) {console.log(response);}, error: function() {}});
+         */
         ALApiService.createGroup = function(options) {
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_CREATE_URL,
@@ -223,6 +266,11 @@
             });
         }
 
+        /**
+         * Get groups list.
+         * Usage Example:
+         * Applozic.ALApiService.loadGroups({success: function(response) {console.log(response);} });
+         */
         ALApiService.loadGroups = function(options) {
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
@@ -239,10 +287,6 @@
                     }
                 }
             });
-        }
-
-        ALApiService.getUsers = function(params, callback) {
-
         }
 
         return ALApiService;
