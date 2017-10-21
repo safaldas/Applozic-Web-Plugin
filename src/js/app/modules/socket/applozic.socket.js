@@ -12,11 +12,11 @@ function MckInitializeChannel($this) {
     var SOCKET = '';
     var $mck_sidebox = document.getElementById("mck-sidebox");
     var $mck_tab_title = document.getElementById("mck-tab-title");
-    var $mck_typing_box = document.getElementsByClassName('mck-typing-box');
+    var $mck_typing_box = document.getElementsByClassName('mck-typing-box')[0];
     var $mck_tab_status = document.getElementById("mck-tab-status");
     var $mck_offline_message_box = document.getElementById("mck-offline-message-box");
     var $mck_typing_label = document.getElementById("mck-typing-label");
-    var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner");
+    var $mck_message_inner = document.getElementById("mck-message-cell").getElementsByClassName("mck-message-inner")[0];
     _this.init = function(appId) {
         _this.MCK_APP_ID = appId;
         if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
