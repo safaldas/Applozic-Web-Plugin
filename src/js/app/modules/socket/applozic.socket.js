@@ -59,11 +59,11 @@ function MckInitializeChannel($this) {
     _this.connectToSocket = function(isFetchMessages) {
         if (!stompClient.connected) {
             if (isFetchMessages && mck_sidebox.style.display === 'block') {
-                var currTabId = $mck_message_inner.data('mck-id');
+                var currTabId = mck_message_inner.getAttribute('data-mck-id');
                 if (currTabId) {
-                    var isGroup = $mck_message_inner.data('isgroup');
-                    var conversationId = $mck_message_inner.data('mck-conversationid');
-                    var topicId = $mck_message_inner.data('mck-topicid');
+                    var isGroup = mck_message_inner.getAttribute('data-isgroup');
+                    var conversationId = mck_message_inner.getAttribute('data-mck-conversationid');
+                    var topicId = mck_message_inner.getAttribute('data-mck-topicid');
                     ALStorage.clearMckMessageArray();
                     mckMessageLayout.loadTab({
                         'tabId': currTabId,
@@ -166,18 +166,19 @@ function MckInitializeChannel($this) {
             var publisher = message.split(",")[1];
             var status = Number(message.split(",")[2]);
             var tabId = resp.headers.destination.substring(resp.headers.destination.lastIndexOf("-") + 1, resp.headers.destination.length);
-            var currTabId = $mck_message_inner.data('mck-id');
-            var isGroup = $mck_message_inner.data('isgroup');
+            var currTabId = mck_message_inner.getAttribute('data-mck-id');
+            var isGroup = mck_message_inner.getAttribute('data-isgroup');
             var group = mckGroupUtils.getGroup(currTabId);
             if (!MCK_BLOCKED_TO_MAP[publisher] && !MCK_BLOCKED_BY_MAP[publisher]) {
                 if (status === 1) {
                     if ((MCK_USER_ID !== publisher || !isGroup) && (currTabId === publisher || currTabId === tabId)) {
-                        var isGroup = $mck_message_inner.data('isgroup');
+                        var isGroup = mck_message_inner.getAttribute('data-isgroup');
                         if (isGroup) {
                             if (publisher !== MCK_USER_ID) {
                                 if (mckGroupLayout.authenticateGroupUser(group) || (group.type === 6 && !MCK_OPEN_GROUP_SETTINGS.disableChatForNonGroupMember)) {
                                     mck_tab_title.classList.add('mck-tab-title-w-typing');
-                                    mck_tab_status.classList.remove('vis').add('n-vis');
+                                    mck_tab_status.classList.remove('vis');
+									mck_tab_status.classList.add('n-vis');
                                     var displayName = mckMessageLayout.getTabDisplayName(publisher, false);
                                     displayName = displayName.split(' ')[0];
                                     mck_typing_label.innerHTML = displayName + ' ' + MCK_LABELS['is.typing'];
@@ -190,24 +191,30 @@ function MckInitializeChannel($this) {
                             }
                         } else {
                             mck_tab_title.classList.add('mck-tab-title-w-typing');
-                            mck_tab_status.classList.remove('vis').add('n-vis');
+                            mck_tab_status.classList.remove('vis');
+							mck_tab_status.classList.add('n-vis');
                             mck_typing_label.innerHTML = MCK_LABELS['typing'];
                         }
-                        mck_typing_box.classList.remove('n-vis').add('vis');
+                        mck_typing_box.classList.remove('n-vis');
+						mck_typing_box.classList.add('vis');
                         setTimeout(function() {
                             mck_tab_title.classList.remove("mck-tab-title-w-typing");
-                            mck_typing_box.classList.remove('vis').add('n-vis');
+                            mck_typing_box.classList.remove('vis');
+							mck_typing_box.classList.add('n-vis');
                             if (mck_tab_title.classList.contains("mck-tab-title-w-status" && (typeof group === "undefined" || group.type != 7))) {
-                                mck_tab_status.classList.remove('n-vis').add('vis');
+                                mck_tab_status.classList.remove('n-vis');
+								mck_typing_box.classList.add('vis');
                             }
                             mck_typing_label.innerHTML = MCK_LABELS['typing'];
                         }, 60000);
                     }
                 } else {
                     mck_tab_title.classList.remove("mck-tab-title-w-typing");
-                    mck_typing_box.classList.remove('vis').add('n-vis');
+                    mck_typing_box.classList.remove('vis');
+					mck_typing_box.classList.add('n-vis');
                     if (mck_tab_title.classList.contains("mck-tab-title-w-status") && (typeof group === "undefined" || group.type != 7)) {
-                        mck_tab_status.classList.remove('n-vis').add('vis');
+                        mck_tab_status.classList.remove('n-vis')
+						mck_tab_status.classList.add('vis');
                     }
                     mck_typing_label.innerHTML = MCK_LABELS['typing'];
                 }
@@ -250,7 +257,7 @@ function MckInitializeChannel($this) {
     };
     _this.onOpenGroupMessage = function(obj) {
         if (openGroupSubscriber.indexOf(obj.headers.subscription) !== -1) {
-            var resp = $applozic.parseJSON(obj.body);
+            var resp = JSON.parse(obj.body);
             var messageType = resp.type;
             var message = resp.message;
             // var userIdArray =
@@ -260,7 +267,8 @@ function MckInitializeChannel($this) {
             if (messageType === "APPLOZIC_03") {
                 ALStorage.updateLatestMessage(message);
                 if (message.type !== 0 && message.type !== 4) {
-                    $applozic("." + message.key + " .mck-message-status").removeClass('mck-icon-time').addClass('mck-icon-sent');
+                    document.querySelector("." + message.key + " .mck-message-status").classList.remove('mck-icon-time');
+					document.querySelector("." + message.key + " .mck-message-status").classList.add('mck-icon-sent');
                     mckMessageLayout.addTooltip(message.key);
                 }
                 events.onMessageSentUpdate({
@@ -270,7 +278,7 @@ function MckInitializeChannel($this) {
                 ALStorage.updateLatestMessage(message);
                 var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                 var mck_sidebox_content = document.getElementById("mck-sidebox-content");
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                     var messageFeed = mckMessageLayout.getMessageFeed(message);
                     events.onMessageReceived({
@@ -318,16 +326,21 @@ function MckInitializeChannel($this) {
     };
     _this.onMessage = function(obj) {
         if (subscriber != null && subscriber.id === obj.headers.subscription) {
-            var resp = $applozic.parseJSON(obj.body);
+            var resp = JSON.parse(obj.body);
             var messageType = resp.type;
             if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
-                $applozic("." + resp.message.split(",")[0] + " .mck-message-status").removeClass('mck-icon-time').removeClass('mck-icon-sent').addClass('mck-icon-delivered');
+                document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
                 mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                 events.onMessageDelivered({
                     'messageKey': resp.message.split(",")[0]
                 });
             } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
-                $applozic("." + resp.message.split(",")[0] + " .mck-message-status").removeClass('mck-icon-time').removeClass('mck-icon-sent').removeClass('mck-icon-delivered').addClass('mck-icon-read');
+                document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-read');
                 mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                 events.onMessageRead({
                     'messageKey': resp.message.split(",")[0]
@@ -360,19 +373,21 @@ function MckInitializeChannel($this) {
             } else if (messageType === 'APPLOZIC_11') {
                 var userId = resp.message;
                 var contact = mckMessageLayout.fetchContact(userId);
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
-                    if (tabId === contact.contactId && !$mck_message_inner.data('isgroup')) {
-                        $applozic('#mck-tab-status').html(MCK_LABELS['online']);
+                    if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
+                        document.querySelector('#mck-tab-status').innerHTML = MCK_LABELS['online'];
                         if (IS_OFFLINE_MESSAGE_ENABLED) {
                             mckMessageLayout.hideOfflineMessage();
                         }
                     } else {
                         var htmlId = mckContactUtils.formatContactId(userId);
-                        $applozic("#li-user-" + htmlId + " .mck-ol-status").removeClass('n-vis').addClass('vis');
+                        document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('n-vis');
+						document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('vis');
                     }
-                    $applozic('.mck-user-ol-status.' + htmlId).removeClass('n-vis').addClass('vis');
-                    $applozic('.mck-user-ol-status.' + htmlId).next().html('(' + MCK_LABELS['online'] + ')');
+                    document.querySelector('.mck-user-ol-status.' + htmlId).classList.remove('n-vis');
+					document.querySelector('.mck-user-ol-status.' + htmlId).classList.add('vis');
+                    document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
                     w.MCK_OL_MAP[userId] = true;
                     mckUserUtils.updateUserStatus({
                         'userId': resp.message,
@@ -391,16 +406,18 @@ function MckInitializeChannel($this) {
                     MCK_LAST_SEEN_AT_MAP[userId] = lastSeenAtTime;
                 }
                 if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
-                    var tabId = $mck_message_inner.data('mck-id');
-                    if (tabId === contact.contactId && !$mck_message_inner.data('isgroup')) {
+                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
                         document.getElementById("mck-tab-status").innerHTML = mckDateUtils.getLastSeenAtStatus(lastSeenAtTime);
                         if (IS_OFFLINE_MESSAGE_ENABLED) {
                             mckInit.manageOfflineMessageTime(tabId);
                         }
                     }
-                    document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis').add('n-vis');
+                    document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis');
+					document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.add('n-vis');
                     document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
-                    document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis').add('n-vis');
+                    document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis');
+					document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('n-vis');
                     mckUserUtils.updateUserStatus({
                         'userId': userId,
                         'status': 0,
@@ -416,10 +433,11 @@ function MckInitializeChannel($this) {
                 var topicId = resp.message.split(",")[1];
                 var contact = mckMessageLayout.fetchContact(userId);
                 mckMessageLayout.updateUnreadCount('user_' + contact.contactId, 0, true);
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if ((typeof tabId === "undefined") || tabId === '') {
                     document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-text").innerHTML = mckMessageLayout.getUnreadCount('user_' + contact.contactId);
-                    document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.remove('vis').add('n-vis');
+                    document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.remove('vis');
+					document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.add('n-vis');
                 }
                 var response = {
                     'userId': userId
@@ -431,10 +449,13 @@ function MckInitializeChannel($this) {
             } else if (messageType === 'APPLOZIC_28') {
                 var userId = resp.message.split(",")[0];
                 var topicId = resp.message.split(",")[1];
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if (tabId === userId) {
-                    document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-time').remove('mck-icon-sent').remove('mck-icon-delivered').add('mck-icon-read');
-                    document.querySelector(".mck-msg-right .mck-icon-delivered").attr('title', 'delivered and read');
+                    document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-time');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-sent');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-delivered');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.add('mck-icon-read');
+                    document.querySelector(".mck-msg-right .mck-icon-delivered").setAttribute('title', 'delivered and read');
                     var contact = mckMessageLayout.getContact(userId);
                     if (typeof contact === 'undefined') {
                         var userIdArray = [];
@@ -453,7 +474,7 @@ function MckInitializeChannel($this) {
                 var status = resp.message.split(":")[0];
                 var userId = resp.message.split(":")[1];
                 var contact = mckMessageLayout.fetchContact(userId);
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if (tabId === contact.contactId) {
                     if (status === BLOCK_STATUS_MAP[0]) {
                         MCK_BLOCKED_TO_MAP[contact.contactId] = true;
@@ -461,11 +482,14 @@ function MckInitializeChannel($this) {
                     } else {
                         MCK_BLOCKED_BY_MAP[contact.contactId] = true;
                         mck_tab_title.classList.remove('mck-tab-title-w-status');
-                        mck_tab_status.classList.remove('vis').add('n-vis');
-                        mck_typing_box.classList.remove('vis').add('n-vis');
+                        mck_tab_status.classList.remove('vis');
+						mck_tab_status.classList.add('n-vis');
+                        mck_typing_box.classList.remove('vis');
+						mck_typing_box.classList.add('n-vis');
                     }
                 } else {
-                    document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.remove('vis').add('n-vis');
+                    document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.remove('vis');
+					document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.add('n-vis');
                 }
                 events.onUserBlocked({
                     'status': status,
@@ -475,7 +499,7 @@ function MckInitializeChannel($this) {
                 var status = resp.message.split(":")[0];
                 var userId = resp.message.split(":")[1];
                 var contact = mckMessageLayout.fetchContact(userId);
-                var tabId = $mck_message_inner.data('mck-id');
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
                 if (tabId === contact.contactId) {
                     if (status === BLOCK_STATUS_MAP[2]) {
                         MCK_BLOCKED_TO_MAP[contact.contactId] = false;
@@ -489,11 +513,13 @@ function MckInitializeChannel($this) {
                                 mck_tab_status.innerHTML = mckDateUtils.getLastSeenAtStatus(MCK_LAST_SEEN_AT_MAP[tabId]);
                             }
                             mck_tab_title.classList.add('mck-tab-title-w-status');
-                            $mck_tab_status.classList.remove('n-vis').add('vis');
+                            mck_tab_status.classList.remove('n-vis');
+							mck_tab_status.classList.add('vis');
                         }
                     }
                 } else if (w.MCK_OL_MAP[tabId]) {
-                    document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.remove('n-vis').add('vis');
+                    document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.remove('n-vis');
+					document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.add('vis');
                 }
                 events.onUserUnblocked({
                     'status': status,
@@ -514,7 +540,8 @@ function MckInitializeChannel($this) {
                 if (messageType === "APPLOZIC_03") {
                     ALStorage.updateLatestMessage(message);
                     if (message.type !== 0 && message.type !== 4) {
-                        document.querySelector("." + message.key + " .mck-message-status").classList.remove('mck-icon-time').add('mck-icon-sent');
+                        document.querySelector("." + message.key + " .mck-message-status").classList.remove('mck-icon-time');
+						document.querySelector("." + message.key + " .mck-message-status").classList.add('mck-icon-sent');
                         mckMessageLayout.addTooltip(message.key);
                     }
                     events.onMessageSentUpdate({
@@ -524,7 +551,7 @@ function MckInitializeChannel($this) {
                     ALStorage.updateLatestMessage(message);
                     var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                     var mck_sidebox_content = document.getElementById("mck-sidebox-content");
-                    var tabId = $mck_message_inner.data('mck-id');
+                    var tabId = mck_message_inner.getAttribute('data-mck-id');
                     if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                         var messageFeed = mckMessageLayout.getMessageFeed(message);
                         events.onMessageReceived({
@@ -575,28 +602,30 @@ function MckInitializeChannel($this) {
                             var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
 
                             var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
-                            $applozic("#mck-video-call-indicator").data("call-id", message.metadata.CALL_ID);
-                            $applozic("#mck-video-call-indicator").data("isAudioCall", message.metadata.CALL_AUDIO_ONLY);
-                            $applozic("#mck-video-call-indicator-txt").html(displayName + " calling...");
-                            $applozic("#mck-video-call-icon").html(imgSource);
-                            $applozic("#mck-video-call-indicator").removeClass("n-vis").addClass("vis");
+                            document.querySelector("#mck-video-call-indicator").setAttribute("data-call-id", message.metadata.CALL_ID);
+                            document.querySelector("#mck-video-call-indicator").setAttribute("data-isAudioCall", message.metadata.CALL_AUDIO_ONLY);
+                            document.querySelector("#mck-video-call-indicator-txt").innerHTML = displayName + " calling...";
+                            document.querySelector("#mck-video-call-icon").innerHTML = imgSource;
+                            document.querySelector("#mck-video-call-indicator").classList.remove("n-vis");
+							document.querySelector("#mck-video-call-indicator").classList.add("vis");
                             mckVideoCallringTone.play();
                             //timer if user not receive call in 1 minute....
                             setTimeout(function() {
-                                var callReceived = $applozic("#mck-video-call-indicator").data("callReceived");
+                                var callReceived = document.querySelector("#mck-video-call-indicator").getAttribute("data-callReceived");
                                 if (!callReceived) {
                                     console.log("call is not answered");
                                     //no need to notify server... sender is doing this...thank you sender.
                                     //mckMessageService.sendVideoCallMessage(callId,"CALL_MISSED",102,false);
                                     mckVideoCallringTone.stop();
-                                    document.querySelector("#mck-video-call-indicator").classList.add("n-vis").remove("vis");
+                                    document.querySelector("#mck-video-call-indicator").classList.add("n-vis");
+									document.querySelector("#mck-video-call-indicator").classList.remove("vis");
 
                                 }
                             }, 60000);
                         } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
                             //notify server.. content type 103 msgType CALL_REJECTED
                             //check is this device is call host
-                            if ($applozic("#mck-btn-video-call").data("isCallHost")) {
+                            if (document.querySelector("#mck-btn-video-call").getAttribute("data-isCallHost")) {
                                 mckMessageService.sendVideoCallMessage(message.metadata.CALL_ID, "CALL_REJECTED", 103, false);
                                 mckCallService.ringToneForHost.stop();
                                 mckCallService.outgoingCallServices.twilioService.leaveRoomIfJoined();
@@ -611,7 +640,8 @@ function MckInitializeChannel($this) {
                     if (message.contentType == 103) {
                         if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
                             //stop ringtone and hide vid-call-indicator
-                             document.querySelector("#mck-video-call-indicator").classList.add("n-vis").remove("vis");
+                             document.querySelector("#mck-video-call-indicator").classList.add("n-vis");
+							 document.querySelector("#mck-video-call-indicator").classList.remove("vis");
                             if (mckVideoCallringTone) {
                                 mckVideoCallringTone.stop();
                             }
