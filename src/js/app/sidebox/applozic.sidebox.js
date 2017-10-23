@@ -4083,13 +4083,25 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return;
                 }
             };
-            _this.getContactDisplayName = function(userId) {
 
-                   if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
+            _this.getContactDisplayName = function (userId) {
+                if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
                     return MCK_CONTACT_NAME_MAP[userId];
-                    } else {
-                    return;
+                } else if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
+                    var userDetail = MCK_USER_DETAIL_MAP[userId];
+                    if (typeof userDetail !== "undefined") {
+                        return userDetail.displayName;
+                     } else{
+                    	    var userIdArray = new Array();
+                         userIdArray.push(userId);
+                         mckContactService.getUsersDetail(userIdArray, { 'async': false });
+                         var userDetail= mckUserUtils.getUserDetail(userId);
+                         return userDetail.displayName;
                      }
+
+                } else {
+                    return;
+                }
             };
             _this.addMessage = function(msg, contact, append, scroll, appendContextMenu) {
                 var metadatarepiledto = '';
