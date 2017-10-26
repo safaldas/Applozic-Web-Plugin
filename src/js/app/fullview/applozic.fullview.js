@@ -976,7 +976,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     'to': $applozic.trim(params.to),
                     'type': params.messageType,
                     'contentType': params.type,
-                    'message': message
+                    'message': message,
+                    'metadata': params.metadata
                 };
                 mckMessageService.sendMessage(messagePxy);
                 return 'success';
