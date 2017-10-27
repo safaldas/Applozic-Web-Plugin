@@ -5,7 +5,6 @@
 
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
-
         var MCK_BASE_URL = "https://apps.applozic.com";
         var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
         var MESSAGE_LIST_URL = "/rest/ws/message/list";
@@ -38,6 +37,7 @@
          */
         ALApiService.login = function(options) {
             MCK_APP_ID = options.data.alUser.applicationId;
+			mckUtils.initAppKey(MCK_APP_ID);
             mckUtils.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',

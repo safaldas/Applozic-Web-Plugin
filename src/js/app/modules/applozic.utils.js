@@ -1,3 +1,8 @@
+var authCode;
+var devKey;
+var accToken;
+var modName;
+var appID;
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -11,6 +16,8 @@ function MckMapUtils() {
     };
 }
 function MckDateUtils() {
+	
+	
     var _this = this;
     var fullDateFormat = 'mmm d, h:MM TT';
     var onlyDateFormat = 'mmm d';
@@ -435,7 +442,35 @@ function MckUtils() {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-
+	_this.initAuth = function(auth,appid,devkey,token,modname)
+	{
+		authCode = auth;
+		appID = appid;
+		devKey = devkey;
+		accToken = token;
+		modName = modname;
+	}
+	_this.initAppKey = function(appid)
+	{
+		appID = appid;
+	}
+	_this.setHeaders = function(jqXHR) {
+                jqXHR.setRequestHeader("UserId-Enabled", true);
+                if (authCode) {
+                    jqXHR.setRequestHeader("Authorization", "Basic " + authCode);
+                }
+                jqXHR.setRequestHeader("Application-Key", appID);
+                if (devKey) {
+                    jqXHR.setRequestHeader("Device-Key", devKey);
+                }
+                if (accToken) {
+                    jqXHR.setRequestHeader("Access-Token", accToken);
+                }
+                if (modName) {
+                    jqXHR.setRequestHeader("App-Module-Name", modName);
+                }
+				return jqXHR;
+            };
     _this.ajax = function(options) {
         //var reqOptions = Object.assign({}, options);
         var reqOptions = $applozic.extend({}, {}, options);
@@ -473,7 +508,73 @@ function MckUtils() {
                 }
             }
         }
-        $applozic.ajax(reqOptions);
+		var request = new XMLHttpRequest();
+		var responsedata;
+		asyn = true;
+		if(typeof reqOptions.async !== 'undefined' || options.async)
+		{	asyn = reqOptions.async; console.log("async exists");}
+		
+		typ = reqOptions.type.toUpperCase();
+		console.log(typ);
+		request.open(typ,reqOptions.url,asyn);
+		if(typ === 'POST')
+		{
+		if(typeof reqOptions.contentType === 'undefined')
+		{
+			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
+			console.log('content undefined');
+		}else
+		{
+			cttype = reqOptions.contentType;
+		}
+			request.setRequestHeader('Content-Type', cttype);
+		}
+		
+			//authorizationrequestheaders
+		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
+		{
+		request = _this.setHeaders(request);
+		}
+		if(typeof reqOptions.data === 'undefined')
+		{
+			console.log("data undefined");
+			request.send();
+		}
+		else
+		{
+		request.send(reqOptions.data);
+		}
+		
+		request.onreadystatechange = function()
+		{
+			if (request.readyState === XMLHttpRequest.DONE) {
+				if (request.status === 200) {
+					//success
+					var contType = request.getResponseHeader("Content-Type");
+					console.log(contType + typ);
+					if(contType == "text/html")
+					{
+						responsedata = request.responseXML;
+					}
+					else if(contType == "text/plain" || contType == "null")
+					{
+						responsedata = request.responseText;
+					}
+					else if(contType == 'application/json;charset=utf-8')
+					{
+						var responsedata = JSON.parse(request.responseText);
+					}
+		
+			reqOptions.success(responsedata);
+      } else {
+		  //error
+        reqOptions.error;
+      }
+    }
+  
+		};
+        //$applozic.ajax(reqOptions);
+   
     };
 
     _this.isJsonString = function(str) {

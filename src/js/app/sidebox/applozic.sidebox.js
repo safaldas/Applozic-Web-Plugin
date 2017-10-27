@@ -1330,7 +1330,11 @@ window.onload = function() {
                         'errorMessage': 'UNABLE TO PROCESS REQUEST'
                     });
                 }
-            };
+            }
+			_this.initAuth = function(auth,appid,dev,acc,mod)
+			{
+				mckUtils.initAuth(auth,appid,dev,acc,mod);
+			}
             _this.onInitApp = function(data) {
                 _this.appendLauncher();
                 _this.setLabels();
@@ -1350,6 +1354,7 @@ window.onload = function() {
                 MCK_FILE_URL = data.fileBaseUrl;
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
+				_this.initAuth(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
