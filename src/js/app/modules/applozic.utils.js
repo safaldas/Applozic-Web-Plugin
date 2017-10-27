@@ -1,8 +1,4 @@
-var authCode;
-var devKey;
-var accToken;
-var modName;
-var appID;
+
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -16,8 +12,6 @@ function MckMapUtils() {
     };
 }
 function MckDateUtils() {
-	
-	
     var _this = this;
     var fullDateFormat = 'mmm d, h:MM TT';
     var onlyDateFormat = 'mmm d';
@@ -442,13 +436,19 @@ function MckUtils() {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-	_this.initAuth = function(auth,appid,devkey,token,modname)
-	{
-		authCode = auth;
-		appID = appid;
-		devKey = devkey;
-		accToken = token;
-		modName = modname;
+	var authCode;
+	var devKey;
+	var accToken;
+	var modName;
+	var appID;
+	_this.initAuth = function(authkeys)
+	{   
+		console.log(authkeys);
+		authCode = authkeys.authcode;
+		appID = authkeys.appid;
+		devKey = authkeys.devkey;
+		accToken = authkeys.accesstoken;
+		modName = authkeys.modname;
 	}
 	_this.initAppKey = function(appid)
 	{

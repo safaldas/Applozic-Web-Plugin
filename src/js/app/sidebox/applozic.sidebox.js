@@ -318,6 +318,7 @@ window.onload = function() {
         var _this = this;
         var MCK_TOKEN;
         var AUTH_CODE;
+		var authKeys = {};
         MCK_GROUP_MAP = [];
         var FILE_META = [];
         var USER_DEVICE_KEY;
@@ -1331,9 +1332,10 @@ window.onload = function() {
                     });
                 }
             }
-			_this.initAuth = function(auth,appid,dev,acc,mod)
+			_this.initAuth = function(authkeys)
 			{
-				mckUtils.initAuth(auth,appid,dev,acc,mod);
+				mckUtils.initAuth(authKeys);
+				console.log("call");
 			}
             _this.onInitApp = function(data) {
                 _this.appendLauncher();
@@ -1354,7 +1356,14 @@ window.onload = function() {
                 MCK_FILE_URL = data.fileBaseUrl;
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
-				_this.initAuth(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+				authKeys = { 
+							 'authcode': AUTH_CODE,
+							 'appid': MCK_APP_ID,
+							 'devkey': USER_DEVICE_KEY,
+							 'accesstoken': MCK_ACCESS_TOKEN,
+							 'modname': MCK_APP_MODULE_NAME
+						   };
+				_this.initAuth(authKeys);
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
@@ -2503,6 +2512,7 @@ window.onload = function() {
                     var contact = mckMessageLayout.fetchContact(tabId);
                     _this.addMessageToTab(messagePxy, contact);
                 }
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     type: 'GET',
                     url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
@@ -3159,6 +3169,7 @@ window.onload = function() {
                 var ucTabId = (isGroup) ? 'group_' + tabId : 'user_' + tabId;
                 if (tabId && (mckMessageLayout.getUnreadCount(ucTabId) > 0)) {
                     var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
+					mckInit.initAuth(mckInit.authKeys);
                     mckUtils.ajax({
                         url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
                         data: data,
@@ -3206,6 +3217,7 @@ window.onload = function() {
                     if (params.fallBackTemplatesList && params.fallBackTemplatesList.length > 0) {
                         conversationPxy.fallBackTemplatesList = params.fallBackTemplatesList;
                     }
+					mckInit.initAuth(mckInit.authKeys);
                     mckUtils.ajax({
                         url: MCK_BASE_URL + CONVERSATION_ID_URL,
                         global: false,
@@ -3257,6 +3269,7 @@ window.onload = function() {
                 if (params.pageSize) {
                     reqdata += '&pageSize=' + params.pageSize;
                 }
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
                     data: reqdata,
@@ -3337,6 +3350,7 @@ window.onload = function() {
             _this.getTopicId = function(params) {
                 if (params.conversationId) {
                     var data = "id=" + params.conversationId;
+					mckInit.initAuth(mckInit.authKeys);
                     mckUtils.ajax({
                         url: MCK_BASE_URL + TOPIC_ID_URL,
                         data: data,
@@ -3390,6 +3404,7 @@ window.onload = function() {
             _this.sendConversationCloseUpdate = function(conversationId) {
                 if (conversationId) {
                     var data = "id=" + conversationId;
+					mckInit.initAuth(mckInit.authKeys);
                     mckUtils.ajax({
                         url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
                         data: data,
@@ -5763,6 +5778,7 @@ window.onload = function() {
                         data = data.substring(0, data.length - 1);
                     }
                     if (data) {
+						mckInit.initAuth(mckInit.authKeys);
                         mckUtils.ajax({
                             url: MCK_BASE_URL + CONTACT_NAME_URL,
                             data: data,
@@ -5786,6 +5802,7 @@ window.onload = function() {
             };
             _this.loadContacts = function() {
                 var mckContactNameArray = [];
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + CONTACT_LIST_URL + '?startIndex=0&pageSize=30&orderBy=1',
                     type: 'get',
@@ -5845,6 +5862,7 @@ window.onload = function() {
             	formData.groupMemberList=params.groupMemberList;
             	if(params.type){
             		formData.type=params.type;
+					mckInit.initAuth(mckInit.authKeys);
                     mckUtils.ajax({
                                   url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add/members",
                                   type: "post",
@@ -5869,6 +5887,7 @@ window.onload = function() {
             		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
+					   mckInit.initAuth(mckInit.authKeys);
                        mckUtils.ajax({
                               url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add",
                               type: "post",
@@ -5887,7 +5906,8 @@ window.onload = function() {
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
         	    var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
-                mckUtils.ajax({
+                mckInit.initAuth(mckInit.authKeys);
+				mckUtils.ajax({
                                  url: MCK_BASE_URL +FRIEND_LIST_URL+friendListGroupName+getFriendListUrl,
                                  type: "get",
                                  async:false,
@@ -5907,6 +5927,7 @@ window.onload = function() {
                   };
                   _this.removeUserFromFriendList = function(params) {
                        	    var getFriendListUrl = (params.type)?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
+							mckInit.initAuth(mckInit.authKeys);
                                mckUtils.ajax({
                                                 url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                 type: "get",
@@ -5918,6 +5939,7 @@ window.onload = function() {
                                  };
                         _this.deleteFriendList = function(params) {
                       	    var getFriendListUrl =(params.type)?"/delete?groupType=9":"/delete";
+							mckInit.initAuth(mckInit.authKeys);
                               mckUtils.ajax({
                                                url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
                                                type: "get",
@@ -5958,6 +5980,7 @@ window.onload = function() {
                 }
 
                 var response = new Object();
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + USER_DETAIL_URL,
                     type: 'post',
@@ -6009,6 +6032,7 @@ window.onload = function() {
             };
             _this.getUserStatus = function(params) {
                 var response = new Object();
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + USER_STATUS_URL,
                     type: 'get',
@@ -6041,6 +6065,7 @@ window.onload = function() {
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + USER_BLOCK_URL,
                     type: 'get',
@@ -7254,6 +7279,7 @@ window.onload = function() {
                                    $file_remove.trigger('click');
                                }
                            });
+						   mckInit.initAuth(mckInit.authKeys);
                            mckUtils.ajax({
                                type : "GET",
                                url : MCK_FILE_URL + FILE_UPLOAD_URL,
@@ -7354,6 +7380,7 @@ window.onload = function() {
                                 $file_remove.trigger('click');
                             }
                         });
+						mckInit.initAuth(mckInit.authKeys);
                         mckUtils.ajax({
                             type: "GET",
                             url: MCK_FILE_URL + FILE_UPLOAD_URL,
@@ -7434,6 +7461,7 @@ window.onload = function() {
                 }
             };
             _this.deleteFileMeta = function(blobKey) {
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
                     type: 'post',
@@ -7600,6 +7628,7 @@ window.onload = function() {
                 if (MCK_SW_SUBSCRIPTION) {
                     var subscriptionId = MCK_SW_SUBSCRIPTION.endpoint.split("/").slice(-1)[0];
                     if (subscriptionId) {
+						mckInit.initAuth(mckInit.authKeys);
                         mckUtils.ajax({
                             url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
                             type: 'post',
@@ -7707,6 +7736,7 @@ window.onload = function() {
             //TODO: rename this method into getTwilioTokenFromServer
             _this.InitilizeVideoClient = function(userId, deviceKey) {
                 _this.Identity = userId;
+				mckInit.initAuth(mckInit.authKeys);
                 mckUtils.ajax({
                     url: MCK_BASE_URL + "/twilio/token",
                     type: 'post',

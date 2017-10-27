@@ -2,7 +2,6 @@
     'use strict';
     function define_ALApiService(){
         var ALApiService = {};
-
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = "https://apps.applozic.com";
