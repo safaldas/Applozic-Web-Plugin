@@ -1,7 +1,9 @@
 var reqHeader = {};
-
-
-
+var appid;
+var acctoken;
+var authkey;
+var devkey;
+var modname;
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -447,9 +449,13 @@ function MckUtils() {
 	{
 		appID = appid;
 	}
-	_this.setAjaxHeaders = function(reqheaders)
+	_this.setAjaxHeaders = function(authcode,appId,devKey,accToken,modName)
 	{
-		reqHeader = reqheaders;
+		appid = appId;
+		acctoken = accToken;
+		authkey = authcode;
+		devkey = devKey;
+		modname = modName;
 	}
 	/*_this.setHeaders = function(jqXHR) {
                 jqXHR.setRequestHeader("UserId-Enabled", true);
@@ -544,7 +550,7 @@ function MckUtils() {
 		}*/
 			//console.log(reqHeader);
 			request.setRequestHeader("UserId-Enabled", true);
-			var i;	
+			/*var i;	
 			
 			for(i in reqHeader)
 			{
@@ -554,9 +560,22 @@ function MckUtils() {
 					request.setRequestHeader(i, reqHeader.i);
 					
 				}
-			}
+			}*/
 			
-		
+		request.setRequestHeader("UserId-Enabled", true);
+                if (authkey) {
+                    request.setRequestHeader("Authorization", "Basic " + authkey);
+                }
+                request.setRequestHeader("Application-Key", appid);
+                if (devkey) {
+                    request.setRequestHeader("Device-Key", devkey);
+                }
+                if (acctoken) {
+                    request.setRequestHeader("Access-Token", acctoken);
+                }
+                if (modname) {
+                    request.setRequestHeader("App-Module-Name", modname);
+                }
 		}
 		if(typeof reqOptions.data === 'undefined')
 		{

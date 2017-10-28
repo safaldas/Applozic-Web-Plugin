@@ -1363,7 +1363,7 @@ window.onload = function() {
 					'App-Module-Name': MCK_APP_MODULE_NAME
 					
 				};
-				mckUtils.setAjaxHeaders(authKeys);
+				mckUtils.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
 				//window.Applozic.ALApiService.initAuth(authKeys);
 				
 				
