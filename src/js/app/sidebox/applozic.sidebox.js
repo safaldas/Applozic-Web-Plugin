@@ -1197,6 +1197,7 @@ window.onload = function() {
 
         function MckInit() {
             var _this = this;
+			var authKeys = {};
             var IS_REINITIALIZE = false;
             var refreshIntervalId,
                 offlineIntervalId;
@@ -1261,6 +1262,7 @@ window.onload = function() {
                             }
                         }
                     );
+					
                 } else {
                         if (IS_CALL_ENABLED) {
                                 mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
@@ -1331,10 +1333,7 @@ window.onload = function() {
                     });
                 }
             }
-			_this.initAuth = function(auth,appid,dev,acc,mod)
-			{
-				mckUtils.initAuth(auth,appid,dev,acc,mod);
-			}
+			
             _this.onInitApp = function(data) {
                 _this.appendLauncher();
                 _this.setLabels();
@@ -1354,7 +1353,18 @@ window.onload = function() {
                 MCK_FILE_URL = data.fileBaseUrl;
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
-				_this.initAuth(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+				var authKeys = 
+				{
+					'Authorization': "Basic" + AUTH_CODE,
+					'Application-Key': MCK_APP_ID,
+					'Device-Key': USER_DEVICE_KEY,
+					'Access-Token': MCK_ACCESS_TOKEN,
+					'App-Module-Name': MCK_APP_MODULE_NAME
+					
+				};
+				window.Applozic.ALApiService.initAuth(authKeys);
+				
+				
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
@@ -1631,6 +1641,7 @@ window.onload = function() {
 
         function MckMessageService() {
             var _this = this;
+			var mckInit = new MckInit();
             var $mck_search = $applozic("#mck-search");
             var $mck_msg_to = $applozic("#mck-msg-to");
             var $mck_msg_new = $applozic("#mck-msg-new");
@@ -3624,6 +3635,7 @@ window.onload = function() {
 
         function MckMessageLayout() {
             var _this = this;
+			var mckInit = new MckInit();
             var emojiTimeoutId = '';
             var $mck_search = $applozic("#mck-search");
             var $mck_msg_to = $applozic("#mck-msg-to");
@@ -5619,6 +5631,7 @@ window.onload = function() {
 
         function MckUserUtils() {
             var _this = this;
+			var mckInit = new MckInit();
             var $mck_msg_form = $applozic("#mck-msg-form");
             var $mck_msg_error = $applozic("#mck-msg-error");
             var $mck_tab_title = $applozic("#mck-tab-title");
@@ -5733,6 +5746,7 @@ window.onload = function() {
 
         function MckContactService() {
             var _this = this;
+			var mckInit = new MckInit();
             var $mck_search_List = $applozic("#mck-search-list");
             var $mck_sidebox_search = $applozic("#mck-sidebox-search");
             var $mck_search_loading = $applozic("#mck-search-loading");
@@ -6060,6 +6074,7 @@ window.onload = function() {
 
         function MckGroupLayout() {
             var _this = this;
+			var mckInit = new MckInit();
             var ROLE_MAP = {
                 0: 'User',
                 1: 'Admin',
@@ -6941,6 +6956,7 @@ window.onload = function() {
 
         function MckMapLayout() {
             var _this = this;
+			var mckInit = new MckInit();
             var GEOCODER = '';
             var CURR_LOC_ADDRESS = '';
             var IS_LOC_SHARE_INIT = false;
@@ -7059,6 +7075,7 @@ window.onload = function() {
 
         function MckMapService() {
             var _this = this;
+			var mckInit = new MckInit();
             var $mck_msg_to = $applozic("#mck-msg-to");
             var $mck_btn_loc = $applozic("#mck-btn-loc");
             var $mck_loc_box = $applozic('#mck-loc-box');
@@ -7105,6 +7122,7 @@ window.onload = function() {
 
         function MckFileService() {
             var _this = this;
+			var mckInit = new MckInit();
             var ONE_KB = 1024;
             var ONE_MB = 1048576;
             var UPLOAD_VIA = ['CREATE', 'UPDATE'];
@@ -7490,6 +7508,7 @@ window.onload = function() {
 
         function MckNotificationService() {
             var _this = this;
+			var mckInit = new MckInit();
             var $mck_sidebox;
             var $mck_msg_inner;
             var $mck_msg_preview;
@@ -7637,6 +7656,7 @@ window.onload = function() {
 
         function MckCallService() {
             var _this = this;
+			var mckInit = new MckInit();
             _this.token = null;
             _this.Identity = null;
             _this.outgoingCallServices = null;

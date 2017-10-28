@@ -1,8 +1,4 @@
-var authCode;
-var devKey;
-var accToken;
-var modName;
-var appID;
+var reqHeaders={};
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -311,6 +307,7 @@ function MckNotificationUtils() {
 }
 function MckUtils() {
     var _this = this;
+	
     var TEXT_NODE = 3,
         ELEMENT_NODE = 1,
         TAGS_BLOCK = [ 'p', 'div', 'pre', 'form' ];
@@ -442,19 +439,12 @@ function MckUtils() {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-	_this.initAuth = function(auth,appid,devkey,token,modname)
-	{
-		authCode = auth;
-		appID = appid;
-		devKey = devkey;
-		accToken = token;
-		modName = modname;
-	}
+	
 	_this.initAppKey = function(appid)
 	{
 		appID = appid;
 	}
-	_this.setHeaders = function(jqXHR) {
+	/*_this.setHeaders = function(jqXHR) {
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (authCode) {
                     jqXHR.setRequestHeader("Authorization", "Basic " + authCode);
@@ -470,8 +460,9 @@ function MckUtils() {
                     jqXHR.setRequestHeader("App-Module-Name", modName);
                 }
 				return jqXHR;
-            };
+            };*/
     _this.ajax = function(options) {
+		
         //var reqOptions = Object.assign({}, options);
         var reqOptions = $applozic.extend({}, {}, options);
         if (this.getEncryptionKey()) {
@@ -515,14 +506,14 @@ function MckUtils() {
 		{	asyn = reqOptions.async; console.log("async exists");}
 		
 		typ = reqOptions.type.toUpperCase();
-		console.log(typ);
+		//console.log(typ);
 		request.open(typ,reqOptions.url,asyn);
 		if(typ === 'POST')
 		{
 		if(typeof reqOptions.contentType === 'undefined')
 		{
 			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
-			console.log('content undefined');
+			//console.log('content undefined');
 		}else
 		{
 			cttype = reqOptions.contentType;
@@ -533,11 +524,29 @@ function MckUtils() {
 			//authorizationrequestheaders
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
 		{
-		request = _this.setHeaders(request);
+		if(reqOptions.headers !== 'undefined')
+		{
+			reqHeaders = reqOptions.headers;
+		}
+			console.log(reqHeaders);
+			request.setRequestHeader("UserId-Enabled", true);
+			var i;	
+			
+			for(i in reqHeaders)
+			{
+				//console.log(i + ":" + reqOptions.headers.i);
+				if(reqHeaders.i)
+				{
+					request.setRequestHeader(i, reqHeaders.i);
+					
+				}
+			}
+			
+		
 		}
 		if(typeof reqOptions.data === 'undefined')
 		{
-			console.log("data undefined");
+			//console.log("data undefined");
 			request.send();
 		}
 		else
