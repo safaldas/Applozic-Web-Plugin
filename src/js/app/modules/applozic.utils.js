@@ -1,5 +1,7 @@
 var reqHeader = {};
 
+
+
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -445,6 +447,10 @@ function MckUtils() {
 	{
 		appID = appid;
 	}
+	_this.setAjaxHeaders = function(reqheaders)
+	{
+		reqHeader = reqheaders;
+	}
 	/*_this.setHeaders = function(jqXHR) {
                 jqXHR.setRequestHeader("UserId-Enabled", true);
                 if (authCode) {
@@ -462,6 +468,7 @@ function MckUtils() {
                 }
 				return jqXHR;
             };*/
+	
     _this.ajax = function(options) {
 		
         //var reqOptions = Object.assign({}, options);
@@ -525,17 +532,17 @@ function MckUtils() {
 			//authorizationrequestheaders
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
 		{
-		if(typeof reqOptions.headers === 'undefined')
+		/*if(typeof reqOptions.headers === 'undefined')
 		{
 				console.log('undefined');
 		}
 		else
 		{
-			//console.log(reqOptions.headers + "inside");
+			console.log(reqOptions.headers + "inside");
 			reqHeader = reqOptions.headers;
 		
-		}
-			console.log(reqHeader);
+		}*/
+			//console.log(reqHeader);
 			request.setRequestHeader("UserId-Enabled", true);
 			var i;	
 			
@@ -544,7 +551,7 @@ function MckUtils() {
 				console.log(i + ":" + reqHeader[i]);
 				if(reqHeader.i)
 				{
-					request.setRequestHeader(i, reqHeader[i]);
+					request.setRequestHeader(i, reqHeader.i);
 					
 				}
 			}

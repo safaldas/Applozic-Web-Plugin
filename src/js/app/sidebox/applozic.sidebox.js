@@ -1363,8 +1363,8 @@ window.onload = function() {
 					'App-Module-Name': MCK_APP_MODULE_NAME
 					
 				};
-			
-				window.Applozic.ALApiService.initAuth(authKeys);
+				mckUtils.setAjaxHeaders(authKeys);
+				//window.Applozic.ALApiService.initAuth(authKeys);
 				
 				
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
