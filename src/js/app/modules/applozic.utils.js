@@ -1,4 +1,5 @@
-var reqHeaders={};
+var reqHeader = {};
+
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -524,20 +525,26 @@ function MckUtils() {
 			//authorizationrequestheaders
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
 		{
-		if(reqOptions.headers !== 'undefined')
+		if(typeof reqOptions.headers === 'undefined')
 		{
-			reqHeaders = reqOptions.headers;
+				console.log('undefined');
 		}
-			console.log(reqHeaders);
+		else
+		{
+			//console.log(reqOptions.headers + "inside");
+			reqHeader = reqOptions.headers;
+		
+		}
+			console.log(reqHeader);
 			request.setRequestHeader("UserId-Enabled", true);
 			var i;	
 			
-			for(i in reqHeaders)
+			for(i in reqHeader)
 			{
-				//console.log(i + ":" + reqOptions.headers.i);
-				if(reqHeaders.i)
+				console.log(i + ":" + reqHeader[i]);
+				if(reqHeader.i)
 				{
-					request.setRequestHeader(i, reqHeaders.i);
+					request.setRequestHeader(i, reqHeader[i]);
 					
 				}
 			}

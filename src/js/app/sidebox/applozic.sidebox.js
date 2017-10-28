@@ -707,6 +707,7 @@ window.onload = function() {
            MCK_ON_TAB_CLICKED = optns.onTabClicked;
            MCK_CONTACT_NUMBER = optns.contactNumber;
            MCK_APP_MODULE_NAME = optns.appModuleName;
+		  
            MCK_GETTOPICDETAIL = optns.getTopicDetail;
            MCK_FILEMAXSIZE = optns.maxAttachmentSize;
            MCK_MSG_VALIDATION = optns.validateMessage;
@@ -1362,6 +1363,7 @@ window.onload = function() {
 					'App-Module-Name': MCK_APP_MODULE_NAME
 					
 				};
+			
 				window.Applozic.ALApiService.initAuth(authKeys);
 				
 				
@@ -1641,7 +1643,7 @@ window.onload = function() {
 
         function MckMessageService() {
             var _this = this;
-			var mckInit = new MckInit();
+			
             var $mck_search = $applozic("#mck-search");
             var $mck_msg_to = $applozic("#mck-msg-to");
             var $mck_msg_new = $applozic("#mck-msg-new");
@@ -3635,7 +3637,7 @@ window.onload = function() {
 
         function MckMessageLayout() {
             var _this = this;
-			var mckInit = new MckInit();
+			
             var emojiTimeoutId = '';
             var $mck_search = $applozic("#mck-search");
             var $mck_msg_to = $applozic("#mck-msg-to");
@@ -5631,7 +5633,7 @@ window.onload = function() {
 
         function MckUserUtils() {
             var _this = this;
-			var mckInit = new MckInit();
+		
             var $mck_msg_form = $applozic("#mck-msg-form");
             var $mck_msg_error = $applozic("#mck-msg-error");
             var $mck_tab_title = $applozic("#mck-tab-title");
@@ -5746,7 +5748,7 @@ window.onload = function() {
 
         function MckContactService() {
             var _this = this;
-			var mckInit = new MckInit();
+			
             var $mck_search_List = $applozic("#mck-search-list");
             var $mck_sidebox_search = $applozic("#mck-sidebox-search");
             var $mck_search_loading = $applozic("#mck-search-loading");
@@ -6074,7 +6076,7 @@ window.onload = function() {
 
         function MckGroupLayout() {
             var _this = this;
-			var mckInit = new MckInit();
+		
             var ROLE_MAP = {
                 0: 'User',
                 1: 'Admin',
@@ -6956,7 +6958,7 @@ window.onload = function() {
 
         function MckMapLayout() {
             var _this = this;
-			var mckInit = new MckInit();
+		
             var GEOCODER = '';
             var CURR_LOC_ADDRESS = '';
             var IS_LOC_SHARE_INIT = false;
@@ -7075,7 +7077,7 @@ window.onload = function() {
 
         function MckMapService() {
             var _this = this;
-			var mckInit = new MckInit();
+			
             var $mck_msg_to = $applozic("#mck-msg-to");
             var $mck_btn_loc = $applozic("#mck-btn-loc");
             var $mck_loc_box = $applozic('#mck-loc-box');
@@ -7122,7 +7124,7 @@ window.onload = function() {
 
         function MckFileService() {
             var _this = this;
-			var mckInit = new MckInit();
+		
             var ONE_KB = 1024;
             var ONE_MB = 1048576;
             var UPLOAD_VIA = ['CREATE', 'UPDATE'];
@@ -7508,7 +7510,7 @@ window.onload = function() {
 
         function MckNotificationService() {
             var _this = this;
-			var mckInit = new MckInit();
+	
             var $mck_sidebox;
             var $mck_msg_inner;
             var $mck_msg_preview;
@@ -7656,7 +7658,7 @@ window.onload = function() {
 
         function MckCallService() {
             var _this = this;
-			var mckInit = new MckInit();
+		
             _this.token = null;
             _this.Identity = null;
             _this.outgoingCallServices = null;

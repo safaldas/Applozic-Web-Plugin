@@ -2,7 +2,8 @@
     'use strict';
     function define_ALApiService(){
         var ALApiService = {};
-		var reqHeaders = {};
+		var reqHead = {};
+		
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = "https://apps.applozic.com";
@@ -30,7 +31,8 @@
         }
 		ALApiService.initAuth = function(reqheaders)
 		{
-			reqHeaders = reqheaders;
+			reqHead = reqheaders;
+			
 			/*for(i in reqHeaders)
 			{
 			 console.log(i + ":" + reqHeaders.i);
@@ -43,7 +45,7 @@
          * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', accessToken: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.login = function(options) {
-			console.log("FALALALALALALALALALALALALALALALALALALALALAL");
+			
             MCK_APP_ID = options.data.alUser.applicationId;
 			mckUtils.initAppKey(MCK_APP_ID);
             mckUtils.ajax({
@@ -283,7 +285,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
                 type: 'get',
-				headers: reqHeaders,
+				headers: reqHead,
                 global: false,
                 success: function(response) {
                     if (options.success) {
