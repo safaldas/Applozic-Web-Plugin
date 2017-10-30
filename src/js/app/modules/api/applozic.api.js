@@ -2,10 +2,8 @@
     'use strict';
     function define_ALApiService(){
         var ALApiService = {};
-
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
-
         var MCK_BASE_URL = "https://apps.applozic.com";
         var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
         var MESSAGE_LIST_URL = "/rest/ws/message/list";
@@ -29,15 +27,17 @@
         ALApiService.initServerUrl = function(serverUrl) {
             MCK_BASE_URL = serverUrl;
         }
-
-
+		
+		
         /**
          * Login user to the chat session, must be done once in a session.
          * Usage Example:
          * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', accessToken: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.login = function(options) {
+			
             MCK_APP_ID = options.data.alUser.applicationId;
+		
             mckUtils.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',
@@ -275,6 +275,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
                 type: 'get',
+			
                 global: false,
                 success: function(response) {
                     if (options.success) {

@@ -1,3 +1,8 @@
+var appid;
+var acctoken;
+var authkey;
+var devkey;
+var modname;
 function MckMapUtils() {
     var _this = this;
     _this.getCurrentLocation = function(succFunc, errFunc) {
@@ -11,6 +16,8 @@ function MckMapUtils() {
     };
 }
 function MckDateUtils() {
+	
+	
     var _this = this;
     var fullDateFormat = 'mmm d, h:MM TT';
     var onlyDateFormat = 'mmm d';
@@ -304,6 +311,7 @@ function MckNotificationUtils() {
 }
 function MckUtils() {
     var _this = this;
+	
     var TEXT_NODE = 3,
         ELEMENT_NODE = 1,
         TAGS_BLOCK = [ 'p', 'div', 'pre', 'form' ];
@@ -311,14 +319,16 @@ function MckUtils() {
         $applozic.ajax({
             url: "https://apps.applozic.com/v2/tab/initialize.page",
             contentType: 'application/json',
-            type: 'OPTIONS'
-        }).done(function(data) {});
+            type: 'OPTIONS',
+			success:function(data) {}
+        });
 
         $applozic.ajax({
             url: "https://apps.applozic.com/rest/ws/message/list",
             contentType: 'application/json',
-            type: 'OPTIONS'
-        }).done(function(data) {});
+            type: 'OPTIONS',
+			success:function(data) {}
+        });
     }
     _this.randomId = function() {
         return w.Math.random().toString(36).substring(7);
@@ -435,10 +445,28 @@ function MckUtils() {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-
+	
+	
+	_this.setAjaxHeaders = function(authcode,appId,devKey,accToken,modName){
+		appid = appId;
+		acctoken = accToken;
+		authkey = authcode;
+		devkey = devKey;
+		modname = modName;
+	}
+	
     _this.ajax = function(options) {
-        //var reqOptions = Object.assign({}, options);
-        var reqOptions = $applozic.extend({}, {}, options);
+		
+        function extend(){
+			for(var i=1; i<arguments.length; i++)
+				for(var key in arguments[i])
+					if(arguments[i].hasOwnProperty(key))
+						arguments[0][key] = arguments[i][key];
+		return arguments[0];
+		}
+
+        var reqOptions = extend({}, {}, options);
+		
         if (this.getEncryptionKey()) {
             var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
             var iv = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
@@ -473,7 +501,82 @@ function MckUtils() {
                 }
             }
         }
-        $applozic.ajax(reqOptions);
+		var request = new XMLHttpRequest();
+		var responsedata;
+		asyn = true;
+		if(typeof reqOptions.async !== 'undefined' || options.async){
+			asyn = reqOptions.async;
+		}
+		
+		typ = reqOptions.type.toUpperCase();
+	
+		request.open(typ,reqOptions.url,asyn);
+		if(typ === 'POST')
+		{
+		if(typeof reqOptions.contentType === 'undefined'){
+			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
+		
+		}else{
+			cttype = reqOptions.contentType;
+		}
+			request.setRequestHeader('Content-Type', cttype);
+		}
+		
+			//authorizationrequestheaders
+		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1){
+	
+			request.setRequestHeader("UserId-Enabled", true);
+		
+			
+		request.setRequestHeader("UserId-Enabled", true);
+                if (authkey) {
+                    request.setRequestHeader("Authorization", "Basic " + authkey);
+                }
+                request.setRequestHeader("Application-Key", appid);
+                if (devkey) {
+                    request.setRequestHeader("Device-Key", devkey);
+                }
+                if (acctoken) {
+                    request.setRequestHeader("Access-Token", acctoken);
+                }
+                if (modname) {
+                    request.setRequestHeader("App-Module-Name", modname);
+                }
+		}
+		if(typeof reqOptions.data === 'undefined'){
+			
+			request.send();
+		}
+		else{
+			request.send(reqOptions.data);
+		}
+		
+		request.onreadystatechange = function(){
+			if (request.readyState === XMLHttpRequest.DONE) {
+				if (request.status === 200) {
+					//success
+					var contType = request.getResponseHeader("Content-Type");
+					
+					if(contType == "text/html"){
+						responsedata = request.responseXML;
+					}
+					else if(contType == "text/plain" || contType == "null"){
+						responsedata = request.responseText;
+					}
+					else if(contType == 'application/json;charset=utf-8'){
+						var responsedata = JSON.parse(request.responseText);
+					}
+		
+			reqOptions.success(responsedata);
+      } else {
+		  //error
+        reqOptions.error;
+      }
+    }
+  
+		};
+        //$applozic.ajax(reqOptions);
+   
     };
 
     _this.isJsonString = function(str) {
