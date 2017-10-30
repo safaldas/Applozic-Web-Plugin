@@ -447,8 +447,7 @@ function MckUtils() {
     };
 	
 	
-	_this.setAjaxHeaders = function(authcode,appId,devKey,accToken,modName)
-	{
+	_this.setAjaxHeaders = function(authcode,appId,devKey,accToken,modName){
 		appid = appId;
 		acctoken = accToken;
 		authkey = authcode;
@@ -464,7 +463,7 @@ function MckUtils() {
 					if(arguments[i].hasOwnProperty(key))
 						arguments[0][key] = arguments[i][key];
 		return arguments[0];
-}
+		}
 
         var reqOptions = extend({}, {}, options);
 		
@@ -505,28 +504,26 @@ function MckUtils() {
 		var request = new XMLHttpRequest();
 		var responsedata;
 		asyn = true;
-		if(typeof reqOptions.async !== 'undefined' || options.async)
-		{	asyn = reqOptions.async; console.log("async exists");}
+		if(typeof reqOptions.async !== 'undefined' || options.async){
+			asyn = reqOptions.async;
+		}
 		
 		typ = reqOptions.type.toUpperCase();
 	
 		request.open(typ,reqOptions.url,asyn);
 		if(typ === 'POST')
 		{
-		if(typeof reqOptions.contentType === 'undefined')
-		{
+		if(typeof reqOptions.contentType === 'undefined'){
 			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
 		
-		}else
-		{
+		}else{
 			cttype = reqOptions.contentType;
 		}
 			request.setRequestHeader('Content-Type', cttype);
 		}
 		
 			//authorizationrequestheaders
-		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
-		{
+		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1){
 	
 			request.setRequestHeader("UserId-Enabled", true);
 		
@@ -546,33 +543,27 @@ function MckUtils() {
                     request.setRequestHeader("App-Module-Name", modname);
                 }
 		}
-		if(typeof reqOptions.data === 'undefined')
-		{
+		if(typeof reqOptions.data === 'undefined'){
 			
 			request.send();
 		}
-		else
-		{
+		else{
 			request.send(reqOptions.data);
 		}
 		
-		request.onreadystatechange = function()
-		{
+		request.onreadystatechange = function(){
 			if (request.readyState === XMLHttpRequest.DONE) {
 				if (request.status === 200) {
 					//success
 					var contType = request.getResponseHeader("Content-Type");
 					
-					if(contType == "text/html")
-					{
+					if(contType == "text/html"){
 						responsedata = request.responseXML;
 					}
-					else if(contType == "text/plain" || contType == "null")
-					{
+					else if(contType == "text/plain" || contType == "null"){
 						responsedata = request.responseText;
 					}
-					else if(contType == 'application/json;charset=utf-8')
-					{
+					else if(contType == 'application/json;charset=utf-8'){
 						var responsedata = JSON.parse(request.responseText);
 					}
 		
