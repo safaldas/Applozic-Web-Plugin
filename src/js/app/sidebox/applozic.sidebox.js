@@ -1356,7 +1356,7 @@ window.onload = function() {
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
 				
 				mckUtils.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
-				
+		
 				
 				
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
