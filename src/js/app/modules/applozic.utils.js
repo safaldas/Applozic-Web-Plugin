@@ -1,4 +1,3 @@
-var reqHeader = {};
 var appid;
 var acctoken;
 var authkey;
@@ -317,17 +316,19 @@ function MckUtils() {
         ELEMENT_NODE = 1,
         TAGS_BLOCK = [ 'p', 'div', 'pre', 'form' ];
     _this.init = function() {
-        $applozic.ajax({
+        _this.ajax({
             url: "https://apps.applozic.com/v2/tab/initialize.page",
             contentType: 'application/json',
-            type: 'OPTIONS'
-        }).done(function(data) {});
+            type: 'OPTIONS',
+			success: function(data) {}
+        });
 
-        $applozic.ajax({
+        _this.ajax({
             url: "https://apps.applozic.com/rest/ws/message/list",
             contentType: 'application/json',
-            type: 'OPTIONS'
-        }).done(function(data) {});
+            type: 'OPTIONS',
+			success: function(data) {}
+        });
     }
     _this.randomId = function() {
         return w.Math.random().toString(36).substring(7);
@@ -444,36 +445,15 @@ function MckUtils() {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join(''));
     };
-	
-	_this.initAppKey = function(appid)
-	{
-		appID = appid;
-	}
 	_this.setAjaxHeaders = function(authcode,appId,devKey,accToken,modName)
 	{
+		//keys for request headers to be set in xhr header requests
 		appid = appId;
 		acctoken = accToken;
 		authkey = authcode;
 		devkey = devKey;
 		modname = modName;
 	}
-	/*_this.setHeaders = function(jqXHR) {
-                jqXHR.setRequestHeader("UserId-Enabled", true);
-                if (authCode) {
-                    jqXHR.setRequestHeader("Authorization", "Basic " + authCode);
-                }
-                jqXHR.setRequestHeader("Application-Key", appID);
-                if (devKey) {
-                    jqXHR.setRequestHeader("Device-Key", devKey);
-                }
-                if (accToken) {
-                    jqXHR.setRequestHeader("Access-Token", accToken);
-                }
-                if (modName) {
-                    jqXHR.setRequestHeader("App-Module-Name", modName);
-                }
-				return jqXHR;
-            };*/
 	
     _this.ajax = function(options) {
 		
@@ -517,51 +497,30 @@ function MckUtils() {
 		var responsedata;
 		asyn = true;
 		if(typeof reqOptions.async !== 'undefined' || options.async)
-		{	asyn = reqOptions.async; console.log("async exists");}
+		{	
+			asyn = reqOptions.async; console.log("async exists");
+		}
 		
 		typ = reqOptions.type.toUpperCase();
-		//console.log(typ);
+	
 		request.open(typ,reqOptions.url,asyn);
 		if(typ === 'POST')
 		{
-		if(typeof reqOptions.contentType === 'undefined')
-		{
-			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
-			//console.log('content undefined');
-		}else
-		{
-			cttype = reqOptions.contentType;
-		}
-			request.setRequestHeader('Content-Type', cttype);
-		}
+			if(typeof reqOptions.contentType === 'undefined')
+			{
+				cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
+			
+			}
+			else
+			{
+				cttype = reqOptions.contentType;
+			}
+				request.setRequestHeader('Content-Type', cttype);
+			}
 		
-			//authorizationrequestheaders
+			//authorization request headers set here
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1)
 		{
-		/*if(typeof reqOptions.headers === 'undefined')
-		{
-				console.log('undefined');
-		}
-		else
-		{
-			console.log(reqOptions.headers + "inside");
-			reqHeader = reqOptions.headers;
-		
-		}*/
-			//console.log(reqHeader);
-			request.setRequestHeader("UserId-Enabled", true);
-			/*var i;	
-			
-			for(i in reqHeader)
-			{
-				console.log(i + ":" + reqHeader[i]);
-				if(reqHeader.i)
-				{
-					request.setRequestHeader(i, reqHeader.i);
-					
-				}
-			}*/
-			
 		request.setRequestHeader("UserId-Enabled", true);
                 if (authkey) {
                     request.setRequestHeader("Authorization", "Basic " + authkey);
@@ -579,12 +538,12 @@ function MckUtils() {
 		}
 		if(typeof reqOptions.data === 'undefined')
 		{
-			//console.log("data undefined");
+			
 			request.send();
 		}
 		else
 		{
-		request.send(reqOptions.data);
+			request.send(reqOptions.data);
 		}
 		
 		request.onreadystatechange = function()
@@ -607,15 +566,18 @@ function MckUtils() {
 						var responsedata = JSON.parse(request.responseText);
 					}
 		
-			reqOptions.success(responsedata);
-      } else {
-		  //error
-        reqOptions.error;
-      }
-    }
+					reqOptions.success(responsedata);
+      
+			}
+			else
+			{
+				//error thrown if XHR isn't successful
+				reqOptions.error;
+			}
+		}
   
 		};
-        //$applozic.ajax(reqOptions);
+        
    
     };
 

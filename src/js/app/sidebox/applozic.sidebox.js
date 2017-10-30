@@ -1354,17 +1354,9 @@ window.onload = function() {
                 MCK_FILE_URL = data.fileBaseUrl;
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
-				var authKeys = 
-				{
-					'Authorization': "Basic" + AUTH_CODE,
-					'Application-Key': MCK_APP_ID,
-					'Device-Key': USER_DEVICE_KEY,
-					'Access-Token': MCK_ACCESS_TOKEN,
-					'App-Module-Name': MCK_APP_MODULE_NAME
-					
-				};
+				
 				mckUtils.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
-				//window.Applozic.ALApiService.initAuth(authKeys);
+				
 				
 				
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
