@@ -15,6 +15,7 @@ Demo: [https://www.applozic.com/docs/chat-examples/web.html](https://www.applozi
 #### Sidebox layout
 
 Demo: [https://www.applozic.com/chat.html](https://www.applozic.com/chat.html)
+
 Instruction:Enter "applozic-sample-app" in application key.
 
 
