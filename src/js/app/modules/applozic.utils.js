@@ -458,7 +458,16 @@ function MckUtils() {
     _this.ajax = function(options) {
 		
         //var reqOptions = Object.assign({}, options);
-        var reqOptions = $applozic.extend({}, {}, options);
+        
+		function extend() {
+                for (var i = 1; i < arguments.length; i++)
+                    for (var key in arguments[i])
+                        if (arguments[i].hasOwnProperty(key))
+                            arguments[0][key] = arguments[i][key];
+                return arguments[0];
+            }
+		var reqOptions =  extend({}, {}, options);
+		
         if (this.getEncryptionKey()) {
             var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
             var iv = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
