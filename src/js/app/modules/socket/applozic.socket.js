@@ -1,7 +1,10 @@
-function MckInitializeChannel($this) {
-    var _this = this;
+(function(window,document){
+function define_MckInitializeChannel() {
+	
+    var MckInitializeChannel = {};
+	var _this = this;
     var MCK_APP_ID;
-    var events = $this.events;
+    var events = {};
     var subscriber = null;
     var stompClient = null;
     var TYPING_TAB_ID = '';
@@ -17,8 +20,8 @@ function MckInitializeChannel($this) {
     var mck_offline_message_box = document.getElementById("mck-offline-message-box");
     var mck_typing_label = document.getElementById("mck-typing-label");
     var mck_message_inner = document.getElementById("mck-message-cell").getElementsByClassName("mck-message-inner")[0];
-    _this.init = function(appId) {
-        _this.MCK_APP_ID = appId;
+    MckInitializeChannel.init = function(appId) {
+        MckInitializeChannel.MCK_APP_ID = appId;
         if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
             var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
             if (typeof w.SockJS === 'function') {
@@ -29,16 +32,20 @@ function MckInitializeChannel($this) {
                 stompClient.heartbeat.outgoing = 0;
                 stompClient.heartbeat.incoming = 0;
                 stompClient.onclose = function() {
-                    _this.disconnect();
+                    MckInitializeChannel.disconnect();
                 };
-                stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
+                stompClient.connect("guest", "guest", MckInitializeChannel.onConnect, MckInitializeChannel.onError, '/');
                 w.addEventListener("beforeunload", function(e) {
-                    _this.disconnect();
+                    MckInitializeChannel.disconnect();
                 });
             }
         }
     };
-    _this.checkConnected = function(isFetchMessages) {
+	MckInitializeChannel.initEvents = function(_events)
+	{
+		events = _events;
+	};
+    MckInitializeChannel.checkConnected = function(isFetchMessages) {
         if (stompClient.connected) {
             if (checkConnectedIntervalId) {
                 clearInterval(checkConnectedIntervalId);
@@ -47,16 +54,16 @@ function MckInitializeChannel($this) {
                 clearInterval(sendConnectedStatusIntervalId);
             }
             checkConnectedIntervalId = setInterval(function() {
-                _this.connectToSocket(isFetchMessages);
+                MckInitializeChannel.connectToSocket(isFetchMessages);
             }, 600000);
             sendConnectedStatusIntervalId = setInterval(function() {
-                _this.sendStatus(1);
+                MckInitializeChannel.sendStatus(1);
             }, 1200000);
         } else {
-            _this.connectToSocket(isFetchMessages);
+            MckInitializeChannel.connectToSocket(isFetchMessages);
         }
     };
-    _this.connectToSocket = function(isFetchMessages) {
+    MckInitializeChannel.connectToSocket = function(isFetchMessages) {
         if (!stompClient.connected) {
             if (isFetchMessages && mck_sidebox.style.display === 'block') {
                 var currTabId = mck_message_inner.getAttribute('data-mck-id');
@@ -79,10 +86,10 @@ function MckInitializeChannel($this) {
                     });
                 }
             }
-            _this.init();
+            MckInitializeChannel.init();
         }
     };
-    _this.stopConnectedCheck = function() {
+    MckInitializeChannel.stopConnectedCheck = function() {
         if (checkConnectedIntervalId) {
             clearInterval(checkConnectedIntervalId);
         }
@@ -91,26 +98,26 @@ function MckInitializeChannel($this) {
         }
         checkConnectedIntervalId = '';
         sendConnectedStatusIntervalId = '';
-        _this.disconnect();
+        MckInitializeChannel.disconnect();
     };
-    _this.disconnect = function() {
+    MckInitializeChannel.disconnect = function() {
         if (stompClient && stompClient.connected) {
-            _this.sendStatus(0);
+            MckInitializeChannel.sendStatus(0);
             stompClient.disconnect();
         }
     };
-    _this.unsubscibeToTypingChannel = function() {
+    MckInitializeChannel.unsubscibeToTypingChannel = function() {
         if (stompClient && stompClient.connected) {
             if (typingSubscriber) {
                 if (MCK_TYPING_STATUS === 1) {
-                    _this.sendTypingStatus(0, TYPING_TAB_ID);
+                    MckInitializeChannel.sendTypingStatus(0, TYPING_TAB_ID);
                 }
                 typingSubscriber.unsubscribe();
             }
         }
         typingSubscriber = null;
     };
-    _this.unsubscibeToNotification = function() {
+    MckInitializeChannel.unsubscibeToNotification = function() {
         if (stompClient && stompClient.connected) {
             if (subscriber) {
                 subscriber.unsubscribe();
@@ -118,23 +125,23 @@ function MckInitializeChannel($this) {
         }
         subscriber = null;
     };
-    _this.subscibeToTypingChannel = function(subscribeId) {
+    MckInitializeChannel.subscibeToTypingChannel = function(subscribeId) {
         if (stompClient && stompClient.connected) {
-            typingSubscriber = stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, _this.onTypingStatus);
+            typingSubscriber = stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, MckInitializeChannel.onTypingStatus);
         } else {
-            _this.reconnect();
+            MckInitializeChannel.reconnect();
         }
     };
-    _this.subscribeToOpenGroup = function(group) {
+    MckInitializeChannel.subscribeToOpenGroup = function(group) {
         if (stompClient && stompClient.connected) {
-            var subs = stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, _this.onOpenGroupMessage);
+            var subs = stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, MckInitializeChannel.onOpenGroupMessage);
             openGroupSubscriber.push(subs.id);
             OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] = subs.id;
         } else {
-            _this.reconnect();
+            MckInitializeChannel.reconnect();
         }
     };
-    _this.sendTypingStatus = function(status, tabId) {
+    MckInitializeChannel.sendTypingStatus = function(status, tabId) {
         if (stompClient && stompClient.connected) {
             if (status === 1 && MCK_TYPING_STATUS === 1) {
                 stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
@@ -160,7 +167,7 @@ function MckInitializeChannel($this) {
             MCK_TYPING_STATUS = status;
         }
     };
-    _this.onTypingStatus = function(resp) {
+    MckInitializeChannel.onTypingStatus = function(resp) {
         if (typingSubscriber != null && typingSubscriber.id === resp.headers.subscription) {
             var message = resp.body;
             var publisher = message.split(",")[1];
@@ -221,41 +228,41 @@ function MckInitializeChannel($this) {
             }
         }
     };
-    _this.reconnect = function() {
-        _this.unsubscibeToTypingChannel();
-        _this.unsubscibeToNotification();
-        _this.disconnect();
-        _this.init();
+    MckInitializeChannel.reconnect = function() {
+        MckInitializeChannel.unsubscibeToTypingChannel();
+        MckInitializeChannel.unsubscibeToNotification();
+        MckInitializeChannel.disconnect();
+        MckInitializeChannel.init();
     };
-    _this.onError = function(err) {
+    MckInitializeChannel.onError = function(err) {
         w.console.log("Error in channel notification. " + err);
         events.onConnectFailed();
     };
-    _this.sendStatus = function(status) {
+    MckInitializeChannel.sendStatus = function(status) {
         if (stompClient && stompClient.connected) {
             stompClient.send('/topic/status-v2', {
                 "content-type": "text/plain"
             }, MCK_TOKEN + "," + USER_DEVICE_KEY + "," + status);
         }
     };
-    _this.onConnect = function() {
+    MckInitializeChannel.onConnect = function() {
         if (stompClient.connected) {
             if (subscriber) {
-                _this.unsubscibeToNotification();
+                MckInitializeChannel.unsubscibeToNotification();
             }
-            subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
-            _this.sendStatus(1);
-            _this.checkConnected(true);
+            subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, MckInitializeChannel.onMessage);
+            MckInitializeChannel.sendStatus(1);
+            MckInitializeChannel.checkConnected(true);
         } else {
             setTimeout(function() {
-                subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, _this.onMessage);
-                _this.sendStatus(1);
-                _this.checkConnected(true);
+                subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, MckInitializeChannel.onMessage);
+                MckInitializeChannel.sendStatus(1);
+                MckInitializeChannel.checkConnected(true);
             }, 5000);
         }
         events.onConnect();
     };
-    _this.onOpenGroupMessage = function(obj) {
+    MckInitializeChannel.onOpenGroupMessage = function(obj) {
         if (openGroupSubscriber.indexOf(obj.headers.subscription) !== -1) {
             var resp = JSON.parse(obj.body);
             var messageType = resp.type;
@@ -324,7 +331,7 @@ function MckInitializeChannel($this) {
             }
         }
     };
-    _this.onMessage = function(obj) {
+    MckInitializeChannel.onMessage = function(obj) {
         if (subscriber != null && subscriber.id === obj.headers.subscription) {
             var resp = JSON.parse(obj.body);
             var messageType = resp.type;
@@ -654,4 +661,12 @@ function MckInitializeChannel($this) {
             }
         }
     };
+	return MckInitializeChannel;
 }
+if(typeof(MckInitializeChannel) === 'undefined'){
+        window.Applozic.MckInitializeChannel = define_MckInitializeChannel();
+    }
+    else{
+        console.log("MckInitializeChannel already defined.");
+    }
+})(window,document);
