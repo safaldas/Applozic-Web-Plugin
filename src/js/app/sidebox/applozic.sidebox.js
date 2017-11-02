@@ -445,7 +445,334 @@ window.onload = function() {
             'onUserBlocked': function() {},
             'onUserUnblocked': function() {},
             'onUserActivated': function() {},
-            'onUserDeactivated': function() {}
+            'onUserDeactivated': function() {},
+			'onMessage': function(resp) {
+				       var messageType = resp.type;
+            if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
+                document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
+                mckMessageLayout.addTooltip(resp.message.split(",")[0]);
+                events.onMessageDelivered({
+                    'messageKey': resp.message.split(",")[0]
+                });
+            } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
+                document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
+				document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-read');
+                mckMessageLayout.addTooltip(resp.message.split(",")[0]);
+                events.onMessageRead({
+                    'messageKey': resp.message.split(",")[0]
+                });
+            } else if (messageType === "APPLOZIC_05") {
+                var key = resp.message.split(",")[0];
+                var tabId = resp.message.split(",")[1];
+                var isGroup = (resp.message.split(",")[2] === "1") ? true : false;
+                mckMessageLayout.removedDeletedMessage(key, tabId, isGroup);
+                var eventResponse = {
+                    'messageKey': resp.message.split(",")[0]
+                };
+                (isGroup) ? eventResponse['groupId'] = tabId: eventResponse['userKey'] = tabId;
+                console.log(eventResponse);
+                events.onMessageDeleted(eventResponse);
+            } else if (messageType === 'APPLOZIC_27') {
+                var userId = resp.message.split(",")[0];
+                var topicId = resp.message.split(",")[1];
+                if (typeof userId !== 'undefined') {
+                    mckMessageLayout.removeConversationThread(userId, false);
+                    mckMessageLayout.updateUnreadCount('user_' + userId, 0, true);
+                    var response = {
+                        'userId': userId
+                    };
+                    if (topicId) {
+                        response['topicId'] = topicId;
+                    }
+                    events.onConversationDeleted(response);
+                }
+            } else if (messageType === 'APPLOZIC_11') {
+                var userId = resp.message;
+                var contact = mckMessageLayout.fetchContact(userId);
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
+                if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
+                    if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
+                        document.querySelector('#mck-tab-status').innerHTML = MCK_LABELS['online'];
+                        if (IS_OFFLINE_MESSAGE_ENABLED) {
+                            mckMessageLayout.hideOfflineMessage();
+                        }
+                    } else {
+                        var htmlId = mckContactUtils.formatContactId(userId);
+                        document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('n-vis');
+						document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('vis');
+                    }
+                    document.querySelector('.mck-user-ol-status.' + htmlId).classList.remove('n-vis');
+					document.querySelector('.mck-user-ol-status.' + htmlId).classList.add('vis');
+                    document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
+                    w.MCK_OL_MAP[userId] = true;
+                    mckUserUtils.updateUserStatus({
+                        'userId': resp.message,
+                        'status': 1
+                    });
+                }
+                events.onUserConnect({
+                    'userId': resp.message
+                });
+            } else if (messageType === 'APPLOZIC_12') {
+                var userId = resp.message.split(",")[0];
+                var lastSeenAtTime = resp.message.split(",")[1];
+                var contact = mckMessageLayout.fetchContact(userId);
+                w.MCK_OL_MAP[userId] = false;
+                if (lastSeenAtTime) {
+                    MCK_LAST_SEEN_AT_MAP[userId] = lastSeenAtTime;
+                }
+                if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
+                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
+                        document.getElementById("mck-tab-status").innerHTML = mckDateUtils.getLastSeenAtStatus(lastSeenAtTime);
+                        if (IS_OFFLINE_MESSAGE_ENABLED) {
+                            mckInit.manageOfflineMessageTime(tabId);
+                        }
+                    }
+                    document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis');
+					document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.add('n-vis');
+                    document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
+                    document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis');
+					document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('n-vis');
+                    mckUserUtils.updateUserStatus({
+                        'userId': userId,
+                        'status': 0,
+                        'lastSeenAtTime': lastSeenAtTime
+                    });
+                }
+                events.onUserDisconnect({
+                    'userId': userId,
+                    'lastSeenAtTime': lastSeenAtTime
+                });
+            } else if (messageType === "APPLOZIC_29") {
+                var userId = resp.message.split(",")[0];
+                var topicId = resp.message.split(",")[1];
+                var contact = mckMessageLayout.fetchContact(userId);
+                mckMessageLayout.updateUnreadCount('user_' + contact.contactId, 0, true);
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
+                if ((typeof tabId === "undefined") || tabId === '') {
+                    document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-text").innerHTML = mckMessageLayout.getUnreadCount('user_' + contact.contactId);
+                    document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.remove('vis');
+					document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.add('n-vis');
+                }
+                var response = {
+                    'userId': userId
+                };
+                if (topicId) {
+                    response['topicId'] = topicId;
+                }
+                events.onConversationReadFromOtherSource(response);
+            } else if (messageType === 'APPLOZIC_28') {
+                var userId = resp.message.split(",")[0];
+                var topicId = resp.message.split(",")[1];
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
+                if (tabId === userId) {
+                    document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-time');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-sent');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-delivered');
+					document.querySelector(".mck-msg-right .mck-message-status").classList.add('mck-icon-read');
+                    document.querySelector(".mck-msg-right .mck-icon-delivered").setAttribute('title', 'delivered and read');
+                    var contact = mckMessageLayout.getContact(userId);
+                    if (typeof contact === 'undefined') {
+                        var userIdArray = [];
+                        userIdArray.push(userId);
+                        mckContactService.getUsersDetail(userIdArray, {});
+                    }
+                }
+                var response = {
+                    'userId': userId
+                };
+                if (topicId) {
+                    response['topicId'] = topicId;
+                }
+                events.onConversationRead(response);
+            } else if (messageType === "APPLOZIC_16") {
+                var status = resp.message.split(":")[0];
+                var userId = resp.message.split(":")[1];
+                var contact = mckMessageLayout.fetchContact(userId);
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
+                if (tabId === contact.contactId) {
+                    if (status === BLOCK_STATUS_MAP[0]) {
+                        MCK_BLOCKED_TO_MAP[contact.contactId] = true;
+                        mckUserUtils.toggleBlockUser(tabId, true);
+                    } else {
+                        MCK_BLOCKED_BY_MAP[contact.contactId] = true;
+                        mck_tab_title.classList.remove('mck-tab-title-w-status');
+                        mck_tab_status.classList.remove('vis');
+						mck_tab_status.classList.add('n-vis');
+                        mck_typing_box.classList.remove('vis');
+						mck_typing_box.classList.add('n-vis');
+                    }
+                } else {
+                    document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.remove('vis');
+					document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.add('n-vis');
+                }
+                events.onUserBlocked({
+                    'status': status,
+                    'userId': userId
+                });
+            } else if (messageType === 'APPLOZIC_17') {
+                var status = resp.message.split(":")[0];
+                var userId = resp.message.split(":")[1];
+                var contact = mckMessageLayout.fetchContact(userId);
+                var tabId = mck_message_inner.getAttribute('data-mck-id');
+                if (tabId === contact.contactId) {
+                    if (status === BLOCK_STATUS_MAP[2]) {
+                        MCK_BLOCKED_TO_MAP[contact.contactId] = false;
+                        mckUserUtils.toggleBlockUser(tabId, false);
+                    } else if (w.MCK_OL_MAP[tabId] || MCK_LAST_SEEN_AT_MAP[tabId]) {
+                        MCK_BLOCKED_BY_MAP[contact.contactId] = false;
+                        if (!MCK_BLOCKED_TO_MAP[tabId]) {
+                            if (w.MCK_OL_MAP[tabId]) {
+                                mck_tab_status.innerHTML = MCK_LABELS['online'];
+                            } else if (MCK_LAST_SEEN_AT_MAP[tabId]) {
+                                mck_tab_status.innerHTML = mckDateUtils.getLastSeenAtStatus(MCK_LAST_SEEN_AT_MAP[tabId]);
+                            }
+                            mck_tab_title.classList.add('mck-tab-title-w-status');
+                            mck_tab_status.classList.remove('n-vis');
+							mck_tab_status.classList.add('vis');
+                        }
+                    }
+                } else if (w.MCK_OL_MAP[tabId]) {
+                    document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.remove('n-vis');
+					document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.add('vis');
+                }
+                events.onUserUnblocked({
+                    'status': status,
+                    'userId': userId
+                });
+            } else if (messageType === 'APPLOZIC_18') {
+                IS_MCK_USER_DEACTIVATED = false;
+                events.onUserActivated();
+            } else if (messageType === 'APPLOZIC_19') {
+                IS_MCK_USER_DEACTIVATED = true;
+                events.onUserDeactivated();
+            } else {
+                var message = resp.message;
+                // var userIdArray =
+                // mckMessageLayout.getUserIdFromMessage(message);
+                // mckContactService.getContactDisplayName(userIdArray);
+                // mckMessageLayout.openConversation();
+                if (messageType === "APPLOZIC_03") {
+                    ALStorage.updateLatestMessage(message);
+                    if (message.type !== 0 && message.type !== 4) {
+                        document.querySelector("." + message.key + " .mck-message-status").classList.remove('mck-icon-time');
+						document.querySelector("." + message.key + " .mck-message-status").classList.add('mck-icon-sent');
+                        mckMessageLayout.addTooltip(message.key);
+                    }
+                    events.onMessageSentUpdate({
+                        'messageKey': message.key
+                    });
+                } else if (messageType === "APPLOZIC_01" || messageType === "APPLOZIC_02" || messageType === "MESSAGE_RECEIVED") {
+                    ALStorage.updateLatestMessage(message);
+                    var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
+                    var mck_sidebox_content = document.getElementById("mck-sidebox-content");
+                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
+                        var messageFeed = mckMessageLayout.getMessageFeed(message);
+                        events.onMessageReceived({
+                            'message': messageFeed
+                        });
+                    } else if (messageType === "APPLOZIC_02") {
+                        var messageFeed = mckMessageLayout.getMessageFeed(message);
+                        events.onMessageSent({
+                            'message': messageFeed
+                        });
+                    }
+                    if (message.conversationId) {
+                        var conversationPxy = MCK_CONVERSATION_MAP[message.conversationId];
+                        if ((IS_MCK_TOPIC_HEADER || IS_MCK_TOPIC_BOX) && ((typeof conversationPxy !== 'object') || (typeof(MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId]) !== 'object'))) {
+                            mckMessageService.getTopicId({
+                                'conversationId': message.conversationId,
+                                'messageType': messageType,
+                                'message': message,
+                                'notifyUser': resp.notifyUser,
+                                'async': false,
+                                'populate': false
+                            });
+                        }
+                    }
+                    if (typeof contact === 'undefined') {
+                        var params = {
+                            'message': message,
+                            'messageType': messageType,
+                            'notifyUser': resp.notifyUser
+                        };
+
+                        if (message.groupId) {
+                            mckGroupLayout.getGroupFeedFromMessage(params);
+                        } else {
+                            var userIdArray = [];
+                            userIdArray.push(message.to);
+                            mckContactService.getUsersDetail(userIdArray, params);
+                        }
+                        return;
+                    }
+                    if (message.contentType == 102 && IS_CALL_ENABLED) {
+                        //video message Received...
+                        //dont show notification for 102 messages
+                        resp.notifyUser = false;
+                        if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_DIALED") {
+                            //its a call dialed Message.. Show Receive/Reject option on screen
+                            var contact = mckMessageLayout.fetchContact(message.to);
+                            var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
+
+                            var imgSource = mckMessageLayout.getContactImageLink(contact, displayName);
+                            document.querySelector("#mck-video-call-indicator").setAttribute("data-call-id", message.metadata.CALL_ID);
+                            document.querySelector("#mck-video-call-indicator").setAttribute("data-isAudioCall", message.metadata.CALL_AUDIO_ONLY);
+                            document.querySelector("#mck-video-call-indicator-txt").innerHTML = displayName + " calling...";
+                            document.querySelector("#mck-video-call-icon").innerHTML = imgSource;
+                            document.querySelector("#mck-video-call-indicator").classList.remove("n-vis");
+							document.querySelector("#mck-video-call-indicator").classList.add("vis");
+                            mckVideoCallringTone.play();
+                            //timer if user not receive call in 1 minute....
+                            setTimeout(function() {
+                                var callReceived = document.querySelector("#mck-video-call-indicator").getAttribute("data-callReceived");
+                                if (!callReceived) {
+                                    console.log("call is not answered");
+                                    //no need to notify server... sender is doing this...thank you sender.
+                                    //mckMessageService.sendVideoCallMessage(callId,"CALL_MISSED",102,false);
+                                    mckVideoCallringTone.stop();
+                                    document.querySelector("#mck-video-call-indicator").classList.add("n-vis");
+									document.querySelector("#mck-video-call-indicator").classList.remove("vis");
+
+                                }
+                            }, 60000);
+                        } else if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
+                            //notify server.. content type 103 msgType CALL_REJECTED
+                            //check is this device is call host
+                            if (document.querySelector("#mck-btn-video-call").getAttribute("data-isCallHost")) {
+                                mckMessageService.sendVideoCallMessage(message.metadata.CALL_ID, "CALL_REJECTED", 103, false);
+                                mckCallService.ringToneForHost.stop();
+                                mckCallService.outgoingCallServices.twilioService.leaveRoomIfJoined();
+                                mckCallService.hideVideoBox();
+                                if (mckCallService.outgoingCallServices) {
+                                    mckCallService.outgoingCallServices.rejectedByReceiver = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (message.contentType == 103) {
+                        if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_MISSED") {
+                            //stop ringtone and hide vid-call-indicator
+                             document.querySelector("#mck-video-call-indicator").classList.add("n-vis");
+							 document.querySelector("#mck-video-call-indicator").classList.remove("vis");
+                            if (mckVideoCallringTone) {
+                                mckVideoCallringTone.stop();
+                            }
+                            }
+                        // no nedd to handle  message.type==4 and metadata.MSG_TYPE=="CALL_Rejected AND contnetType 103"
+                    } else {
+                        mckMessageLayout.populateMessage(messageType, message, resp.notifyUser);
+                    }
+                }
+            }
+			}
         };
         window.Applozic.MckInitializeChannel.initEvents(_this.events);
         _this.getOptions = function() {
