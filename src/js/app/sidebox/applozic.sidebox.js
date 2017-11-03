@@ -3125,7 +3125,7 @@ window.onload = function() {
                 var replyMsg = ALStorage.getMessageByKey(msgkey);
                 if (typeof replyMsg === "undefined" ) {
                     window.Applozic.ALApiService.updateReplyMessage({
-                            data: {key: msgKey},
+                            data: {key: msgkey},
                             success: function(data) {
                                 ALStorage.updateMckMessageArray(data);
                             }
