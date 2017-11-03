@@ -506,7 +506,7 @@ function MckUtils() {
 		asyn = true;
 		if(typeof reqOptions.async !== 'undefined' || options.async){
 			asyn = reqOptions.async;
-		}
+        }
 		
 		typ = reqOptions.type.toUpperCase();
 	
@@ -520,7 +520,8 @@ function MckUtils() {
 			cttype = reqOptions.contentType;
 		}
 			request.setRequestHeader('Content-Type', cttype);
-		}
+        }
+        
 		
 			//authorizationrequestheaders
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1){

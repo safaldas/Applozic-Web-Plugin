@@ -41,6 +41,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 data: w.JSON.stringify(options.data.alUser),
                 contentType: 'application/json',
                 headers: {
@@ -77,8 +78,10 @@
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4', endTime: 1508177918406}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.getMessages = function(options) {
-            if ((options.data.userId || options.data.groupId) && typeof options.data.pageSize === 'undefined') {
-                options.data.pageSize = 30;
+            if (options.data.userId || options.data.groupId) {
+                if (options.data.pageSize === 'undefined') {
+                    options.data.pageSize = 30;                    
+                }
             } else if (typeof options.data.mainPageSize === 'undefined') {
                 options.data.mainPageSize = 60;
             }
@@ -87,6 +90,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + MESSAGE_LIST_URL,
                 data: data,
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 type: 'get',
                 success: function(data) {
                     response.status = "success";
@@ -120,6 +124,7 @@
                 url: MCK_BASE_URL + MESSAGE_SEND_URL,
                 global: false,
                 data: w.JSON.stringify(options.data.message),
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 contentType: 'application/json',
                 success: function(response) {
                     if (options.success) {
@@ -145,6 +150,7 @@
                 data: "key=" + options.data.key,
                 global: false,
                 type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 success: function() {},
                 error: function() {}
             });
@@ -161,6 +167,7 @@
                 data: "key=" + options.data.key,
                 global: false,
                 type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 success: function() {},
                 error: function() {}
             });
@@ -176,6 +183,7 @@
                 url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.data.key,
                 global: false,                
                 type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 success: function(response) {
                     if (options.success) {
                       options.success(response);
@@ -197,8 +205,8 @@
         ALApiService.updateReplyMessage = function(options) {
             mckUtils.ajax({
                 url: MCK_BASE_URL + UPDATE_REPLY_MAP + "?keys=" + options.data.key,
-                async: false,
                 type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 success: function(response) {
                     if (options.success) {
                       options.success(response);
@@ -223,8 +231,9 @@
          */
         ALApiService.deleteConversation = function(options) {
             mckUtils.ajax({
+                url: MCK_BASE_URL + CONVERSATION_DELETE_URL,                
                 type: "get",
-                url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 global: false,
                 data: getAsUriParameters(options.data),
                 success: function(response) {
@@ -251,6 +260,7 @@
                 global: false,
                 data: w.JSON.stringify(options.data.group),
                 type: 'post',
+                async: (typeof options.async !== 'undefined') ? options.async : true,                                
                 contentType: 'application/json',
                 success: function(response) {
                     if (options.success) {
@@ -274,7 +284,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
                 type: 'get',
-			
+                async: (typeof options.async !== 'undefined') ? options.async : true,                
                 global: false,
                 success: function(response) {
                     if (options.success) {

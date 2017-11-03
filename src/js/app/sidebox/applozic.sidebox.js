@@ -3126,6 +3126,7 @@ window.onload = function() {
                 if (typeof replyMsg === "undefined" ) {
                     window.Applozic.ALApiService.updateReplyMessage({
                             data: {key: msgkey},
+                            async: false,
                             success: function(data) {
                                 ALStorage.updateMckMessageArray(data);
                             }
@@ -4395,6 +4396,7 @@ window.onload = function() {
                 var replyTo = '';
                 var  msgReplyToVisible = 'n-vis';
                 if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== "undefined" ) {
+                    console.log(msg.metadata);
                     metadatarepiledto = msg.metadata.AL_REPLY;
                     replyMsg = mckMessageService.getReplyMessageByKey(metadatarepiledto);
                     if (typeof replyMsg!== "undefined" ) {
@@ -6225,7 +6227,7 @@ window.onload = function() {
                 mckUtils.ajax({
                                  url: MCK_BASE_URL +FRIEND_LIST_URL+friendListGroupName+getFriendListUrl,
                                  type: "get",
-                                 async:false,
+                                 async: false,
                                  contentType: "application/json",
                                  success: function(response) {
 
