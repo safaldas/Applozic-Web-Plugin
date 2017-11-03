@@ -42,7 +42,7 @@
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',
                 async: (typeof options.async !== 'undefined') ? options.async : true,                
-                data: w.JSON.stringify(options.data.alUser),
+                data: JSON.stringify(options.data.alUser),
                 contentType: 'application/json',
                 headers: {
                     'Application-Key': MCK_APP_ID
