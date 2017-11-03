@@ -196,10 +196,9 @@
          */
         ALApiService.updateReplyMessage = function(options) {
             mckUtils.ajax({
-                url: MCK_BASE_URL + UPDATE_REPLY_MAP,
+                url: MCK_BASE_URL + UPDATE_REPLY_MAP + "?keys=" + options.data.key,
                 async: false,
                 type: 'get',
-                data: "keys=" + options.data.key,
                 success: function(response) {
                     if (options.success) {
                       options.success(response);
