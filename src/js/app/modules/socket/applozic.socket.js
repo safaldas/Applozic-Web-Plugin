@@ -1,7 +1,7 @@
 (function(window){
     'use strict';
-    function define_MckInitializeChannel() {
-        var MckInitializeChannel = {};
+    function define_ALSocket() {
+        var ALSocket = {};
         var _this = this;
         var MCK_APP_ID;
         var events = {};
@@ -36,12 +36,12 @@
                 'onUserActivated': function() {},
                 'onUserDeactivated': function() {},
                 'onMessage': function(resp) { console.log(resp); } }; 
-        window.Applozic.MckInitializeChannel.init("applozic-sample-app", events);
+        window.Applozic.ALSocket.init("applozic-sample-app", events);
         */
-        MckInitializeChannel.init = function(appId, websocketUrl, _events) {
-            MckInitializeChannel.MCK_APP_ID = appId;
-            MckInitializeChannel.MCK_WEBSOCKET_URL = websocketUrl;
-            MckInitializeChannel.events = _events;
+        ALSocket.init = function(appId, websocketUrl, _events) {
+            ALSocket.MCK_APP_ID = appId;
+            ALSocket.MCK_WEBSOCKET_URL = websocketUrl;
+            ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 if (typeof SockJS === 'function') {
@@ -52,16 +52,16 @@
                     stompClient.heartbeat.outgoing = 0;
                     stompClient.heartbeat.incoming = 0;
                     stompClient.onclose = function() {
-                        MckInitializeChannel.disconnect();
+                        ALSocket.disconnect();
                     };
-                    stompClient.connect("guest", "guest", MckInitializeChannel.onConnect, MckInitializeChannel.onError, '/');
+                    stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
-                        MckInitializeChannel.disconnect();
+                        ALSocket.disconnect();
                     });
                 }
             }
         };
-        MckInitializeChannel.checkConnected = function(isFetchMessages) {
+        ALSocket.checkConnected = function(isFetchMessages) {
             if (stompClient.connected) {
                 if (checkConnectedIntervalId) {
                     clearInterval(checkConnectedIntervalId);
@@ -70,19 +70,19 @@
                     clearInterval(sendConnectedStatusIntervalId);
                 }
                 checkConnectedIntervalId = setInterval(function() {
-                    MckInitializeChannel.connectToSocket(isFetchMessages);
+                    ALSocket.connectToSocket(isFetchMessages);
                 }, 600000);
                 sendConnectedStatusIntervalId = setInterval(function() {
-                    MckInitializeChannel.sendStatus(1);
+                    ALSocket.sendStatus(1);
                 }, 1200000);
             } else {
-                MckInitializeChannel.connectToSocket(isFetchMessages);
+                ALSocket.connectToSocket(isFetchMessages);
             }
         };
-        MckInitializeChannel.connectToSocket = function(isFetchMessages) {
+        ALSocket.connectToSocket = function(isFetchMessages) {
             events.connectToSocket(isFetchMessages);
         };
-        MckInitializeChannel.stopConnectedCheck = function() {
+        ALSocket.stopConnectedCheck = function() {
             if (checkConnectedIntervalId) {
                 clearInterval(checkConnectedIntervalId);
             }
@@ -91,26 +91,26 @@
             }
             checkConnectedIntervalId = '';
             sendConnectedStatusIntervalId = '';
-            MckInitializeChannel.disconnect();
+            ALSocket.disconnect();
         };
-        MckInitializeChannel.disconnect = function() {
+        ALSocket.disconnect = function() {
             if (stompClient && stompClient.connected) {
-                MckInitializeChannel.sendStatus(0);
+                ALSocket.sendStatus(0);
                 stompClient.disconnect();
             }
         };
-        MckInitializeChannel.unsubscibeToTypingChannel = function() {
+        ALSocket.unsubscibeToTypingChannel = function() {
             if (stompClient && stompClient.connected) {
                 if (typingSubscriber) {
                     if (MCK_TYPING_STATUS === 1) {
-                        MckInitializeChannel.sendTypingStatus(0, TYPING_TAB_ID);
+                        ALSocket.sendTypingStatus(0, TYPING_TAB_ID);
                     }
                     typingSubscriber.unsubscribe();
                 }
             }
             typingSubscriber = null;
         };
-        MckInitializeChannel.unsubscibeToNotification = function() {
+        ALSocket.unsubscibeToNotification = function() {
             if (stompClient && stompClient.connected) {
                 if (subscriber) {
                     subscriber.unsubscribe();
@@ -118,23 +118,23 @@
             }
             subscriber = null;
         };
-        MckInitializeChannel.subscibeToTypingChannel = function(subscribeId) {
+        ALSocket.subscibeToTypingChannel = function(subscribeId) {
             if (stompClient && stompClient.connected) {
-                typingSubscriber = stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, MckInitializeChannel.onTypingStatus);
+                typingSubscriber = stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, ALSocket.onTypingStatus);
             } else {
-                MckInitializeChannel.reconnect();
+                ALSocket.reconnect();
             }
         };
-        MckInitializeChannel.subscribeToOpenGroup = function(group) {
+        ALSocket.subscribeToOpenGroup = function(group) {
             if (stompClient && stompClient.connected) {
-                var subs = stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, MckInitializeChannel.onOpenGroupMessage);
+                var subs = stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, ALSocket.onOpenGroupMessage);
                 openGroupSubscriber.push(subs.id);
                 OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] = subs.id;
             } else {
-                MckInitializeChannel.reconnect();
+                ALSocket.reconnect();
             }
         };
-        MckInitializeChannel.sendTypingStatus = function(status, tabId) {
+        ALSocket.sendTypingStatus = function(status, tabId) {
             if (stompClient && stompClient.connected) {
                 if (status === 1 && MCK_TYPING_STATUS === 1) {
                     stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
@@ -160,59 +160,59 @@
                 MCK_TYPING_STATUS = status;
             }
         };
-        MckInitializeChannel.onTypingStatus = function(resp) {
+        ALSocket.onTypingStatus = function(resp) {
             events.onTypingStatus(resp);
         };
-        MckInitializeChannel.reconnect = function() {
-            MckInitializeChannel.unsubscibeToTypingChannel();
-            MckInitializeChannel.unsubscibeToNotification();
-            MckInitializeChannel.disconnect();
-            MckInitializeChannel.init();
+        ALSocket.reconnect = function() {
+            ALSocket.unsubscibeToTypingChannel();
+            ALSocket.unsubscibeToNotification();
+            ALSocket.disconnect();
+            ALSocket.init();
         };
-        MckInitializeChannel.onError = function(err) {
+        ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
             events.onConnectFailed();
         };
-        MckInitializeChannel.sendStatus = function(status) {
+        ALSocket.sendStatus = function(status) {
             if (stompClient && stompClient.connected) {
                 stompClient.send('/topic/status-v2', {
                     "content-type": "text/plain"
                 }, MCK_TOKEN + "," + USER_DEVICE_KEY + "," + status);
             }
         };
-        MckInitializeChannel.onConnect = function() {
+        ALSocket.onConnect = function() {
             if (stompClient.connected) {
                 if (subscriber) {
-                    MckInitializeChannel.unsubscibeToNotification();
+                    ALSocket.unsubscibeToNotification();
                 }
-                subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, MckInitializeChannel.onMessage);
-                MckInitializeChannel.sendStatus(1);
-                MckInitializeChannel.checkConnected(true);
+                subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
+                ALSocket.sendStatus(1);
+                ALSocket.checkConnected(true);
             } else {
                 setTimeout(function() {
-                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, MckInitializeChannel.onMessage);
-                    MckInitializeChannel.sendStatus(1);
-                    MckInitializeChannel.checkConnected(true);
+                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
+                    ALSocket.sendStatus(1);
+                    ALSocket.checkConnected(true);
                 }, 5000);
             }
             events.onConnect();
         };
-        MckInitializeChannel.onOpenGroupMessage = function(obj) {
+        ALSocket.onOpenGroupMessage = function(obj) {
             events.onOpenGroupMessage(obj);
         };
-        MckInitializeChannel.onMessage = function(obj) {
+        ALSocket.onMessage = function(obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
                 var resp = JSON.parse(obj.body);
                 events.onMessage(resp);
             }
         };
 
-        return MckInitializeChannel;
+        return ALSocket;
     }
 
-    if(typeof(MckInitializeChannel) === 'undefined'){
-        window.Applozic.MckInitializeChannel = define_MckInitializeChannel();
+    if(typeof(ALSocket) === 'undefined'){
+        window.Applozic.ALSocket = define_ALSocket();
     } else{
-        console.log("MckInitializeChannel already defined.");
+        console.log("ALSocket already defined.");
     }
 })(window);
