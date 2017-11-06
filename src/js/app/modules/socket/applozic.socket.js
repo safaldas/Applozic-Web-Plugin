@@ -2,7 +2,6 @@
     'use strict';
     function define_ALSocket() {
         var ALSocket = {};
-        var _this = this;
         var MCK_APP_ID;
         var events = {};
         var subscriber = null;
@@ -41,7 +40,7 @@
         ALSocket.init = function(appId, websocketUrl, _events) {
             ALSocket.MCK_APP_ID = appId;
             ALSocket.MCK_WEBSOCKET_URL = websocketUrl;
-            ALSocket.events = _events;
+            events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 if (typeof SockJS === 'function') {
