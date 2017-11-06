@@ -14,6 +14,7 @@ function define_MckInitializeChannel() {
     var sendConnectedStatusIntervalId;
     var SOCKET = '';
     var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
+    var mckUtils = new mckUtils();
 
     /**
      * var events = {
@@ -43,18 +44,18 @@ function define_MckInitializeChannel() {
         MckInitializeChannel.events = _events;
         if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
             var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
-            if (typeof w.SockJS === 'function') {
+            if (typeof SockJS === 'function') {
                 if (!SOCKET) {
                     SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + port + "/stomp");
                 }
-                stompClient = w.Stomp.over(SOCKET);
+                stompClient = Stomp.over(SOCKET);
                 stompClient.heartbeat.outgoing = 0;
                 stompClient.heartbeat.incoming = 0;
                 stompClient.onclose = function() {
                     MckInitializeChannel.disconnect();
                 };
                 stompClient.connect("guest", "guest", MckInitializeChannel.onConnect, MckInitializeChannel.onError, '/');
-                w.addEventListener("beforeunload", function(e) {
+                window.addEventListener("beforeunload", function(e) {
                     MckInitializeChannel.disconnect();
                 });
             }
@@ -169,7 +170,7 @@ function define_MckInitializeChannel() {
         MckInitializeChannel.init();
     };
     MckInitializeChannel.onError = function(err) {
-        w.console.log("Error in channel notification. " + err);
+        console.log("Error in channel notification. " + err);
         events.onConnectFailed();
     };
     MckInitializeChannel.sendStatus = function(status) {
