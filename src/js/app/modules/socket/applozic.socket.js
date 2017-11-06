@@ -13,9 +13,32 @@ function define_MckInitializeChannel() {
     var checkConnectedIntervalId;
     var sendConnectedStatusIntervalId;
     var SOCKET = '';
-    
-    MckInitializeChannel.init = function(appId) {
+
+    /**
+     * var events = {
+            'onConnectFailed': function() {},
+            'onConnect': function() {},
+            'onMessageDelivered': function() {},
+            'onMessageRead': function() {},
+            'onMessageDeleted': function() {},
+            'onConversationDeleted': function() {},
+            'onUserConnect': function() {},
+            'onUserDisconnect': function() {},
+            'onConversationReadFromOtherSource': function() {},
+            'onConversationRead': function() {},
+            'onMessageReceived': function() {},
+            'onMessageSentUpdate': function() {},
+            'onMessageSent': function() {},
+            'onUserBlocked': function() {},
+            'onUserUnblocked': function() {},
+            'onUserActivated': function() {},
+            'onUserDeactivated': function() {},
+            'onMessage': function(resp) { console.log(resp); } }; 
+    window.Applozic.MckInitializeChannel.init("applozic-sample-app", events);
+     */
+    MckInitializeChannel.init = function(appId, _events) {
         MckInitializeChannel.MCK_APP_ID = appId;
+        MckInitializeChannel.events = _events;
         if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
             var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
             if (typeof w.SockJS === 'function') {
@@ -35,10 +58,6 @@ function define_MckInitializeChannel() {
             }
         }
     };
-	MckInitializeChannel.initEvents = function(_events)
-	{
-		events = _events;
-	};
     MckInitializeChannel.checkConnected = function(isFetchMessages) {
         if (stompClient.connected) {
             if (checkConnectedIntervalId) {

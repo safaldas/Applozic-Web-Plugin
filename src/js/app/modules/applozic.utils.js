@@ -523,26 +523,25 @@ function MckUtils() {
         }
         
 		
-			//authorizationrequestheaders
+        //authorizationrequestheaders
+        MCK_BASE_URL = "https://apps.applozic.com";
 		if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1){
 	
 			request.setRequestHeader("UserId-Enabled", true);
-		
-			
-		request.setRequestHeader("UserId-Enabled", true);
-                if (authkey) {
-                    request.setRequestHeader("Authorization", "Basic " + authkey);
-                }
-                request.setRequestHeader("Application-Key", appid);
-                if (devkey) {
-                    request.setRequestHeader("Device-Key", devkey);
-                }
-                if (acctoken) {
-                    request.setRequestHeader("Access-Token", acctoken);
-                }
-                if (modname) {
-                    request.setRequestHeader("App-Module-Name", modname);
-                }
+				
+            if (authkey) {
+                request.setRequestHeader("Authorization", "Basic " + authkey);
+            }
+            request.setRequestHeader("Application-Key", appid);
+            if (devkey) {
+                request.setRequestHeader("Device-Key", devkey);
+            }
+            if (acctoken) {
+                request.setRequestHeader("Access-Token", acctoken);
+            }
+            if (modname) {
+                request.setRequestHeader("App-Module-Name", modname);
+            }
 		}
 		if(typeof reqOptions.data === 'undefined'){
 			

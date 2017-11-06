@@ -32,7 +32,7 @@
         /**
          * Login user to the chat session, must be done once in a session.
          * Usage Example:
-         * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', accessToken: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.login = function(options) {
 			
