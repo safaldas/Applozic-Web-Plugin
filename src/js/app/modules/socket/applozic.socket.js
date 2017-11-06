@@ -36,7 +36,7 @@
                 'onUserActivated': function() {},
                 'onUserDeactivated': function() {},
                 'onMessage': function(resp) { console.log(resp); } }; 
-        window.Applozic.ALSocket.init("applozic-sample-app", events);
+        window.Applozic.ALSocket.init("applozic-sample-app", "https://apps.applozic.com", events);
         */
         ALSocket.init = function(appId, websocketUrl, _events) {
             ALSocket.MCK_APP_ID = appId;
