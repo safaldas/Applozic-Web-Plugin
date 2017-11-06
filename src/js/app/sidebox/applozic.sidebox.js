@@ -1857,7 +1857,7 @@ window.onload = function() {
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
-                    (IS_REINITIALIZE) ? window.Applozic.MckInitializeChannel.reconnect(): window.Applozic.MckInitializeChannel.init(MCK_APP_ID, events);
+                    (IS_REINITIALIZE) ? window.Applozic.MckInitializeChannel.reconnect(): window.Applozic.MckInitializeChannel.init(MCK_APP_ID, MCK_WEBSOCKET_URL, events);
                     // mckGroupService.loadGroups();
                 }
                 mckMessageLayout.createContactWithDetail({
