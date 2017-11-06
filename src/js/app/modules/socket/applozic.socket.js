@@ -13,7 +13,7 @@ function define_MckInitializeChannel() {
     var checkConnectedIntervalId;
     var sendConnectedStatusIntervalId;
     var SOCKET = '';
-    var MCK_WEBSOCKET_URL = '';
+    var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
 
     /**
      * var events = {
