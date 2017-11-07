@@ -13,6 +13,8 @@
         var sendConnectedStatusIntervalId;
         var SOCKET = '';
         var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
+        var MCK_TOKEN;
+        var USER_DEVICE_KEY;
         var mckUtils = new MckUtils();
 
         /**
@@ -37,9 +39,12 @@
                 'onMessage': function(resp) { console.log(resp); } }; 
         window.Applozic.ALSocket.init("applozic-sample-app", "https://apps.applozic.com", events);
         */
-        ALSocket.init = function(appId, websocketUrl, _events) {
-            ALSocket.MCK_APP_ID = appId;
-            ALSocket.MCK_WEBSOCKET_URL = websocketUrl;
+        ALSocket.init = function(appId, data, _events) {
+            MCK_APP_ID = appId;
+            MCK_TOKEN = data.token;            
+            USER_DEVICE_KEY = data.deviceKey;
+            MCK_WEBSOCKET_URL = data.websocketUrl;            
+            
             events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
