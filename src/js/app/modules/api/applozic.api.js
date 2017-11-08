@@ -92,8 +92,7 @@
             var data = getAsUriParameters(options.data);
             var response = new Object();
             mckUtils.ajax({
-                url: MCK_BASE_URL + MESSAGE_LIST_URL,
-                data: data,
+                url: MCK_BASE_URL + MESSAGE_LIST_URL + "?" + data,
                 async: (typeof options.async !== 'undefined') ? options.async : true,                
                 type: 'get',
                 success: function(data) {
