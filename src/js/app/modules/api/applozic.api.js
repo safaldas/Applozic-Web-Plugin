@@ -48,6 +48,10 @@
                     'Application-Key': MCK_APP_ID
                 },
                 success: function(response) {
+                    mckUtils.setEncryptionKey(response.encryptionKey);
+                    var AUTH_CODE = btoa(response.userId + ':' + response.deviceKey);
+                    mckUtils.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
+            
                     if (options.success) {
                       options.success(response);
                     }
