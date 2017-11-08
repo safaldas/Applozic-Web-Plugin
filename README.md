@@ -368,7 +368,7 @@ For advanced options and customization, visit:
 [Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://www.applozic.com/docs/web-chat-plugin.html?utm_source=github&utm_medium=readme&utm_campaign=web)
 
 
-##Help
+### Help
 
 We provide support over at [StackOverflow](http://stackoverflow.com/questions/tagged/applozic) when you tag using applozic, ask us anything.
 
