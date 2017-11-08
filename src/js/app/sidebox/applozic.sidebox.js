@@ -4097,7 +4097,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                          userIdArray.push(userId);
                          mckContactService.getUsersDetail(userIdArray, { 'async': false });
                          var userDetail= mckUserUtils.getUserDetail(userId);
-                         return userDetail.displayName;
+                         if (typeof userDetail !== "undefined") {
+                             return userDetail.displayName;
+                          }
                      }
 
                 } else {
