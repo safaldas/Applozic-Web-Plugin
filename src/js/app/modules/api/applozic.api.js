@@ -126,7 +126,7 @@
                 type: 'POST',
                 url: MCK_BASE_URL + MESSAGE_SEND_URL,
                 global: false,
-                data: w.JSON.stringify(options.data.message),
+                data: JSON.stringify(options.data.message),
                 async: (typeof options.async !== 'undefined') ? options.async : true,                
                 contentType: 'application/json',
                 success: function(response) {

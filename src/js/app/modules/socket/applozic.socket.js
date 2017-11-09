@@ -41,10 +41,14 @@
         window.Applozic.ALSocket.init("applozic-sample-app", "https://apps.applozic.com", events);
         */
         ALSocket.init = function(appId, data, _events) {
-            MCK_APP_ID = appId;
-            MCK_TOKEN = data.token;            
-            USER_DEVICE_KEY = data.deviceKey;
-            MCK_WEBSOCKET_URL = data.websocketUrl;            
+            if (appId) {
+                MCK_APP_ID = appId;                
+            }
+            if (typeof data !== "undefined") {
+                MCK_TOKEN = data.token;   
+                USER_DEVICE_KEY = data.deviceKey;
+                MCK_WEBSOCKET_URL = data.websocketUrl;                                  
+            }
             
             events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {

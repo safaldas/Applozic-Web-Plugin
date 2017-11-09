@@ -543,12 +543,15 @@ function MckUtils() {
                 request.setRequestHeader("App-Module-Name", modname);
             }
 		}
-		if(typeof reqOptions.data === 'undefined'){
+		if (typeof reqOptions.data === 'undefined'){
 			
 			request.send();
-		}
-		else{
-			request.send(reqOptions.data);
+		} else {
+            if (reqOptions.type === 'get' || reqOptions.type === 'GET') {
+                reqOptions.url = reqOptions.url + "?" + reqOptions.data;
+            } else {
+                request.send(reqOptions.data);                
+            }
 		}
 		
 		request.onreadystatechange = function(){
