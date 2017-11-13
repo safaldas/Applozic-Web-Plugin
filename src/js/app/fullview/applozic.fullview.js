@@ -594,7 +594,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             }
         };
         _this.loadTabWithTopic = function(optns) {
-            if (typeof optns === 'object' && optns.userId && optns.topicId) {
+          if (typeof optns === 'object' && (optns.userId || optns.groupId) && optns.topicId) {
                 var params = {
                     'tabId': optns.userId,
                     'topicId': optns.topicId
@@ -607,8 +607,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                 } else {
                     params.topicStatus = CONVERSATION_STATUS_MAP[0];
                 }
-                if (typeof(MCK_GETTOPICDETAIL) === 'function') {
-                    var topicDetail = MCK_GETTOPICDETAIL(optns.topicId);
+                if (typeof (MCK_GETTOPICDETAIL) === 'function'|| optns.topicDetail) {
+                  var topicDetail =(optns.topicDetail) ? (optns.topicDetail):MCK_GETTOPICDETAIL(optns.topicId);
                     if (typeof topicDetail === 'object' && topicDetail.title !== 'undefined') {
                         MCK_TOPIC_DETAIL_MAP[optns.topicId] = topicDetail;
                     }
@@ -624,17 +624,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                 } else {
                     params.isMessage = false;
                 }
-                if (optns.supportId) {
+                if (optns.groupId) {
                     params.isGroup = true;
-                    params.supportId = supportId;
+                    params.groupId = optns.groupId;
                 } else {
                     params.isGroup = false;
                 }
                 params.isSearch = true;
                 mckMessageService.getConversationId(params);
             } else {
-                if (!optns.userId) {
-                    return 'UserId required';
+               if (!optns.userId || !optns.groupId) {
+                    return 'UserId or groupId  required';
                 } else if (!optns.topicId) {
                     return 'TopicId required';
                 }
@@ -3174,8 +3174,11 @@ _this.getReplyMessageByKey = function(msgkey) {
                         'status': params.topicStatus
                     };
                     if (params.isGroup) {
-                        conversationPxy.supportIds = [];
-                        conversationPxy.supportIds.push(params.supportId);
+                        //conversationPxy.supportIds = [];
+                        //conversationPxy.supportIds.push(params.supportId);
+                        conversationPxy.groupId = params.groupId;
+                    } else {
+                      conversationPxy.userId = params.tabId;
                     }
                     var topicDetail = MCK_TOPIC_DETAIL_MAP[params.topicId];
                     if (typeof topicDetail === 'object') {
