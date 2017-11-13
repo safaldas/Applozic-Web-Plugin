@@ -261,7 +261,7 @@
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_CREATE_URL,
                 global: false,
-                data: w.JSON.stringify(options.data.group),
+                data: JSON.stringify(options.data.group),
                 type: 'post',
                 async: (typeof options.async !== 'undefined') ? options.async : true,                                
                 contentType: 'application/json',
