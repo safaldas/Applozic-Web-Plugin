@@ -89,7 +89,9 @@
             }
         };
         ALSocket.connectToSocket = function(isFetchMessages) {
-            events.connectToSocket(isFetchMessages);
+            if (typeof events.connectToSocket === "function") { 
+                events.connectToSocket(isFetchMessages);
+            }
         };
         ALSocket.stopConnectedCheck = function() {
             if (checkConnectedIntervalId) {
@@ -170,7 +172,9 @@
             }
         };
         ALSocket.onTypingStatus = function(resp) {
-            events.onTypingStatus(resp);
+            if (typeof events.onTypingStatus === "function") { 
+                events.onTypingStatus(resp);                
+            }
         };
         ALSocket.reconnect = function() {
             ALSocket.unsubscibeToTypingChannel();
@@ -180,7 +184,9 @@
         };
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
-            events.onConnectFailed();
+            if (typeof events.onConnectFailed === "function") { 
+                events.onConnectFailed();                
+            }
         };
         ALSocket.sendStatus = function(status) {
             if (stompClient && stompClient.connected) {
@@ -204,15 +210,21 @@
                     ALSocket.checkConnected(true);
                 }, 5000);
             }
-            events.onConnect();
+            if (typeof events.onConnect === "function") { 
+                events.onConnect();             
+            }
         };
         ALSocket.onOpenGroupMessage = function(obj) {
-            events.onOpenGroupMessage(obj);
+            if (typeof events.onOpenGroupMessage === "function") { 
+                events.onOpenGroupMessage(obj);      
+            }
         };
         ALSocket.onMessage = function(obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
                 var resp = JSON.parse(obj.body);
-                events.onMessage(resp);
+                if (typeof events.onMessage === "function") { 
+                    events.onMessage(resp);     
+                }
             }
         };
 
