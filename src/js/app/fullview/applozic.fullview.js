@@ -2115,11 +2115,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                         if (group && group.adminName === MCK_USER_ID) {
                             if (MCK_GROUP_MEMBER_SEARCH_ARRAY.length > 0) {
                                 mckGroupLayout.addMembersToGroupSearchList();
-                            } else if (IS_MCK_OWN_CONTACTS && MCK_CONTACT_ARRAY.length > 0) {
+                              } else if (IS_MCK_OWN_CONTACTS) {
+                                  if (MCK_CONTACT_ARRAY.length > 0) {
                                 $applozic.each(MCK_CONTACT_ARRAY, function(i, contact) {
                                     MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
                                 });
                                 mckGroupLayout.addMembersToGroupSearchList();
+                              } else {
+                                  $mck_gms_loading.removeClass('vis').addClass('n-vis');
+                                  $mck_no_gsm_text.removeClass('n-vis').addClass('vis');
+                              }
+
                             } else {
                                 $mck_no_gsm_text.removeClass('n-vis').addClass('vis');
                                 mckContactService.getUserStatus({
@@ -4885,7 +4891,9 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 var groupUserCount = contact.userCount;
                 var conversationId = '';
                 var isGroupTab = contact.isGroup ? contact.isGroup:false;
-                MCK_CONTACT_ARRAY.push(contact);
+                 if (IS_MCK_OWN_CONTACTS !==true) {
+                   MCK_CONTACT_ARRAY.push(contact);
+                  }
                 if (typeof message !== 'undefined') {
                     if (message.conversationId) {
                         conversationId = message.conversationId;
@@ -5989,6 +5997,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
             var $mck_group_title = $applozic("#mck-group-name-sec .mck-group-title");
             var $mck_group_info_icon_loading = $applozic("#mck-group-info-icon-loading");
             var $mck_group_member_search_list = $applozic("#mck-group-member-search-list");
+            var $mck_no_gsm_text = $applozic("#mck-no-gsm-text");
             var $mck_group_create_icon_loading = $applozic("#mck-group-create-icon-loading");
             var $mck_group_info_icon = $applozic("#mck-group-info-icon-box .mck-group-icon");
             var $mck_group_create_icon = $applozic("#mck-group-create-icon-box .mck-group-icon");
