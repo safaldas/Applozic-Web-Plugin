@@ -114,8 +114,13 @@
 
         /**
          * Usage Example:
+	 * Send message to a user (to)
          * Applozic.ALApiService.sendMessage({data: {message: {"type":5,"contentType":0,"message":"hi","to":"debug4","metadata":{},"key":"mpfj2","source":1}}, success: function(response) {console.log(response);}, error: function() {}});
-         * type: 5 - Sent Message, 4 - Received Message
+         * Send message to a group using groupId
+         * Applozic.ALApiService.sendMessage({data: {message: {"type":5,"contentType":0,"message":"hi","groupId":"group-1","metadata":{},"key":"mpfj2","source":1}}, success: function(response) {console.log(response);}, error: function() {}});
+         * Send message to a group using clientGroupId
+         * Applozic.ALApiService.sendMessage({data: {message: {"type":5,"contentType":0,"message":"hi","clientGroupId":"group-1","metadata":{},"key":"mpfj2","source":1}}, success: function(response) {console.log(response);}, error: function() {}});
+	 * type: 5 - Sent Message, 4 - Received Message
          * contentType: 0 - Standard Chat Message
          * to: userId to whom the message is to be sent
          * metadata: Additional key value pairs
