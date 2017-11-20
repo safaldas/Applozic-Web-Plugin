@@ -462,7 +462,7 @@ function MckUtils() {
 				for(var key in arguments[i])
 					if(arguments[i].hasOwnProperty(key))
 						arguments[0][key] = arguments[i][key];
-		return arguments[0];
+		    return arguments[0];
 		}
 
         var reqOptions = extend({}, {}, options);
@@ -510,7 +510,7 @@ function MckUtils() {
 		
         typ = reqOptions.type.toUpperCase();
         
-        if (typ === 'GET') {
+        if (typ === 'GET' && typeof reqOptions.data !== "undefined") {
             reqOptions.url = reqOptions.url + "?" + reqOptions.data;
         }
 	
@@ -545,38 +545,35 @@ function MckUtils() {
                 request.setRequestHeader("App-Module-Name", modname);
             }
 		}
-		if (typeof reqOptions.data === 'undefined' && typ != "GET"){
+		if (typeof reqOptions.data === 'undefined'){
 			request.send();
 		} else {
             request.send(reqOptions.data);                
 		}
 		
-		request.onreadystatechange = function(){
-			if (request.readyState === XMLHttpRequest.DONE) {
-				if (request.status === 200) {
-					//success
-					var contType = request.getResponseHeader("Content-Type");
-					
-					if(contType == "text/html"){
-						responsedata = request.responseXML;
-					}
-					else if(contType == "text/plain" || contType == "null"){
-						responsedata = request.responseText;
-					}
-					else if(contType == 'application/json;charset=utf-8'){
-						var responsedata = JSON.parse(request.responseText);
-					}
-			console.log(responsedata);
-			reqOptions.success(responsedata);
-      } else {
-		  //error
-        reqOptions.error(responseData);
-      }
-    }
-  
-		};
-        //$applozic.ajax(reqOptions);
-   
+        request.onreadystatechange = function () {
+            if (request.readyState === XMLHttpRequest.DONE) {
+                if (request.status === 200) {
+                    //success
+                    var contType = request.getResponseHeader("Content-Type");
+                    if (typeof contType === "undefined" || contType == "null") {
+                        contType = "";
+                    }
+
+                    if (contType.toLowerCase().indexOf("text/html") != -1) {
+                        responsedata = request.responseXML;
+                    } else if (contType.toLowerCase().indexOf("application/json") != -1) {
+                        responsedata = JSON.parse(request.responseText);
+                    } else {
+                        responsedata = request.responseText;                        
+                    }
+                    reqOptions.success(responsedata);
+                } else {
+                    //error
+                    reqOptions.error(responsedata);
+                }
+            }
+		};   
     };
 
     _this.isJsonString = function(str) {
