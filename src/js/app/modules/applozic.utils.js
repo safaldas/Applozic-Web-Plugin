@@ -508,17 +508,19 @@ function MckUtils() {
 			asyn = reqOptions.async;
         }
 		
-		typ = reqOptions.type.toUpperCase();
+        typ = reqOptions.type.toUpperCase();
+        
+        if (typ === 'GET') {
+            reqOptions.url = reqOptions.url + "?" + reqOptions.data;
+        }
 	
 		request.open(typ,reqOptions.url,asyn);
-		if(typ === 'POST')
-		{
-		if(typeof reqOptions.contentType === 'undefined'){
-			cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
-		
-		}else{
-			cttype = reqOptions.contentType;
-		}
+		if(typ === 'POST') {
+            if(typeof reqOptions.contentType === 'undefined'){
+                cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
+		    } else{
+                cttype = reqOptions.contentType;
+            }
 			request.setRequestHeader('Content-Type', cttype);
         }
         
@@ -543,15 +545,10 @@ function MckUtils() {
                 request.setRequestHeader("App-Module-Name", modname);
             }
 		}
-		if (typeof reqOptions.data === 'undefined'){
-			
+		if (typeof reqOptions.data === 'undefined' && typ != "GET"){
 			request.send();
 		} else {
-            if (reqOptions.type === 'get' || reqOptions.type === 'GET') {
-                reqOptions.url = reqOptions.url + "?" + reqOptions.data;
-            } else {
-                request.send(reqOptions.data);                
-            }
+            request.send(reqOptions.data);                
 		}
 		
 		request.onreadystatechange = function(){

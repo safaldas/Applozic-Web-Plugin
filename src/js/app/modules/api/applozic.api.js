@@ -154,8 +154,16 @@
                 global: false,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,                
-                success: function() {},
-                error: function() {}
+                success: function(response) {
+                    if (options.success) {
+                      options.success(response);
+                    }
+                },
+                error: function(response) {
+                    if (options.error) {
+                      options.error(response);
+                    }
+                }
             });
         }
 
@@ -171,8 +179,16 @@
                 global: false,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,                
-                success: function() {},
-                error: function() {}
+                success: function(response) {
+                    if (options.success) {
+                      options.success(response);
+                    }
+                },
+                error: function(response) {
+                    if (options.error) {
+                      options.error(response);
+                    }
+                }
             });
         }
 
