@@ -37,7 +37,9 @@
                 'onUserActivated': function() {},
                 'onUserDeactivated': function() {},
                 'connectToSocket': function() {},
-                'onMessage': function(resp) { console.log(resp); } }; 
+                'onMessage': function(resp) { console.log(resp); },
+                'onTypingStatus': function(resp) {}
+               }; 
         window.Applozic.ALSocket.init("applozic-sample-app", "https://apps.applozic.com", events);
         */
         ALSocket.init = function(appId, data, _events) {
