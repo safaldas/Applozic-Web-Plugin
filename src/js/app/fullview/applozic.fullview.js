@@ -472,12 +472,21 @@ var MCK_CLIENT_GROUP_MAP = [];
             mckMessageLayout.loadTab(params);
             $applozic('#mck-search').val('');
         };
-        _this.loadTab = function(tabId) {
+        _this.loadTab = function(params) {
+          if(typeof params ==='object'){
             mckMessageLayout.loadTab({
-                'tabId': tabId,
+                'tabId': params.tabId,
+                'isGroup': false,
+                'hideothertab':params.hideothertab,
+                isSearch: true
+            });
+          } else{
+            mckMessageLayout.loadTab({
+                'tabId': params,
                 'isGroup': false,
                 isSearch: true
             });
+          }
             $applozic('#mck-search').val('');
         };
         _this.loadChat = function(optns) {
@@ -3908,6 +3917,12 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     var contact = (params.isGroup) ? mckGroupUtils.getGroup(params.tabId) : mckMessageLayout.getContact(params.tabId);
                     var contactHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                     $applozic("#li-" + contactHtmlExpr + " .mck-unread-count-box").removeClass("vis").addClass("n-vis");
+                   if(params.hideothertab === true){
+                      $applozic("#li-user-"+params.tabId).removeClass('n-vis').addClass('vis');
+                      $applozic('#mck-contact-list li').not("#li-user-"+params.tabId).removeClass('vis').addClass('n-vis');
+                    }else{
+                      $applozic('#mck-contact-list li').removeClass('n-vis').addClass('vis');
+                    }
                     $mck_msg_inner.bind('scroll', function() {
                         if ($mck_msg_inner.scrollTop() === 0) {
                             var tabId = $mck_msg_inner.data("mck-id");
@@ -3926,7 +3941,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                                     'startTime': startTime
                                 });
                             }
-                        }
+                       }
                     });
                     $mck_text_box.focus();
                 } else {
