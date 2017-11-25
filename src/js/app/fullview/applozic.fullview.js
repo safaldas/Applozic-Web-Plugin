@@ -1951,6 +1951,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     /*
                      * var personName = $applozic(this).find('.name').text(); $applozic('.right .top .name').html(personName); $applozic('.chat').removeClass('active-chat'); $applozic('.left .person').removeClass('active'); $applozic(this).addClass('active'); $applozic('.chat[data-mck-id ="'+tabId+'"]').addClass('active-chat');
                      */
+                     if($this.hasClass('othertabshidden')){
+                       return;
+                     }
                     if (topicId && !conversationId) {
                         var topicStatus = $applozic(this).data("mck-topic-status");
                         if (topicStatus) {
@@ -3918,10 +3921,10 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     var contactHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                     $applozic("#li-" + contactHtmlExpr + " .mck-unread-count-box").removeClass("vis").addClass("n-vis");
                    if(params.hideothertab === true){
-                      $applozic("#li-user-"+params.tabId).removeClass('n-vis').addClass('vis');
-                      $applozic('#mck-contact-list li').not("#li-user-"+params.tabId).removeClass('vis').addClass('n-vis');
+                      $applozic("#li-user-"+params.tabId).removeClass('n-vis').addClass('othertabshidden vis');
+                      $applozic('#mck-contact-list li').not("#li-user-"+params.tabId).removeClass('othertabshidden vis').addClass('n-vis');
                     }else{
-                      $applozic('#mck-contact-list li').removeClass('n-vis').addClass('vis');
+                      $applozic('#mck-contact-list li').removeClass('othertabshidden n-vis').addClass('vis');
                     }
                     $mck_msg_inner.bind('scroll', function() {
                         if ($mck_msg_inner.scrollTop() === 0) {
