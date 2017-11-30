@@ -4068,7 +4068,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic("." + msgKey + " .msgtype-outbox-cr").attr('title', 'sent via Carrier');
                 $applozic("." + msgKey + " .msgtype-outbox-mck").attr('title', 'sent');
                 $applozic("." + msgKey + " .msgtype-inbox-cr").attr('title', 'received via Carrier');
-                $applozic("." + msgKey + " .msgtype-inbox-mck").attr('title', 'recieved');
+                $applozic("." + msgKey + " .msgtype-inbox-mck").attr('title', 'received');
             };
             _this.fetchContact = function(contactId) {
                 var contact = _this.getContact(contactId);
