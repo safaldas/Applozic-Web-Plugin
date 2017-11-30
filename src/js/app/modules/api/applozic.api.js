@@ -10,6 +10,13 @@
         var MESSAGE_SEND_URL = "/rest/ws/message/send";
         var GROUP_CREATE_URL = "/rest/ws/group/create";
         var GROUP_LIST_URL = "/rest/ws/group/list";
+        var GROUP_INFO_URL = "/rest/ws/group/v2/info";
+        var GROUP_ADD_MEMBER_URL = "/rest/ws/group/add/member";
+        var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
+        var GROUP_LEFT_URL = "/rest/ws/group/left";
+        var GROUP_UPDATE_URL = "/rest/ws/group/update";
+        var GROUP_IS_USER_PRESENT_URL = "/rest/ws/group/check/user";
+        var GROUP_USER_COUNT_URL = "/rest/ws/group/user/count";
         var UPDATE_REPLY_MAP = "/rest/ws/message/detail";
         var MESSAGE_DELETE_URL = "/rest/ws/message/delete";
         var MESSAGE_READ_UPDATE_URL = "/rest/ws/message/read";
@@ -322,6 +329,221 @@
                 }
             });
         }
+        /**
+         * Get groups info.
+         * Usage Example:
+         * Applozic.ALApiService.getGroupInfo({data: {groupId:"6300709"}, success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.getGroupInfo = function (options) {
+            var groupId = (options.data.groupId)? "?groupId="+options.data.groupId : "?clientGroupId="+options.data.clientGroupId;
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_INFO_URL+ groupId,
+                type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+       /**
+         * Add Group Member to Group.
+         * Usage Example:
+         * Applozic.ALApiService.addGroupMember({data:{group:{"userId":"user unique identifier ",
+                                                     "clientGroupId":"group unique identifier" }},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.addGroupMember = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_ADD_MEMBER_URL,
+                type: 'POST',
+                data: JSON.stringify(options.data.group),
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+        
+        /**
+         * Remove Group Member from Group.
+         * Usage Example:
+         * Applozic.ALApiService.removeGroupMember({data:{group:{"userId":"user unique identifier ",
+                                                     "clientGroupId":"group unique identifier" }},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.removeGroupMember = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_REMOVE_MEMBER_URL,
+                type: 'POST',
+                data: JSON.stringify(options.data.group),
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+
+        /**
+         * Group Left
+         * Usage Example:
+         * Applozic.ALApiService.groupLeave({data:{group:{"clientGroupId":"group unique identifier" }},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.groupLeave = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_LEFT_URL,
+                type: 'POST',
+                data: JSON.stringify(options.data.group),
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+
+         /**
+         * Group Update
+         * Usage Example:
+         * Applozic.ALApiService.groupUpdate({data:{group:{groupId:"groupId" or clientGroupId:"clientGroupId",newName:"New name of group",imageUrl:"image url of the group"}},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.groupUpdate = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_UPDATE_URL,
+                type: 'POST',
+                data: JSON.stringify(options.data.group),
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        } 
+        
+         /**
+         * Check if user is part of a Group
+         * Usage Example:
+         * Applozic.ALApiService.isUserPresentInGroup({data:{clientGroupId:"clientGroupId",userId:"userId"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.isUserPresentInGroup = function (options) {           
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_IS_USER_PRESENT_URL+ '?userId='+options.data.userId+'&clientGroupId='+options.data.clientGroupId,
+                type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+
+        /**
+         * Group Users Count
+         * Usage Example:
+         * Applozic.ALApiService.groupUserCount({data:{clientGroupId:["clientGroupId1","clientGroupId2"]},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.groupUserCount = function (options) {           
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_USER_COUNT_URL+ '?clientGroupIds='+options.data.clientGroupId,
+                type: 'get',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        } 
+        
+         /**
+         * Group Delete
+         * Usage Example:
+         * Applozic.ALApiService.groupDelete({data:{clientGroupId:"clientGroupId"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.groupDelete = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_LEFT_URL+"?clientGroupId="+options.data.clientGroupId,
+                type: 'GET',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+
 
         return ALApiService;
     }
