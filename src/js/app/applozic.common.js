@@ -115,10 +115,10 @@ function MckGroupService() {
     var GROUP_UPDATE_INFO_URL = "/rest/ws/group/update";
     var GROUP_ADD_MEMBER_URL = "/rest/ws/group/add/member";
     var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
-    _this.loadGroups = function(params) {
+    _this.loadGroups = function (params) {
         var response = new Object();
         window.Applozic.ALApiService.loadGroups({
-            success: function(data) {
+            success: function (data) {
                 if (data.status === 'success') {
                     response.status = 'success';
                     response.data = data.response;
@@ -132,7 +132,7 @@ function MckGroupService() {
                     params.callback(response);
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to load groups. Please reload page.');
                 response.status = 'error';
                 if (params.callback) {
@@ -144,17 +144,17 @@ function MckGroupService() {
             }
         });
     };
-    _this.getGroupFeed = function(params) {
-        var data = "";
+    _this.getGroupFeed = function (params) {
+        var group = {};
         if (typeof params.callback === 'function' || typeof params.apzCallback === 'function') {
             var response = new Object();
         } else {
             return;
         }
         if (params.groupId) {
-            data += "groupId=" + params.groupId;
+            group.groupId = params.groupId;
         } else if (params.clientGroupId) {
-            data += "clientGroupId=" + params.clientGroupId;
+            group.clientGroupId = params.clientGroupId;
         } else {
             if (typeof params.callback === 'function') {
                 response.status = "error";
@@ -164,14 +164,11 @@ function MckGroupService() {
             return;
         }
         if (params.conversationId) {
-            data += "&conversationId=" + params.conversationId;
+            group.conversationId = params.conversationId;
         }
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_FEED_URL,
-            data: data,
-            type: 'get',
-            global: false,
-            success: function(data) {
+
+        Applozic.ALApiService.getGroupInfo({
+            data: { group }, success: function (response) {
                 if (data.status === "success") {
                     var groupFeed = data.response;
                     if (groupFeed + '' === "null" || typeof groupFeed !== "object") {
@@ -196,7 +193,7 @@ function MckGroupService() {
                     params.apzCallback(response, params);
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to load group. Please reload page.');
                 response.status = "error";
                 response.errorMessage = 'Please reload page.';
@@ -209,13 +206,13 @@ function MckGroupService() {
             }
         });
     };
-    _this.leaveGroup = function(params) {
-        var data = "";
+    _this.leaveGroup = function (params) {
+        var group = {};
         var response = new Object();
         if (params.groupId) {
-            data += "groupId=" + params.groupId;
+            group.groupId = params.groupId;
         } else if (params.clientGroupId) {
-            data += "clientGroupId=" + params.clientGroupId;
+            group.clientGroupId = params.clientGroupId;
         } else {
             response.status = "error";
             response.errorMessage = "GroupId or Client GroupId Required";
@@ -224,12 +221,9 @@ function MckGroupService() {
             }
             return;
         }
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_LEAVE_URL,
-            data: data,
-            type: 'get',
-            global: false,
-            success: function(data) {
+        Applozic.ALApiService.groupLeave({
+            data: { group },
+            success: function (data) {
                 if (data.status === "success") {
                     if (params.clientGroupId) {
                         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
@@ -254,7 +248,7 @@ function MckGroupService() {
                     });
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to process your request. Please reload page.');
                 response.status = "error";
                 response.errorMessage = "";
@@ -267,13 +261,13 @@ function MckGroupService() {
             }
         });
     };
-    _this.removeGroupMember = function(params) {
-        var data = '';
+    _this.removeGroupMember = function (params) {
+        var group = {};
         var response = new Object();
         if (params.groupId) {
-            data += 'groupId=' + params.groupId;
+            group.groupId = params.groupId;
         } else if (params.clientGroupId) {
-            data += 'clientGroupId=' + params.clientGroupId;
+            group.clientGroupId = params.clientGroupId;
         } else {
             response.status = 'error';
             response.errorMessage = "GroupId or Client GroupId Required";
@@ -282,13 +276,10 @@ function MckGroupService() {
             }
             return;
         }
-        data += '&userId=' + encodeURIComponent(params.userId);
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_REMOVE_MEMBER_URL,
-            data: data,
-            type: 'get',
-            global: false,
-            success: function(data) {
+        group.userId = params.userId;
+        Applozic.ALApiService.removeGroupMember({
+            data: { group: group },
+            success: function (response) {
                 if (data.status === 'success') {
                     if (params.clientGroupId) {
                         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
@@ -309,7 +300,7 @@ function MckGroupService() {
                     params.apzCallback(response, params)
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to process your request. Please reload page.');
                 response.status = 'error';
                 response.errorMessage = '';
@@ -319,32 +310,30 @@ function MckGroupService() {
                 if (params.apzCallback) {
                     params.apzCallback(response);
                 }
+                params.apzCallback(response);
             }
         });
     };
-    _this.addGroupMember = function(params) {
-        var data = '';
+    _this.addGroupMember = function (params) {
+        var group = {};
         var response = new Object();
         if (params.groupId) {
-            data += 'groupId=' + params.groupId;
+            group.groupId = params.groupId;
         } else if (params.clientGroupId) {
-            data += 'clientGroupId=' + params.clientGroupId;
+            group.clientGroupId = params.clientGroupId;
         } else {
             if (typeof params.callback === 'function') {
                 params.callback(response);
             }
             return;
         }
-        data += '&userId=' + encodeURIComponent(params.userId);
+        group.userId = params.userId;
         if (typeof params.role !== 'undefined') {
-            data += '&role=' + params.role;
+            group.role = params.role;
         }
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_ADD_MEMBER_URL,
-            data: data,
-            type: 'get',
-            global: false,
-            success: function(data) {
+        Applozic.ALApiService.addGroupMember({
+            data: { group: group },
+            success: function (data) {
                 if (data.status === "success") {
                     if (params.clientGroupId) {
                         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
@@ -365,7 +354,7 @@ function MckGroupService() {
                     params.apzCallback(response, params)
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to process your request. Please reload page.');
                 response.status = "error";
                 response.errorMessage = '';
@@ -378,13 +367,13 @@ function MckGroupService() {
             }
         });
     };
-    _this.updateGroupInfo = function(params) {
-        var groupInfo = {};
+    _this.updateGroupInfo = function (params) {
+        var group = {};
         var response = new Object();
         if (params.groupId) {
-            groupInfo.groupId = params.groupId;
+            group.groupId = params.groupId;
         } else if (params.clientGroupId) {
-            groupInfo.clientGroupId = params.clientGroupId;
+            group.clientGroupId = params.clientGroupId;
         } else {
             if (typeof params.callback === 'function') {
                 response.status = 'error';
@@ -394,21 +383,17 @@ function MckGroupService() {
             return;
         }
         if (params.name) {
-            groupInfo.newName = params.name;
+            group.newName = params.name;
         }
         if (params.imageUrl) {
-            groupInfo.imageUrl = params.imageUrl;
+            group.imageUrl = params.imageUrl;
         }
         if (params.users && params.users.length > 0) {
-            groupInfo.users = params.users;
+            group.users = params.users;
         }
-        mckUtils.ajax({
-            url: MCK_BASE_URL + GROUP_UPDATE_INFO_URL,
-            type: 'post',
-            data: JSON.stringify(groupInfo),
-            contentType: 'application/json',
-            global: false,
-            success: function(data) {
+        Applozic.ALApiService.groupUpdate({
+            data: { group },
+            success: function (data) {
                 if (data.status === "success") {
                     if (params.clientGroupId) {
                         var group = mckGroupLayout.getGroupByClientGroupId(params.clientGroupId);
@@ -432,7 +417,7 @@ function MckGroupService() {
                     })
                 }
             },
-            error: function() {
+            error: function () {
                 console.log('Unable to process your request. Please reload page.');
                 response.status = "error";
                 response.errorMessage = "Unable to process your request. Please reload page.";
