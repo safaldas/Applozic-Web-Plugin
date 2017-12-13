@@ -17,10 +17,22 @@
         var GROUP_UPDATE_URL = "/rest/ws/group/update";
         var GROUP_IS_USER_PRESENT_URL = "/rest/ws/group/check/user";
         var GROUP_USER_COUNT_URL = "/rest/ws/group/user/count";
+        var FRIEND_LIST_URL ="/rest/ws/group/";
+        var GET_USER_DETAIL_URL ="/rest/ws/user/v2/detail";
+        var UPDATE_USER_DETAIL_URL ="/rest/ws/user/update";
+        var USER_FILTER ="/rest/ws/user/filter";
+        var USER_BLOCK_URL ="/rest/ws/user/block";
+        var USER_UNBLOCK_URL ="/rest/ws/user/unblock";
+        var UPDATE_PASSWORD_URL ="/rest/ws/user/update/password";
         var UPDATE_REPLY_MAP = "/rest/ws/message/detail";
         var MESSAGE_DELETE_URL = "/rest/ws/message/delete";
         var MESSAGE_READ_UPDATE_URL = "/rest/ws/message/read";
         var MESSAGE_DELIVERY_UPDATE_URL = "/rest/ws/message/delivered";
+        var CONVERSATION_CLOSE_UPDATE_URL = "/rest/ws/conversation/close";
+        var FILE_PREVIEW_URL = "/rest/ws/aws/file";
+        var FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
+        var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
+        var FILE_DELETE_URL = "/rest/ws/aws/file/delete";
 
         function getAsUriParameters(data) {
             var url = '';
@@ -42,8 +54,8 @@
          * Applozic.ALApiService.login({data: {alUser: {userId: 'debug4', password: 'debug4', appVersionCode: 108, applicationId: 'applozic-sample-app'}}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.login = function (options) {
-
             MCK_APP_ID = options.data.alUser.applicationId;
+            MCK_BASE_URL = options.data.baseUrl;
 
             mckUtils.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
@@ -335,7 +347,7 @@
          * Applozic.ALApiService.getGroupInfo({data: {groupId:"6300709"}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.getGroupInfo = function (options) {
-            var groupId = (options.data.groupId)? "?groupId="+options.data.groupId : "?clientGroupId="+options.data.clientGroupId;
+            var groupId = (options.group.groupId)? "?groupId="+options.group.groupId : "?clientGroupId="+options.group.clientGroupId;
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_INFO_URL+ groupId,
                 type: 'get',
@@ -356,7 +368,7 @@
        /**
          * Add Group Member to Group.
          * Usage Example:
-         * Applozic.ALApiService.addGroupMember({data:{group:{"userId":"user unique identifier ",
+         * Applozic.ALApiService.addGroupMember({data:{group:{"userId":"user unique identifier",
                                                      "clientGroupId":"group unique identifier" }},
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
@@ -441,7 +453,7 @@
          /**
          * Group Update
          * Usage Example:
-         * Applozic.ALApiService.groupUpdate({data:{group:{groupId:"groupId" or clientGroupId:"clientGroupId",newName:"New name of group",imageUrl:"image url of the group"}},
+         * Applozic.ALApiService.groupUpdate({data:{group:{groupId:groupId or clientGroupId:"clientGroupId",newName:"New name of group",imageUrl:"image url of the group"}},
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
 
@@ -543,6 +555,348 @@
                 }
             });
         }  
+        /**
+         * Create User FriendList
+         * Usage Example:
+         * Applozic.ALApiService.createUserFriendList({data:{groupName:"groupName"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.createUserFriendList = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + FRIEND_LIST_URL+options.data.group.groupName+"/add/",
+                type: 'POST',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                data: JSON.stringify(options.data.group.groupMemberList),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+ /**
+         * Create Open FriendList
+         * Usage Example:
+         * Applozic.ALApiService.createOpenFriendList({data:{groupName:"groupName",type: 9,
+                                                groupMemberList: ["debug2", "debug3","videocall-1"]},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.createOpenFriendList = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + FRIEND_LIST_URL+options.data.group.groupName+"/add/members",
+                type: 'POST',
+                data: JSON.stringify(options.data.group),
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        } 
+        /**
+         * Get FriendList
+         * Usage Example:
+         * Applozic.ALApiService.getFriendList({data:{groupName:"groupName",type: 9,
+                                                groupMemberList: ["debug2", "debug3","videocall-1"]},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.getFriendList = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + options.data.url,
+                type: 'GET',
+                async: (typeof options.data.async !== 'undefined') ? options.data.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }    
+
+ /**
+         * remove user from friendList
+         * Usage Example:
+         * Applozic.ALApiService.removeUserFromFriendList({group:{groupName:"groupname",userId:"userid",type:9}},
+                                                      success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.removeUserFromFriendList = function (options) {
+            var getFriendListUrl = (options.group.type)?"/remove?userId="+options.group.userId+"&groupType=9":"/remove?userId="+options.group.userId;
+            mckUtils.ajax({
+                url: MCK_BASE_URL +FRIEND_LIST_URL+options.group.groupName+getFriendListUrl,
+                type: 'Post',
+                contentType: 'application/json',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }    
+
+        /**
+         * delete friendList
+         * Usage Example:
+         * Applozic.ALApiService.removeUserFromFriendList({group:{groupName:"groupname",userId:"userid",type:9}},
+                                                      success: function(response) {console.log(response);}, error: function() {}});
+         */
+        ALApiService.deleteFriendList = function(options) {
+            var getFriendListUrl =(options.group.type)?"/delete?groupType=9":"/delete";
+            mckUtils.ajax({
+                             url: MCK_BASE_URL +FRIEND_LIST_URL+options.group.groupName+getFriendListUrl,
+                             type: "GET",
+                             async:false,
+                             contentType: "application/json",
+                             async: (typeof options.async !== 'undefined') ? options.async : true,
+                             success: function (response) {
+                                if (options.success) {
+                                    console.log(response);
+                                    options.success(response);
+                                }
+                            },
+                            error: function (response) {
+                                if (options.error) {
+                                    options.error(response);
+                                }
+                            }
+                          });
+                        };
+         /**
+         * Get User Detail
+         * Usage Example:
+         * Applozic.ALApiService.getuserDetail({data:{userIdList:["userId1","userId2"]},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.getuserDetail = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GET_USER_DETAIL_URL,
+                data: JSON.stringify({
+                    userIdList: options.data.userIdList
+                }),
+                type:'POST',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+         /**
+         * Update User Detail
+         * Usage Example:
+         * Applozic.ALApiService.updateUserDetail({data:{email:"user email", displayName:"user display name",imageLink:"User profile image url", statusMessage:"status Message"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.updateUserDetail = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + UPDATE_USER_DETAIL_URL,
+                data: JSON.stringify(options.data),
+                type:'POST',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                contentType:'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }  
+/**
+         * Update Password
+         * Usage Example:
+         * Applozic.ALApiService.updatePassword({data:{oldPassword:"oldPassword", newPassword:"newPassword"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.updatePassword = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + UPDATE_PASSWORD_URL+"?oldPassword="+options.data.oldPassword+"&newPassword="+options.data.newPassword,
+                type:'GET',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+        /**
+         * Get Contact List
+         * Usage Example:
+         * Applozic.ALApiService.getContactList({url:"url",
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+        ALApiService.getContactList = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + USER_FILTER+options.url,
+                type:'GET',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+/**
+         * Block User
+         * Usage Example:
+         * Applozic.ALApiService.blockUser({data:{userId:"userId"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.blockUser = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + USER_BLOCK_URL+"?userId="+options.data.userId,
+                type:'GET',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+        
+        /**
+         * Block User
+         * Usage Example:
+         * Applozic.ALApiService.unBlockUser({data:{userId:"userId"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.unBlockUser = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + USER_UNBLOCK_URL+"?userId="+options.data.userId,
+                type:'GET',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                global: false,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+
+//remaining to verfify
+        ALApiService.sendConversationCloseUpdate = function(conversationId) {
+                var data = "id=" + conversationId;
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
+                    data: data,
+                    global: false,
+                    type: 'get',
+                    success: function() {},
+                    error: function() {}
+                });
+        };
+
+
+        ALApiService.fileUpload = function (options) {
+            mckUtils.ajax({
+                type : "GET",
+                url : options.data.url,
+                global : false,
+                data : "data=" + new Date().getTime(),
+                crosDomain : true,
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+
+        ALApiService.deleteFileMeta = function(options) {
+            mckUtils.ajax({
+                url: options.data.url,
+                type: 'post',
+                success: function() {},
+                error: function() {}
+            });
+        };
 
 
         return ALApiService;

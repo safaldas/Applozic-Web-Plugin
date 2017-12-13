@@ -1750,7 +1750,7 @@ window.onload = function() {
                     window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
                     window.Applozic.ALApiService.login(
                         {
-                            data: {alUser: userPxy},
+                            data: {alUser: userPxy,baseUrl: MCK_BASE_URL},
                             success: function(result) {
                                 _this.onLoginSuccess(result, userPxy);
                             },
@@ -1876,6 +1876,9 @@ window.onload = function() {
                     var poweredByUrl = "https://www.applozic.com/?utm_source=" + w.location.href + "&utm_medium=webplugin&utm_campaign=poweredby";
                     $applozic('.mck-running-on a').attr('href', poweredByUrl);
                     $applozic('.mck-running-on').removeClass('n-vis').addClass('vis');
+                }
+                if(MCK_BASE_URL){
+                    data.baseUrl =MCK_BASE_URL;
                 }
                 var mckContactNameArray = ALStorage.getMckContactNameArray();
                 if (mckContactNameArray !== null && mckContactNameArray.length > 0) {
@@ -6290,42 +6293,38 @@ window.onload = function() {
             };
             _this.loadContacts = function() {
                 var mckContactNameArray = [];
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + CONTACT_LIST_URL + '?startIndex=0&pageSize=30&orderBy=1',
-                    type: 'get',
-                    global: false,
-                    success: function(data) {
-                        if ($mck_sidebox_search.hasClass('vis')) {
-                            if (typeof data === 'object' && data.users.length > 0) {
-                                $applozic.each(data.users, function(i, user) {
-                                    if (typeof user.userId !== 'undefined') {
-                                        var contact = mckMessageLayout.getContact('' + user.userId);
-                                        contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
-                                        MCK_CONTACT_ARRAY.push(contact);
-                                        mckContactNameArray.push([user.userId, contact.displayName]);
-                                        if (user.connected) {
-                                            w.MCK_OL_MAP[user.userId] = true;
-                                        } else {
-                                            w.MCK_OL_MAP[user.userId] = false;
-                                            if (typeof user.lastSeenAtTime !== 'undefined') {
-                                                MCK_LAST_SEEN_AT_MAP[user.userId] = user.lastSeenAtTime;
-                                            }
+                window.Applozic.ALApiService.getContactList({url:'?startIndex=0&pageSize=30&orderBy=1',
+                success: function(data) {
+                    if ($mck_sidebox_search.hasClass('vis')) {
+                        if (typeof data === 'object' && data.users.length > 0) {
+                            $applozic.each(data.users, function(i, user) {
+                                if (typeof user.userId !== 'undefined') {
+                                    var contact = mckMessageLayout.getContact('' + user.userId);
+                                    contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+                                    MCK_CONTACT_ARRAY.push(contact);
+                                    mckContactNameArray.push([user.userId, contact.displayName]);
+                                    if (user.connected) {
+                                        w.MCK_OL_MAP[user.userId] = true;
+                                    } else {
+                                        w.MCK_OL_MAP[user.userId] = false;
+                                        if (typeof user.lastSeenAtTime !== 'undefined') {
+                                            MCK_LAST_SEEN_AT_MAP[user.userId] = user.lastSeenAtTime;
                                         }
                                     }
-                                });
-                                if (mckContactNameArray.length > 0) {
-                                    ALStorage.updateMckContactNameArray(mckContactNameArray);
                                 }
+                            });
+                            if (mckContactNameArray.length > 0) {
+                                ALStorage.updateMckContactNameArray(mckContactNameArray);
                             }
-                            mckMessageLayout.addContactsToSearchList();
-                            return;
                         }
-                    },
-                    error: function() {
-                        $mck_search_loading.removeClass('vis').addClass('n-vis');
-                        w.console.log('Unable to load contacts. Please reload page.');
+                        mckMessageLayout.addContactsToSearchList();
+                        return;
                     }
-                });
+                },
+                error: function() {
+                    $mck_search_loading.removeClass('vis').addClass('n-vis');
+                    w.console.log('Unable to load contacts. Please reload page.');
+                } });
             };
             _this.loadUserProfile = function(userId) {
                 if (typeof userId !== "undefined") {
@@ -6345,94 +6344,76 @@ window.onload = function() {
                 _this.getUsersDetail(userIdArray, { 'async': false });
             };
             _this.createFriendList = function(params) {
-            	var formData={};
-            	formData.groupMemberList=params.groupMemberList;
+            	var group={};
+                group.groupMemberList=params.groupMemberList;
+                group.groupName=params.groupName;
             	if(params.type){
-            		formData.type=params.type;
-                    mckUtils.ajax({
-                                  url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add/members",
-                                  type: "post",
-                                  data: JSON.stringify(formData),
-                                  contentType: "application/json",
-                                  success: function(response) {
-                                    if(response.status==='success'){
-                                    ALStorage.setFriendListGroupName(params.groupName);
-                                    var friendListGroupType;
-                                    if (typeof params.groupType !== 'undefined') {
-                                      ALStorage.setFriendListGroupType(params.type);
-                                    };
-                                    if(params.callback){
-                                      params.callback();
-                                    }
+                    group.type=params.type;
+                    window.Applozic.ALApiService.createOpenFriendList({data:{group},
+                        success: function(response) {
+                            if(response.status==='success'){
+                            ALStorage.setFriendListGroupName(params.groupName);
+                            var friendListGroupType;
+                            if (typeof params.type !== 'undefined') {
+                              ALStorage.setFriendListGroupType(params.type);
+                            };
+                            if(params.callback){
+                              params.callback();
+                            }
 
-                                        }
-                                    }
-                               });
+                                }
+                            }, error: function() {}});
             	} else {
             		var groupMembersArray =[];
             		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
-                       mckUtils.ajax({
-                              url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+"/add",
-                              type: "post",
-                              data: JSON.stringify(groupMembersArray),
-                              contentType: "application/json",
-                              success: function(response) {
-                                ALStorage.setFriendListGroupName(params.groupName);
-                                if(typeof friendListGroupType !=='undefined') {
-                                  ALStorage.setFriendListGroupType(friendListGroupType);
-                                  }
-                                }
-                           });
+                       window.Applozic.ALApiService.createUserFriendList({data:{group},
+                        success: function(response) {
+                                        ALStorage.setFriendListGroupName(params.groupName);
+                                        if(typeof friendListGroupType !=='undefined') {
+                                          ALStorage.setFriendListGroupType(friendListGroupType);
+                                          }
+                                        }, error: function() {}});  
+                   
                 }
                  };
 
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
-        	    var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
-                mckUtils.ajax({
-                                 url: MCK_BASE_URL +FRIEND_LIST_URL+friendListGroupName+getFriendListUrl,
-                                 type: "get",
-                                 async: false,
-                                 contentType: "application/json",
-                                 success: function(response) {
-
-                                   ALStorage.setFriendListGroupName(friendListGroupName);
-                                   if(typeof friendListGroupType !=='undefined') {
-                                     ALStorage.setFriendListGroupType(friendListGroupType);
-                                     }
-                                 for(var i = 0, size = (response.response.membersId).length; i < size ; i++){
-                                	 groupmemberdetail.push((response.response.membersId)[i]);
-                                 }
-                                     }
-                              });
+                var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
+                window.Applozic.ALApiService.getFriendList({data:{url: "/rest/ws/group/test/get?groupType=9",async:false},
+                success: function(response) {
+                    console.log("response",response);
+                    if (typeof friendListGroupType !== 'undefined') {
+                        ALStorage.setFriendListGroupType(friendListGroupType);
+                    }
+                    for (var i = 0, size = (response.response.membersId).length; i < size; i++) {
+                        groupmemberdetail.push((response.response.membersId)[i]);
+                    }
+                }, error: function () { 
+                    console.log(response);
+                } });
+              
                        return groupmemberdetail;
                   };
-                  _this.removeUserFromFriendList = function(params) {
-                       	    var getFriendListUrl = (params.type)?"/remove?userId="+params.userId+"&groupType=9":"/remove?userId="+params.userId;
-                               mckUtils.ajax({
-                                                url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
-                                                type: "get",
-                                                async:false,
-                                                contentType: "application/json",
-                                                success: function(response) {
-                                                }
-                                             });
-                                 };
-                        _this.deleteFriendList = function(params) {
-                      	    var getFriendListUrl =(params.type)?"/delete?groupType=9":"/delete";
-                              mckUtils.ajax({
-                                               url: MCK_BASE_URL +FRIEND_LIST_URL+params.groupName+getFriendListUrl,
-                                               type: "get",
-                                               async:false,
-                                               contentType: "application/json",
-                                               success: function(response) {
-                                                 ALStorage.setFriendListGroupName('');
-                                                 ALStorage.setFriendListGroupType('');
-                                                   }
-                                            });
-                                          };
+           _this.removeUserFromFriendList = function (group) {
+               window.Applozic.ALApiService.removeUserFromFriendList({
+                   data: { group },
+                   success: function (response) { console.log(response); },
+                   error: function () { }
+               });
+           };
+
+           _this.deleteFriendList = function (params) {
+               window.Applozic.ALApiService.deleteFriendList({
+                   data: { group },
+                   success: function (response) {
+                       ALStorage.setFriendListGroupName('');
+                       ALStorage.setFriendListGroupType('');
+                   }, error: function () { }
+               });
+           };
             _this.getUsersDetail = function(userIdArray, params) {
                 if (typeof userIdArray === 'undefined' || userIdArray.length < 1) {
                     return;
@@ -6462,54 +6443,47 @@ window.onload = function() {
                 }
 
                 var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_DETAIL_URL,
-                    type: 'post',
-                    async: (typeof params.async !== 'undefined') ? params.async : true,
-                    data: JSON.stringify({
-                        userIdList: userIdList
-                    }),
-                    contentType: 'application/json',
-                    success: function(data) {
-                        if (data.status === 'success') {
-                            if (data.response.length > 0) {
-                                $applozic.each(data.response, function(i, userDetail) {
-                                    MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
-                                    w.MCK_OL_MAP[userDetail.userId] = (userDetail.connected);
-                                    var contact = mckMessageLayout.getContact('' + userDetail.userId);
-                                    contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail) : mckMessageLayout.updateContactDetail(contact, userDetail);
-                                });
-                            }
-                        }
-                        if (params.setStatus) {
-                            mckUserUtils.updateUserConnectedStatus();
-                        } else if (params.message) {
-                            mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                        } else if (params.isLoadMessageList) {
-                            mckMessageLayout.loadMessageListOnUserDetailFetch(params);
-                        }
-
-                        response.status = "success";
-                        response.data = data;
-                        if (params.callback) {
-                            params.callback(response);
-                        }
-                    },
-                    error: function() {
-                        if (params.setStatus) {
-                            mckUserUtils.updateUserConnectedStatus();
-                        } else if (params.message) {
-                            mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                        } else if (params.isLoadMessageList) {
-                            mckMessageLayout.loadMessageListOnUserDetailFetch(params);
-                        }
-
-                        response.status = "error";
-                        if (params.callback) {
-                            params.callback(response);
+                window.Applozic.ALApiService.getuserDetail({data:{userIdList: userIdList},
+                success: function(data) {
+                    if (data.status === 'success') {
+                        if (data.response.length > 0) {
+                            $applozic.each(data.response, function(i, userDetail) {
+                                MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                w.MCK_OL_MAP[userDetail.userId] = (userDetail.connected);
+                                var contact = mckMessageLayout.getContact('' + userDetail.userId);
+                                contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail) : mckMessageLayout.updateContactDetail(contact, userDetail);
+                            });
                         }
                     }
-                });
+                    if (params.setStatus) {
+                        mckUserUtils.updateUserConnectedStatus();
+                    } else if (params.message) {
+                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
+                    } else if (params.isLoadMessageList) {
+                        mckMessageLayout.loadMessageListOnUserDetailFetch(params);
+                    }
+
+                    response.status = "success";
+                    response.data = data;
+                    if (params.callback) {
+                        params.callback(response);
+                    }
+                },
+                error: function() {
+                    if (params.setStatus) {
+                        mckUserUtils.updateUserConnectedStatus();
+                    } else if (params.message) {
+                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
+                    } else if (params.isLoadMessageList) {
+                        mckMessageLayout.loadMessageListOnUserDetailFetch(params);
+                    }
+
+                    response.status = "error";
+                    if (params.callback) {
+                        params.callback(response);
+                    }
+                }
+             });
             };
             _this.getUserStatus = function(params) {
                 var response = new Object();
@@ -7762,20 +7736,19 @@ window.onload = function() {
                                    $file_remove.trigger('click');
                                }
                            });
-                           mckUtils.ajax({
-                               type : "GET",
-                               url : MCK_FILE_URL + FILE_UPLOAD_URL,
-                               global : false,
-                               data : "data=" + new Date().getTime(),
-                               crosDomain : true,
-                               success : function(result) {
+                           var url = MCK_FILE_URL + FILE_UPLOAD_URL;
+
+                           window.Applozic.ALApiService.fileUpload({
+                               data: { url: url },
+                               success: function (result) {
                                    var fd = new FormData();
                                    fd.append('files[]', file);
                                    xhr.open("POST", result, true);
                                    xhr.send(fd);
                                },
-                               error : function() {}
-                           });
+                               error: function () { }
+                           }
+                           );
                        }
                        return false;
                    }
@@ -7862,20 +7835,19 @@ window.onload = function() {
                                 $file_remove.trigger('click');
                             }
                         });
-                        mckUtils.ajax({
-                            type: "GET",
-                            url: MCK_FILE_URL + FILE_UPLOAD_URL,
-                            global: false,
-                            data: "data=" + new Date().getTime(),
-                            crosDomain: true,
-                            success: function(result) {
+                        var url = MCK_FILE_URL + FILE_UPLOAD_URL;
+
+                        window.Applozic.ALApiService.fileUpload({
+                            data: { url: url },
+                            success: function (result) {
                                 var fd = new FormData();
                                 fd.append('files[]', file);
                                 xhr.open("POST", result, true);
                                 xhr.send(fd);
                             },
-                            error: function() {}
-                        });
+                            error: function () { }
+                        }
+                        );
                     }
                     return false;
                 }
@@ -7941,12 +7913,11 @@ window.onload = function() {
                     xhr.send(data);
                 }
             };
-            _this.deleteFileMeta = function(blobKey) {
-                mckUtils.ajax({
-                    url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
-                    type: 'post',
-                    success: function() {},
-                    error: function() {}
+            
+            _this.deleteFileMeta = function (blobKey) {
+                window.Applozic.ALApiService.deleteFileMeta({
+                    data: { blobKey: blobKey, url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey, },
+                    success: function (response) { console.log(response); }, error: function () { }
                 });
             };
             _this.getFilePreviewPath = function(fileMeta) {

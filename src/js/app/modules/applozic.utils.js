@@ -526,7 +526,7 @@ function MckUtils() {
 
 
         //authorizationrequestheaders
-        MCK_BASE_URL = "https://apps.applozic.com";
+        MCK_BASE_URL = MCK_BASE_URL;
         if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
 
             request.setRequestHeader("UserId-Enabled", true);
