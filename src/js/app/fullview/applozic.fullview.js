@@ -383,6 +383,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_LAUNCH_TAB_ON_NEW_MESSAGE = (typeof appOptions.launchOnNewMessage === "boolean") ? appOptions.launchOnNewMessage : false;
         var IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED = (typeof appOptions.launchOnUnreadMessage === "boolean") ? appOptions.launchOnUnreadMessage : false;
         var USER_TYPE_ID = (typeof appOptions.userTypeId === "number") ? appOptions.userTypeId : false;
+        var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var CONVERSATION_STATUS_MAP = ["DEFAULT", "NEW", "OPEN"];
         var BLOCK_STATUS_MAP = ["BLOCKED_TO", "BLOCKED_BY", "UNBLOCKED_TO", "UNBLOCKED_BY"];
         var mckStorage = new MckStorage();
@@ -4704,7 +4705,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     'isContactSearch': true
                 });
             };
-            _this.initAutoSuggest = function(params) {
+            _this.initAutoSuggest = function (params) {
                 var contactsArray = params.contactsArray;
                 var $searchId = params.$searchId;
                 var typeaheadArray = [];
@@ -4715,9 +4716,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     var contact = contactsArray[j];
                     contact.displayName = _this.getTabDisplayName(contact.contactId, contact.isGroup);
                     typeaheadEntry = (contact.displayName) ? $applozic.trim(contact.displayName) : $applozic.trim(contact.contactId);
-                    typeaheadMap[typeaheadEntry] = contact;
-                    typeaheadArray.push(typeaheadEntry);
-                    contactSuggestionsArray.push(typeaheadEntry);
+                    if ((MCK_SELF_CHAT_DISABLE === true && contact.contactId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                        typeaheadMap[typeaheadEntry] = contact;
+                        typeaheadArray.push(typeaheadEntry);
+                        contactSuggestionsArray.push(typeaheadEntry);
+                    }
                 }
                 $searchId.mcktypeahead({
                     source: typeaheadArray,
@@ -4757,24 +4760,26 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     }
                 });
             };
-            _this.initSearchAutoType = function() {
+            _this.initSearchAutoType = function () {
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
-                    $mck_search.keypress(function(e) {
+                    $mck_search.keypress(function (e) {
                         if (e.which === 13) {
                             var tabId = $mck_search.val();
                             if (tabId !== '') {
-                                mckMessageLayout.loadTab({
-                                    'tabId': tabId,
-                                    'isGroup': false,
-                                    'isSearch': true
-                                });
-                                $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                                    mckMessageLayout.loadTab({
+                                        'tabId': tabId,
+                                        'isGroup': false,
+                                        'isSearch': true
+                                    });
+                                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                }
                             }
                             $applozic(this).val('');
                             return true;
                         }
                     });
-                    $applozic(d).on("click", ".mck-tab-search", function(e) {
+                    $applozic(d).on("click", ".mck-tab-search", function (e) {
                         e.preventDefault();
                         var tabId = $mck_search.val();
                         if (tabId !== '') {
@@ -4787,17 +4792,19 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                         }
                         $mck_search.val('');
                     });
-                    $mck_contact_search_input.keypress(function(e) {
+                    $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
                             var userId = $mck_contact_search_input.val();
                             if (userId) {
                                 userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
                                 if (userId) {
-                                    mckMessageLayout.loadTab({
-                                        'tabId': userId,
-                                        'isGroup': false,
-                                        'isSearch': true
-                                    });
+                                    if ((MCK_SELF_CHAT_DISABLE === true && userId!== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
+                                        mckMessageLayout.loadTab({
+                                            'tabId': userId,
+                                            'isGroup': false,
+                                            'isSearch': true
+                                        });
+                                    }
                                 }
                             }
                             $mck_contact_search_input.val('');
@@ -4813,16 +4820,18 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                         e.preventDefault();
                         return true;
                     });
-                    $applozic(d).on('click', '.mck-contact-search-link', function(e) {
+                    $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
                         var tabId = $mck_contact_search_input.val();
                         if (tabId !== '') {
+                            if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
                                 isGroup: false,
                                 'isSearch': true
-                            });
+                            });   
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
+                        }    
                         }
                         $mck_contact_search_input.val('');
                         $mck_contact_search_box.mckModal('hide');

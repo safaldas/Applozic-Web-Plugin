@@ -379,6 +379,7 @@ window.onload = function() {
         var MCK_GETCONVERSATIONDETAIL = appOptions.getConversationDetail;
         var MCK_NOTIFICATION_ICON_LINK = appOptions.notificationIconLink;
         var MCK_MAP_STATIC_API_KEY = appOptions.mapStaticAPIkey;
+        var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
         var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : MCK_BASE_URL + "/resources/sidebox/audio/notification_tone.mp3";
         var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : 'NO_ACCESS';
@@ -5204,7 +5205,7 @@ window.onload = function() {
                     'isContactSearch': true
                 });
             };
-            _this.initAutoSuggest = function(params) {
+            _this.initAutoSuggest = function (params) {
                 var contactsArray = params.contactsArray;
                 var $searchId = params.$searchId;
                 var typeaheadArray = [];
@@ -5215,9 +5216,11 @@ window.onload = function() {
                     var contact = contactsArray[j];
                     contact.displayName = _this.getTabDisplayName(contact.contactId, contact.isGroup);
                     typeaheadEntry = (contact.displayName) ? $applozic.trim(contact.displayName) : $applozic.trim(contact.contactId);
-                    typeaheadMap[typeaheadEntry] = contact;
-                    typeaheadArray.push(typeaheadEntry);
-                    contactSuggestionsArray.push(typeaheadEntry);
+                    if ((MCK_SELF_CHAT_DISABLE === true && contact.contactId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
+                        typeaheadMap[typeaheadEntry] = contact;
+                        typeaheadArray.push(typeaheadEntry);
+                        contactSuggestionsArray.push(typeaheadEntry);
+                    }
                 }
                 var matcher1 = function(item) {
                     var contact = typeaheadMap[item];
@@ -5267,26 +5270,28 @@ window.onload = function() {
                     updater: updater
                 });
             };
-            _this.initSearchAutoType = function() {
+            _this.initSearchAutoType = function () {
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
-                    $mck_contact_search_input.keypress(function(e) {
+                    $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
                             var userId = $mck_contact_search_input.val();
                             if (userId) {
-                                userId = (typeof userId !== 'undefined' && userId !== '') ? userId.toString() : '';
-                                if (userId) {
-                                    mckMessageLayout.loadTab({
-                                        'tabId': userId,
-                                        'isGroup': false,
-                                        'isSearch': true
-                                    });
-                                    $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                if ((MCK_SELF_CHAT_DISABLE === true && userId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
+                                    userId = (typeof userId !== 'undefined' && userId !== '') ? userId.toString() : '';
+                                    if (userId) {
+                                        mckMessageLayout.loadTab({
+                                            'tabId': userId,
+                                            'isGroup': false,
+                                            'isSearch': true
+                                        });
+                                        $modal_footer_content.removeClass('n-vis').addClass('vis');
+                                    }
                                 }
                             }
                             $mck_contact_search_input.val('');
                         }
                     });
-                    $mck_group_search_input.keypress(function(e) {
+                    $mck_group_search_input.keypress(function (e) {
                         if (e.which === 13) {
                             return true;
                         }
@@ -5295,16 +5300,18 @@ window.onload = function() {
                         e.preventDefault();
                         return true;
                     });
-                    $applozic(d).on('click', '.mck-contact-search-link', function(e) {
+                    $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
                         var tabId = $mck_contact_search_input.val();
                         if (tabId !== '') {
-                            mckMessageLayout.loadTab({
-                                tabId: tabId,
-                                isGroup: false,
-                                'isSearch': true
-                            });
-                            $modal_footer_content.removeClass('n-vis').addClass('vis');
+                            if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) || MCK_SELF_CHAT_DISABLE !== true) {
+                                mckMessageLayout.loadTab({
+                                    tabId: tabId,
+                                    isGroup: false,
+                                    'isSearch': true
+                                });
+                                $modal_footer_content.removeClass('n-vis').addClass('vis');
+                            }
                         }
                         $mck_contact_search_input.val('');
                     });
