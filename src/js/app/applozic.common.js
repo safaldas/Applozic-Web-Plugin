@@ -117,7 +117,7 @@ function MckGroupService() {
     var GROUP_REMOVE_MEMBER_URL = "/rest/ws/group/remove/member";
     _this.loadGroups = function (params) {
         var response = new Object();
-        window.Applozic.ALApiService.loadGroups({
+        window.Applozic.ALApiService.loadGroups({baseUrl:MCK_BASE_URL,
             success: function (data) {
                 if (data.status === 'success') {
                     response.status = 'success';

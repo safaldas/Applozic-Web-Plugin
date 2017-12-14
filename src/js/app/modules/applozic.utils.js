@@ -515,7 +515,7 @@ function MckUtils() {
         }
 
         request.open(typ, reqOptions.url, asyn);
-        if (typ === 'POST') {
+        if (typ === 'POST'|| typ === 'GET') {
             if (typeof reqOptions.contentType === 'undefined') {
                 cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
             } else {
