@@ -364,8 +364,8 @@ Sample response:
 
 ### Documentation:
 
-For advanced options and customization, visit: 
-[Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://www.applozic.com/docs/web-chat-plugin.html?utm_source=github&utm_medium=readme&utm_campaign=web)
+For UI customization, visit: 
+[Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://docs.applozic.com/docs/web-javascript-chat-theme-and-customization)
 
 
 ### Help
