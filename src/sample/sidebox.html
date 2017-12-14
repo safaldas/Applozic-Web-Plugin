@@ -193,7 +193,7 @@
 								<div id="mck-response-text" class="response-text"></div>
 							</div>
 							<div class="blk-lg-12">
-								<div id="mck-msg-form" class="vertical mck-msg-form">
+								<form id="mck-msg-form" class="vertical mck-msg-form">
 									<div class="mck-form-group n-vis">
 										<label class="sr-only placeholder-text control-label"
 											for="mck-msg-to">To:</label> <input class="mck-form-cntrl"
@@ -279,7 +279,7 @@
 											<div id="mck-file-box" class="n-vis"></div>
 										</div>
 									</div>
-								</div>
+								</form>
 							</div>
 						</div>
 						<div id="mck-contacts-content"
@@ -780,6 +780,7 @@
 
 					$applozic.fn
 						.applozic({
+							baseUrl:"https://apps.applozic.com",
 							userId : 'debug3', //TODO: replace with actual userId
 							userName : 'debug3',    //TODO: replace with actual userName
 							appId : 'applozic-sample-app',  //TODO: replace with actual appId
@@ -796,6 +797,8 @@
 							desktopNotification : true,
 							locShare : true,
 							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",
+							//disableSelfChat:true
+
 							//video: true
 							/* groupUserCount: false,
 							defaultMessageMetaData: {'eventId' : '123'},
