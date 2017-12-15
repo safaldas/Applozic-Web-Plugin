@@ -327,7 +327,9 @@
          * Applozic.ALApiService.loadGroups({success: function(response) {console.log(response);} });
          */
         ALApiService.loadGroups = function (options) {
-            MCK_BASE_URL= options.baseUrl
+            if (options.baseUrl) {
+                MCK_BASE_URL = options.baseUrl;
+            }
             mckUtils.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
                 type: 'get',
@@ -348,7 +350,7 @@
         /**
          * Get groups info.
          * Usage Example:
-         * Applozic.ALApiService.getGroupInfo({data: {groupId:"6300709"}, success: function(response) {console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.getGroupInfo({group:{groupId:"236215"}, success: function(response){console.log(response);}, error: function() {}});
          */
         ALApiService.getGroupInfo = function (options) {
             var groupId = (options.group.groupId)? "?groupId="+options.group.groupId : "?clientGroupId="+options.group.clientGroupId;
