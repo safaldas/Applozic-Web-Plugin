@@ -34,6 +34,8 @@
         var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
         var FILE_DELETE_URL = "/rest/ws/aws/file/delete";
         var MESSAGE_ADD_INBOX_URL = "/rest/ws/message/add/inbox";
+        var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
+
 
         function getAsUriParameters(data) {
             var url = '';
@@ -808,13 +810,13 @@
 /**
          * Block User
          * Usage Example:
-         * Applozic.ALApiService.blockUser({data:{userId:"userId"},
+         * Applozic.ALApiService.blockUser({data:{userId:"userId",isBlock:true},
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
 
         ALApiService.blockUser = function (options) {
             mckUtils.ajax({
-                url: MCK_BASE_URL + USER_BLOCK_URL+"?userId="+options.data.userId,
+                url: MCK_BASE_URL + USER_BLOCK_URL+"?userId="+options.data.userId+ "&block=" +options.data.isBlock,
                 type:'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
@@ -860,9 +862,14 @@
         }
 
 
-//remaining to verfify
-        ALApiService.sendConversationCloseUpdate = function(conversationId) {
-                var data = "id=" + conversationId;
+ /**
+         * SendConversationCloseUpdate
+         * Usage Example:
+         window.Applozic.ALApiService.sendConversationCloseUpdate({conversationId:conversationId, success: function (result) {}, error: function () {} });
+         */
+
+        ALApiService.sendConversationCloseUpdate = function(options) {
+                var data = "id=" + options.conversationId;
                 mckUtils.ajax({
                     url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
                     data: data,
@@ -929,26 +936,74 @@
           window.Applozic.ALApiService.addMessageInbox({data:{sender:"sender",messageContent:"Welcome"} , success: function (result) {}, error: function () { } });
          */
 
-        ALApiService.addMessageInbox = function(options) {
-        mckUtils.ajax({
-            type: 'GET',
-            url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
-            global: false,
-            data: 'sender=' + encodeURIComponent(options.data.sender) + "&messageContent=" + encodeURIComponent(options.data.messageContent),
-            contentType: 'text/plain',
-            success: function (response) {
-                if (options.success) {
-                    console.log(response);
-                    options.success(response);
+        ALApiService.addMessageInbox = function (options) {
+            mckUtils.ajax({
+                type: 'GET',
+                url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
+                global: false,
+                data: 'sender=' + encodeURIComponent(options.data.sender) + "&messageContent=" + encodeURIComponent(options.data.messageContent),
+                contentType: 'text/plain',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
                 }
-            },
-            error: function (response) {
-                if (options.error) {
-                    options.error(response);
-                }
-            }
-        });
+            });
         };  
+/**
+         * conversationReadUpdate
+         * Usage Example:
+          window.Applozic.ALApiService.conversationReadUpdate({data: "groupId=groupId"/"userId=encodeURIComponent(userId)" , success: function (result) {}, error: function () { } });
+         */
+
+        ALApiService.conversationReadUpdate = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
+                data: options.data,
+                global: false,
+                type: 'get',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                }
+            });
+        }
+
+        /**
+         * sendSubscriptionIdToServer
+         * Usage Example:
+          window.Applozic.ALApiService.sendSubscriptionIdToServer({data: {"subscriptionId":subscriptionId}, success: function (result) {}, error: function () { } });
+         */
+
+        ALApiService.sendSubscriptionIdToServer = function (options) {
+            var subscriptionId=options.data.subscriptionId ;
+            mckUtils.ajax({
+                url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
+                type: 'post',
+                data: 'registrationId=' + subscriptionId,
+                success: function(data) {},
+                error: function(xhr, desc, err) {
+                    if (xhr.status === 401) {
+                        sessionStorage.clear();
+                        console.log('Please reload page.');
+                    }
+                }
+            });
+        }
 
 
         return ALApiService;
