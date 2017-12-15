@@ -2302,7 +2302,7 @@ window.onload = function() {
                         }
                         ($mck_msg_sbmt.is(':disabled') && $mck_file_box.hasClass('vis')) ? alert('Please wait file is uploading.'): $mck_msg_form.submit();
                     } else if (MCK_TYPING_STATUS === 0) {
-                        window.Applozic.ALSocket.sendTypingStatus(1, $mck_msg_inner.data('mck-id'));
+                        window.Applozic.ALSocket.sendTypingStatus(1,MCK_TYPING_STATUS, $mck_msg_inner.data('mck-id'));
                     }
                 });
                 $applozic(d).on('click', '.mck-btn-clear-messages', function() {
@@ -3005,18 +3005,14 @@ window.onload = function() {
                     var contact = mckMessageLayout.fetchContact(tabId);
                     _this.addMessageToTab(messagePxy, contact);
                 }
-                mckUtils.ajax({
-                    type: 'GET',
-                    url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
-                    global: false,
-                    data: 'sender=' + encodeURIComponent(params.sender) + "&messageContent=" + encodeURIComponent(params.messageContent),
-                    contentType: 'text/plain',
-                    success: function(data) {
+                window.Applozic.ALApiService.addMessageInbox({
+                    data: { sender: "sender", messageContent: "Welcome" }, success: function (result) {
                         if (params.callback) {
                             params.callback(data);
                         }
-                    }
+                    }, error: function () { }
                 });
+
             };
             _this.submitMessage = function(messagePxy, optns) {
                 var randomId = messagePxy.key;
@@ -3662,16 +3658,9 @@ window.onload = function() {
                 var ucTabId = (isGroup) ? 'group_' + tabId : 'user_' + tabId;
                 if (tabId && (mckMessageLayout.getUnreadCount(ucTabId) > 0)) {
                     var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        success: function() {
-                            mckMessageLayout.updateUnreadCount(ucTabId, 0, true);
-                        },
-                        error: function() {}
-                    });
+                    window.Applozic.ALApiService.conversationReadUpdate({data:data , success: function (response) {
+                        mckMessageLayout.updateUnreadCount(ucTabId, 0, true); 
+                    }, error: function () {} });
                 }
             };
             _this.getConversationId = function(params) {
@@ -3893,14 +3882,7 @@ window.onload = function() {
             _this.sendConversationCloseUpdate = function(conversationId) {
                 if (conversationId) {
                     var data = "id=" + conversationId;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        success: function() {},
-                        error: function() {}
-                    });
+                    window.Applozic.ALApiService.sendConversationCloseUpdate({conversationId:conversationId, success: function (result) {}, error: function () {} });
                 }
             };
             _this.sendPriceMessage = function() {
@@ -6382,7 +6364,7 @@ window.onload = function() {
            _this.getFriendList = function(friendListGroupName,friendListGroupType) {
         	    var groupmemberdetail=[];
                 var getFriendListUrl = (friendListGroupType && friendListGroupType!=="null")?"/get?groupType=9":"/get";
-                window.Applozic.ALApiService.getFriendList({data:{url: "/rest/ws/group/test/get?groupType=9",async:false},
+                window.Applozic.ALApiService.getFriendList({data:{groupName:friendListGroupName,url: getFriendListUrl,async:false},
                 success: function(response) {
                     console.log("response",response);
                     if (typeof friendListGroupType !== 'undefined') {
@@ -6514,24 +6496,21 @@ window.onload = function() {
                     }
                 });
             };
-            _this.blockUser = function(userId, isBlock) {
+            _this.blockUser = function (userId, isBlock) {
                 if (!userId || typeof isBlock === 'undefined') {
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_BLOCK_URL,
-                    type: 'get',
-                    data: data,
-                    success: function(data) {
+                Applozic.ALApiService.blockUser({
+                    data: { userId: "userId", isBlock: isBlock },
+                    success: function (data) {
                         if (typeof data === 'object') {
                             if (data.status === 'success') {
                                 MCK_BLOCKED_TO_MAP[userId] = isBlock;
                                 mckUserUtils.toggleBlockUser(userId, isBlock);
                             }
                         }
-                    },
-                    error: function() {}
+                    }, error: function () { }
                 });
             };
         }
@@ -8080,18 +8059,7 @@ window.onload = function() {
                 if (MCK_SW_SUBSCRIPTION) {
                     var subscriptionId = MCK_SW_SUBSCRIPTION.endpoint.split("/").slice(-1)[0];
                     if (subscriptionId) {
-                        mckUtils.ajax({
-                            url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
-                            type: 'post',
-                            data: 'registrationId=' + subscriptionId,
-                            success: function(data) {},
-                            error: function(xhr, desc, err) {
-                                if (xhr.status === 401) {
-                                    sessionStorage.clear();
-                                    console.log('Please reload page.');
-                                }
-                            }
-                        });
+                        window.Applozic.ALApiService.sendSubscriptionIdToServer({data: {"subscriptionId":subscriptionId}, success: function (result) {}, error: function () { } });
                     }
                 }
             };

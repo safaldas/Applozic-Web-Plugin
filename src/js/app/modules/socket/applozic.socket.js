@@ -11,6 +11,7 @@
         var openGroupSubscriber = [];
         var checkConnectedIntervalId;
         var sendConnectedStatusIntervalId;
+        var MCK_TYPING_STATUS;
         var SOCKET = '';
         var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
         var MCK_TOKEN;
@@ -147,7 +148,8 @@
                 ALSocket.reconnect();
             }
         };
-        ALSocket.sendTypingStatus = function(status, tabId) {
+        ALSocket.sendTypingStatus = function(status, mck_typing_status,tabId) {
+            MCK_TYPING_STATUS =mck_typing_status;
             if (stompClient && stompClient.connected) {
                 if (status === 1 && MCK_TYPING_STATUS === 1) {
                     stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
