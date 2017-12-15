@@ -11,8 +11,8 @@ var ALStorage = (function(win){
     updateLatestMessage: function(message) {
         var messageArray = [];
         messageArray.push(message);
-        updateLatestMessageArray(messageArray);
-        updateMckMessageArray(messageArray);
+        ALStorage.updateLatestMessageArray(messageArray);
+        ALStorage.updateMckMessageArray(messageArray);
     },
     getLatestMessageArray : function() {
         return (typeof(w.sessionStorage) !== 'undefined') ? $applozic.parseJSON(w.sessionStorage.getItem("mckLatestMessageArray")) : MCK_LATEST_MESSAGE_ARRAY;
