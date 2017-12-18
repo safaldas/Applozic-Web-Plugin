@@ -169,8 +169,8 @@ function MckGroupService() {
 
         Applozic.ALApiService.getGroupInfo({
             data: { group }, success: function (response) {
-                if (data.status === "success") {
-                    var groupFeed = data.response;
+                if (response.status === "success") {
+                    var groupFeed = response.response;
                     if (groupFeed + '' === "null" || typeof groupFeed !== "object") {
                         response.status = "error";
                         response.errorMessage = "GroupId not found";
@@ -413,7 +413,7 @@ function MckGroupService() {
                 if (params.apzCallback) {
                     params.apzCallback(response, {
                         groupId: params.groupId,
-                        groupInfo: groupInfo
+                        groupInfo: group
                     })
                 }
             },

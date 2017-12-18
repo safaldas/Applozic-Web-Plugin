@@ -6425,7 +6425,7 @@ window.onload = function() {
                 }
 
                 var response = new Object();
-                window.Applozic.ALApiService.getuserDetail({data:{userIdList: userIdList},
+                window.Applozic.ALApiService.getUserDetail({data:{userIdList: userIdList},
                 success: function(data) {
                     if (data.status === 'success') {
                         if (data.response.length > 0) {
@@ -6501,7 +6501,7 @@ window.onload = function() {
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
-                Applozic.ALApiService.blockUser({
+                window.Applozic.ALApiService.blockUser({
                     data: { userId: "userId", isBlock: isBlock },
                     success: function (data) {
                         if (typeof data === 'object') {
