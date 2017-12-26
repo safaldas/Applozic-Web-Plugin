@@ -8,7 +8,7 @@ Open source Chat and Messaging SDK that lets you add real time chat and messagin
 
 Signup at [https://www.applozic.com/signup.html](https://www.applozic.com/signup.html?utm_source=github&utm_medium=readme&utm_campaign=web) to get the application key.
 
-Documentation: [Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://www.applozic.com/docs/web-chat-plugin.html?utm_source=github&utm_medium=readme&utm_campaign=web)
+Documentation: [Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://docs.applozic.com/docs/web-javascript-chat-plugin)
 
 Applozic comes with 2 ready to use UI layout
 
@@ -364,8 +364,8 @@ Sample response:
 
 ### Documentation:
 
-For advanced options and customization, visit: 
-[Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://www.applozic.com/docs/web-chat-plugin.html?utm_source=github&utm_medium=readme&utm_campaign=web)
+For UI customization, visit: 
+[Applozic Web (Javascript) Chat & Messaging Plugin Documentation](https://docs.applozic.com/docs/web-javascript-chat-theme-and-customization)
 
 
 ### Help
