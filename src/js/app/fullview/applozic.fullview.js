@@ -411,7 +411,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var notificationtoneoption = {};
         var mckCallService = new MckCallService();
         var ringToneService;
-        var isUserDeleted;
+        var isUserDeleted = false;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         _this.events = {
@@ -2888,7 +2888,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                     global: false,
                     success: function(data) {
                         var isMessages = true;
-                        isUserDeleted ="";
+                        isUserDeleted = false;
                         var currTabId = $mck_msg_inner.data('mck-id');
                         var isGroupTab = $mck_msg_inner.data('isgroup');
                         if (CONTACT_SYNCING && !params.startTime) {
