@@ -148,7 +148,7 @@
                 ALSocket.reconnect();
             }
         };
-        ALSocket.sendTypingStatus = function(status, mck_typing_status,tabId) {
+        ALSocket.sendTypingStatus = function(status, mck_typing_status,MCK_USER_ID,tabId) {
             MCK_TYPING_STATUS =mck_typing_status;
             if (stompClient && stompClient.connected) {
                 if (status === 1 && MCK_TYPING_STATUS === 1) {
