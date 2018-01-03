@@ -4202,7 +4202,7 @@ window.onload = function() {
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
             var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
             var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b id${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}">' +
+            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}">' +
                 '<div class="mck-clear">' +
                 '<div class="blk-lg-12">' +
                 '<div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div>' +
@@ -4729,7 +4729,7 @@ window.onload = function() {
                     if (!MCK_PRICE_WIDGET_ENABLED)
                         emoji_template += '<br/><button class="mck-accept" data-mck-topic-price="' + priceText + '" data-mck-conversationid="' + msg.conversationId + '">Accept</button>';
                 }
-                var $textMessage = $applozic(".id" + replyId + " .mck-msg-content");
+                var $textMessage = $applozic("." + replyId + " .mck-msg-content");
                 if (emoji_template.indexOf('emoji-inner') === -1 && msg.contentType === 0) {
                     var nodes = emoji_template.split("<br/>");
                     for (var i = 0; i < nodes.length; i++) {
@@ -5750,7 +5750,7 @@ window.onload = function() {
                 return userIdArray;
             };
             _this.messageContextMenu = function(messageKey) {
-                var $messageBox = $applozic(".id" + messageKey + " .mck-msg-box");
+                var $messageBox = $applozic("." + messageKey + " .mck-msg-box");
                 if ($messageBox.addEventListener) {
                     $messageBox.addEventListener('contextmenu', function(e) {
                         e.preventDefault();
@@ -5759,7 +5759,7 @@ window.onload = function() {
                     $messageBox.bind('contextmenu', function(e) {
                         e.preventDefault();
                         $applozic(".mck-context-menu").removeClass("vis").addClass("n-vis");
-                        $applozic(".id" + messageKey + " .mck-context-menu").removeClass("n-vis").addClass("vis");
+                        $applozic("." + messageKey + " .mck-context-menu").removeClass("n-vis").addClass("vis");
                         w.event.returnValue = false;
                     });
                 }
