@@ -6450,25 +6450,27 @@ window.onload = function() {
                     }
                 });
             };
-            _this.blockUser = function (userId, isBlock) {
+            _this.blockUser = function(userId, isBlock) {
                 if (!userId || typeof isBlock === 'undefined') {
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
-                window.Applozic.ALApiService.blockUser({
-                    data: { userId: "userId", isBlock: isBlock },
-                    success: function (data) {
+                mckUtils.ajax({
+                    url: MCK_BASE_URL + USER_BLOCK_URL,
+                    type: 'get',
+                    data: data,
+                    success: function(data) {
                         if (typeof data === 'object') {
                             if (data.status === 'success') {
                                 MCK_BLOCKED_TO_MAP[userId] = isBlock;
                                 mckUserUtils.toggleBlockUser(userId, isBlock);
                             }
                         }
-                    }, error: function () { }
+                    },
+                    error: function() {}
                 });
             };
         }
-
         function MckGroupLayout() {
             var _this = this;
 		
