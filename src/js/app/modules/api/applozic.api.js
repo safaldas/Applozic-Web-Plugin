@@ -38,7 +38,7 @@
         var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
         var ONE_TO_ONE_MUTE_URL = "/rest/ws/user/chat/mute";
         var GROUP_MUTE_URL = "/rest/ws/group/user/update";
-        var MUTE_USER_SYNC_URL ="/rest/ws/user/chat/mute/list";
+        var SYNC_MUTE_USER_URL ="/rest/ws/user/chat/mute/list";
 
         function getAsUriParameters(data) {
             var url = '';
@@ -871,12 +871,12 @@
          /**
          * Mute User Sync
          * Usage Example:
-         * Applozic.ALApiService.muteUserSync({success: function(response) {console.log(response);}, error: function() {} });
+         * Applozic.ALApiService.syncMuteUserList({success: function(response) {console.log(response);}, error: function() {} });
          */
 
-        ALApiService.muteUserSync = function (options) {
+        ALApiService.syncMuteUserList = function (options) {
             mckUtils.ajax({
-                url: MCK_BASE_URL + MUTE_USER_SYNC_URL,
+                url: MCK_BASE_URL + SYNC_MUTE_USER_URL,
                 type: 'get',
                 success: function (response) {
                     if (options.success) {
