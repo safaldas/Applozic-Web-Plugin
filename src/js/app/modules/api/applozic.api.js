@@ -36,7 +36,9 @@
         var MESSAGE_ADD_INBOX_URL = "/rest/ws/message/add/inbox";
         var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
         var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
-
+        var ONE_TO_ONE_MUTE_URL = "/rest/ws/user/chat/mute";
+        var GROUP_MUTE_URL = "/rest/ws/group/user/update";
+        var MUTE_USER_SYNC_URL ="/rest/ws/user/chat/mute/list";
 
         function getAsUriParameters(data) {
             var url = '';
@@ -810,6 +812,85 @@
                 }
             });
         }
+
+         /**
+         * One to One Mute
+         * Usage Example:
+         * Applozic.ALApiService.userChatMute({data:{userId:"userId",notificationAfterTime:"Time till you want to mute in millisceconds"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+         ALApiService.userChatMute = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + ONE_TO_ONE_MUTE_URL+"?userId="+option.data.userId+"&notificationAfterTime="+option.data.notificationAfterTime,
+                type: 'post',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+        /**
+         * Group Mute
+         * Usage Example:
+         * Applozic.ALApiService.groupMute({data:{clientGroupId:clientGroupId,notificationAfterTime:"Time till you want to mute in millisceconds"},
+                                                      success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.groupMute = function (options) {
+            var group={};
+            group.clientGroupId = options.data.clientGroupId;
+            group.notificationAfterTime = options.data.notificationAfterTime;
+            mckUtils.ajax({
+                url: MCK_BASE_URL + GROUP_MUTE_URL,
+                type: 'post',
+                data: JSON.stringify(group),
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+         /**
+         * Mute User Sync
+         * Usage Example:
+         * Applozic.ALApiService.muteUserSync(success: function(response) {console.log(response);}, error: function() {} });
+         */
+
+        ALApiService.muteUserSync = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + MUTE_USER_SYNC_URL,
+                type: 'get',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
 /**
          * Block User
          * Usage Example:
