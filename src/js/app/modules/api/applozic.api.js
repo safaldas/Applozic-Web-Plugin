@@ -822,7 +822,7 @@
 
          ALApiService.userChatMute = function (options) {
             mckUtils.ajax({
-                url: MCK_BASE_URL + ONE_TO_ONE_MUTE_URL+"?userId="+option.data.userId+"&notificationAfterTime="+option.data.notificationAfterTime,
+                url: MCK_BASE_URL + ONE_TO_ONE_MUTE_URL+"?userId="+options.data.userId+"&notificationAfterTime="+options.data.notificationAfterTime,
                 type: 'post',
                 success: function (response) {
                     if (options.success) {
@@ -853,6 +853,7 @@
                 url: MCK_BASE_URL + GROUP_MUTE_URL,
                 type: 'post',
                 data: JSON.stringify(group),
+                contentType:'application/json',
                 success: function (response) {
                     if (options.success) {
                         console.log(response);
