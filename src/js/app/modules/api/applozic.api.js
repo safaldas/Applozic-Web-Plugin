@@ -353,7 +353,7 @@
         /**
          * Get groups info.
          * Usage Example:
-         * Applozic.ALApiService.getGroupInfo({group:{groupId:"236215"}, success: function(response){console.log(response);}, error: function() {}});
+         * Applozic.ALApiService.getGroupInfo({data:{group:{groupId:"237437"}}, success: function(response){console.log(response);}, error: function() {}});
          */
         ALApiService.getGroupInfo = function (options) {
             var groupId = (options.data.group.groupId)? "?groupId="+options.data.group.groupId : "?clientGroupId="+options.group.clientGroupId;
