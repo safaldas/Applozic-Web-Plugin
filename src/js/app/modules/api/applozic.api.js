@@ -871,7 +871,7 @@
          /**
          * Mute User Sync
          * Usage Example:
-         * Applozic.ALApiService.muteUserSync(success: function(response) {console.log(response);}, error: function() {} });
+         * Applozic.ALApiService.muteUserSync({success: function(response) {console.log(response);}, error: function() {} });
          */
 
         ALApiService.muteUserSync = function (options) {
