@@ -39,6 +39,11 @@
         var ONE_TO_ONE_MUTE_URL = "/rest/ws/user/chat/mute";
         var GROUP_MUTE_URL = "/rest/ws/group/user/update";
         var SYNC_MUTE_USER_URL ="/rest/ws/user/chat/mute/list";
+        var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
+        var CONTACT_NAME_URL = "/rest/ws/user/info";
+        var USER_STATUS_URL = "/rest/ws/user/chat/status";
+        var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
+        var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
 
         function getAsUriParameters(data) {
             var url = '';
@@ -1089,6 +1094,168 @@
                 }
             });
         }
+
+ /**
+         * getTopicId
+         * Usage Example:
+          window.Applozic.ALApiService.getTopicId({data: {"conversationId":conversationId}, success: function (result) {}, error: function () { } });
+         */
+
+        ALApiService.getTopicId = function (options) {
+            var conversationId = "id=" + options.data.conversationId ;
+            mckUtils.ajax({
+                url: MCK_BASE_URL + TOPIC_ID_URL+"?"+conversationId,
+                type: 'get',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                }
+            });
+        }
+
+ /**
+         * getContactDisplayName
+         * Usage Example:
+          window.Applozic.ALApiService.getContactDisplayName({data: {"userIdArray":userIdArray}, success: function (result) {}, error: function () { } });
+         */
+
+        ALApiService.getContactDisplayName = function (options) {
+            var userIdArray = options.data.userIdArray;
+            if (userIdArray.length > 0 && userIdArray[0]) {
+                var data = '';
+                var uniqueUserIdArray = userIdArray.filter(function (item, pos) {
+                    return userIdArray.indexOf(item) === pos;
+                });
+                for (var i = 0; i < uniqueUserIdArray.length; i++) {
+                    var userId = uniqueUserIdArray[i];
+                    if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
+                        data += "userIds=" + encodeURIComponent(userId) + "&";
+                    }
+                }
+                if (data.lastIndexOf("&") === data.length - 1) {
+                    data = data.substring(0, data.length - 1);
+                }
+                if (data) {
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONTACT_NAME_URL,
+                        data: data,
+                        global: false,
+                        type: 'get',
+                        success: function (response) {
+                            if (options.success) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        },
+                        error: function (response) {
+                            if (options.error) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        /**
+                 * getUserStatus
+                 * Usage Example:
+                  window.Applozic.ALApiService.getUserStatus({success: function (result) {}, error: function () { } });
+                 */
+
+        ALApiService.getUserStatus = function (options) {
+            mckUtils.ajax({
+                url: MCK_BASE_URL + USER_STATUS_URL,
+                type: 'get',
+                success: function (response) {
+                    if (options.success) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        console.log(response);
+                        options.success(response);
+                    }
+                }
+            });
+        }
+
+         /**
+                 * fetchConversationByTopicId
+                 * Usage Example:
+                  window.Applozic.ALApiService.fetchConversationByTopicId({data: {"topicId":topicId,"tabId":tabId,"pageSize":pageSize,"clientGroupId":clientGroupId,"isGroup":isGroup}, success: function (result) {}, error: function () { } });
+                 */
+
+                ALApiService.fetchConversationByTopicId = function (options) {
+                    var reqdata = 'topic=' + options.data.topicId;
+                    if (options.data.tabId) {
+                        reqdata += ('' + options.data.isGroup === 'true') ? '&groupId=' + options.data.tabId : '&userId=' + encodeURIComponent(options.data.tabId);
+                    } else if (options.data.clientGroupId) {
+                        reqdata += '&clientGroupId=' + options.data.clientGroupId;
+                    } else {
+                        return false;
+                    }
+                    if (options.data.pageSize) {
+                        reqdata += '&pageSize=' + options.data.pageSize;
+                    }
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
+                        data: reqdata,
+                        type: 'get',
+                        success: function (response) {
+                            if (options.success) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        },
+                        error: function (response) {
+                            if (options.error) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        }
+                    });
+                }
+
+
+                 /**
+                 * getConversationId
+                 * Usage Example:
+                  window.Applozic.ALApiService.getConversationId({data: {"topicId":topicId,"userId":userId,"status":status,"isGroup":isGroup,"topicDetail":topicDetail}, success: function (result) {}, error: function () { } });
+                 */
+
+                ALApiService.getConversationId = function (options) {
+                    mckUtils.ajax({
+                        url: MCK_BASE_URL + CONVERSATION_ID_URL,
+                        global: false,
+                        data: w.JSON.stringify(options.data.conversationPxy),
+                        type: 'post',
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (options.success) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        },
+                        error: function (response) {
+                            if (options.error) {
+                                console.log(response);
+                                options.success(response);
+                            }
+                        }
+                    });
+                }
 
 
         return ALApiService;

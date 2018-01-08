@@ -3663,7 +3663,7 @@ window.onload = function() {
                     }, error: function () {} });
                 }
             };
-            _this.getConversationId = function(params) {
+            _this.getConversationId = function (params) {
                 if (!params.isGroup && !params.isMessage && (params.topicStatus !== CONVERSATION_STATUS_MAP[1])) {
                     var conversationId = MCK_TOPIC_CONVERSATION_MAP[params.topicId];
                     if (conversationId) {
@@ -3698,13 +3698,9 @@ window.onload = function() {
                     if (params.fallBackTemplatesList && params.fallBackTemplatesList.length > 0) {
                         conversationPxy.fallBackTemplatesList = params.fallBackTemplatesList;
                     }
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_ID_URL,
-                        global: false,
-                        data: w.JSON.stringify(conversationPxy),
-                        type: 'post',
-                        contentType: 'application/json',
-                        success: function(data) {
+                    window.Applozic.ALApiService.getConversationId({
+                        data: conversationPxy,
+                        success: function (data) {
                             if (typeof data === 'object' && data.status === "success") {
                                 var groupPxy = data.response;
                                 if (typeof groupPxy === 'object' && groupPxy.conversationPxy !== 'undefined') {
@@ -3729,35 +3725,20 @@ window.onload = function() {
                                         var group = mckGroupUtils.addGroup(groupPxy);
                                         params.tabId = group.contactId;
                                     }
-                                    (params.isMessage && conversationPxy.created) ? mckMessageLayout.loadTab(params, _this.dispatchMessage): mckMessageLayout.loadTab(params);
+                                    (params.isMessage && conversationPxy.created) ? mckMessageLayout.loadTab(params, _this.dispatchMessage) : mckMessageLayout.loadTab(params);
                                 }
                             }
-                        },
-                        error: function() {}
+                        }, error: function () { }
                     });
                 }
             };
-            _this.fetchConversationByTopicId = function(params) {
-                var reqdata = 'topic=' + params.topicId;
-                if (params.tabId) {
-                    reqdata += ('' + params.isGroup === 'true') ? '&groupId=' + params.tabId : '&userId=' + encodeURIComponent(params.tabId);
-                } else if (params.clientGroupId) {
-                    reqdata += '&clientGroupId=' + params.clientGroupId;
-                } else {
-                    return false;
-                }
-                if (params.pageSize) {
-                    reqdata += '&pageSize=' + params.pageSize;
-                }
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
-                    data: reqdata,
-                    type: 'get',
-                    success: function(data) {
+            _this.fetchConversationByTopicId = function (data) {
+                window.Applozic.ALApiService.fetchConversationByTopicId({
+                    data, success: function (data) {
                         if (typeof data === 'object' && data.status === "success") {
                             var conversationList = data.response;
                             if (conversationList.length > 0) {
-                                $applozic.each(conversationList, function(i, conversationPxy) {
+                                $applozic.each(conversationList, function (i, conversationPxy) {
                                     MCK_CONVERSATION_MAP[conversationPxy.id] = conversationPxy;
                                     MCK_TOPIC_CONVERSATION_MAP[conversationPxy.topicId] = [conversationPxy.id];
                                     if (conversationPxy.topicDetail) {
@@ -3810,7 +3791,7 @@ window.onload = function() {
                             }
                         }
                     },
-                    error: function() {
+                    error: function () {
                         if (typeof params.callback === 'function') {
                             var resp = {};
                             if (params.tabId) {
@@ -3829,54 +3810,47 @@ window.onload = function() {
             _this.getTopicId = function(params) {
                 if (params.conversationId) {
                     var data = "id=" + params.conversationId;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + TOPIC_ID_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        async: (typeof params.async !== 'undefined') ? params.async : true,
-                        success: function(data) {
-                            if (typeof data === 'object' && data.status === 'success') {
-                                var conversationPxy = data.response;
-                                if (typeof conversationPxy === 'object') {
-                                    MCK_TOPIC_CONVERSATION_MAP[conversationPxy.topicId] = [params.conversationId];
-                                    MCK_CONVERSATION_MAP[params.conversationId] = conversationPxy;
-                                    if (conversationPxy.topicDetail) {
-                                        try {
-                                            MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = $applozic.parseJSON(conversationPxy.topicDetail);
-                                        } catch (ex) {
-                                            w.console.log('Incorect Topic Detail!');
-                                        }
-                                    }
-                                    if (typeof(MCK_PRICE_DETAIL) === 'function' && params.priceText) {
-                                        MCK_PRICE_DETAIL({
-                                            'custId': MCK_USER_ID,
-                                            'suppId': params.suppId,
-                                            'productId': conversationPxy.topicId,
-                                            'price': params.priceText
-                                        });
-                                        _this.sendConversationCloseUpdate(params.conversationId);
-                                    }
-                                    if (params.messageType && typeof params.message === 'object') {
-                                        var tabId = (params.message.groupId) ? params.message.groupId : params.message.to;
-                                        if (typeof MCK_TAB_CONVERSATION_MAP[tabId] !== 'undefined') {
-                                            var tabConvArray = MCK_TAB_CONVERSATION_MAP[tabId];
-                                            tabConvArray.push(conversationPxy);
-                                            MCK_TAB_CONVERSATION_MAP[tabId] = tabConvArray;
-                                        }
-                                        if (typeof params.populate !== 'undefined' ? params.populate : true) {
-                                            mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                                        }
-                                    }
-
-                                    if (typeof params.callback === 'function') {
-                                        params.callback(conversationPxy);
+                    window.Applozic.ALApiService.getTopicId({data: {"conversationId":params.conversationId}, 
+                    success: function (result) {
+                        if (typeof data === 'object' && data.status === 'success') {
+                            var conversationPxy = data.response;
+                            if (typeof conversationPxy === 'object') {
+                                MCK_TOPIC_CONVERSATION_MAP[conversationPxy.topicId] = [params.conversationId];
+                                MCK_CONVERSATION_MAP[params.conversationId] = conversationPxy;
+                                if (conversationPxy.topicDetail) {
+                                    try {
+                                        MCK_TOPIC_DETAIL_MAP[conversationPxy.topicId] = $applozic.parseJSON(conversationPxy.topicDetail);
+                                    } catch (ex) {
+                                        w.console.log('Incorect Topic Detail!');
                                     }
                                 }
+                                if (typeof(MCK_PRICE_DETAIL) === 'function' && params.priceText) {
+                                    MCK_PRICE_DETAIL({
+                                        'custId': MCK_USER_ID,
+                                        'suppId': params.suppId,
+                                        'productId': conversationPxy.topicId,
+                                        'price': params.priceText
+                                    });
+                                    _this.sendConversationCloseUpdate(params.conversationId);
+                                }
+                                if (params.messageType && typeof params.message === 'object') {
+                                    var tabId = (params.message.groupId) ? params.message.groupId : params.message.to;
+                                    if (typeof MCK_TAB_CONVERSATION_MAP[tabId] !== 'undefined') {
+                                        var tabConvArray = MCK_TAB_CONVERSATION_MAP[tabId];
+                                        tabConvArray.push(conversationPxy);
+                                        MCK_TAB_CONVERSATION_MAP[tabId] = tabConvArray;
+                                    }
+                                    if (typeof params.populate !== 'undefined' ? params.populate : true) {
+                                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
+                                    }
+                                }
+
+                                if (typeof params.callback === 'function') {
+                                    params.callback(conversationPxy);
+                                }
                             }
-                        },
-                        error: function() {}
-                    });
+                        }
+                    }, error: function () { } });
                 }
             };
             _this.sendConversationCloseUpdate = function(conversationId) {
@@ -6235,44 +6209,23 @@ window.onload = function() {
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
             var FRIEND_LIST_URL ="/rest/ws/group/";
-            _this.getContactDisplayName = function(userIdArray) {
+            _this.getContactDisplayName = function (userIdArray) {
                 var mckContactNameArray = [];
-                if (userIdArray.length > 0 && userIdArray[0]) {
-                    var data = '';
-                    var uniqueUserIdArray = userIdArray.filter(function(item, pos) {
-                        return userIdArray.indexOf(item) === pos;
-                    });
-                    for (var i = 0; i < uniqueUserIdArray.length; i++) {
-                        var userId = uniqueUserIdArray[i];
-                        if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
-                            data += "userIds=" + encodeURIComponent(userId) + "&";
+                window.Applozic.ALApiService.getContactDisplayName({
+                    data: { "userIdArray": userIdArray },
+                    success: function (data) {
+                        for (var userId in data) {
+                            if (data.hasOwnProperty(userId)) {
+                                mckContactNameArray.push([userId, data[userId]]);
+                                MCK_CONTACT_NAME_MAP[userId] = data[userId];
+                                var contact = mckMessageLayout.fetchContact(userId);
+                                contact.displayName = data[userId];
+                            }
                         }
-                    }
-                    if (data.lastIndexOf("&") === data.length - 1) {
-                        data = data.substring(0, data.length - 1);
-                    }
-                    if (data) {
-                        mckUtils.ajax({
-                            url: MCK_BASE_URL + CONTACT_NAME_URL,
-                            data: data,
-                            global: false,
-                            type: 'get',
-                            success: function(data) {
-                                for (var userId in data) {
-                                    if (data.hasOwnProperty(userId)) {
-                                        mckContactNameArray.push([userId, data[userId]]);
-                                        MCK_CONTACT_NAME_MAP[userId] = data[userId];
-                                        var contact = mckMessageLayout.fetchContact(userId);
-                                        contact.displayName = data[userId];
-                                    }
-                                }
-                                ALStorage.updateMckContactNameArray(mckContactNameArray);
-                            },
-                            error: function() {}
-                        });
-                    }
-                }
-            };
+                        ALStorage.updateMckContactNameArray(mckContactNameArray);
+                    }, error: function () { }
+                });
+        };
             _this.loadContacts = function() {
                 var mckContactNameArray = [];
                 window.Applozic.ALApiService.getContactList({url:'?startIndex=0&pageSize=30&orderBy=1',
@@ -6467,15 +6420,13 @@ window.onload = function() {
                 }
              });
             };
-            _this.getUserStatus = function(params) {
+            _this.getUserStatus = function (params) {
                 var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_STATUS_URL,
-                    type: 'get',
-                    success: function(data) {
+                window.Applozic.ALApiService.getUserStatus({
+                    success: function (data) {
                         if (data.users.length > 0) {
                             MCK_GROUP_MEMBER_SEARCH_ARRAY = [];
-                            $applozic.each(data.users, function(i, user) {
+                            $applozic.each(data.users, function (i, user) {
                                 var contact = mckMessageLayout.getContact('' + user.userId);
                                 contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
                                 MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
@@ -6488,7 +6439,7 @@ window.onload = function() {
                         }
                         return;
                     },
-                    error: function() {
+                    error: function () {
                         response.status = "error";
                         if (params.callback) {
                             params.callback(response);
