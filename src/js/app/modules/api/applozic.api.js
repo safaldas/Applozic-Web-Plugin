@@ -1239,7 +1239,7 @@
                     mckUtils.ajax({
                         url: MCK_BASE_URL + CONVERSATION_ID_URL,
                         global: false,
-                        data: w.JSON.stringify(options.data.conversationPxy),
+                        data: w.JSON.stringify(options.data),
                         type: 'post',
                         contentType: 'application/json',
                         success: function (response) {
