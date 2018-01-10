@@ -5,9 +5,9 @@
         var MCK_APP_ID;
         var events = {};
         var subscriber = null;
-        var stompClient = null;
+        ALSocket.stompClient = null;
         var TYPING_TAB_ID = '';
-        var typingSubscriber = null;
+        ALSocket.typingSubscriber = null;
         var openGroupSubscriber = [];
         var checkConnectedIntervalId;
         var sendConnectedStatusIntervalId;
@@ -60,13 +60,13 @@
                     if (!SOCKET) {
                         SOCKET = new SockJS(MCK_WEBSOCKET_URL + ":" + port + "/stomp");
                     }
-                    stompClient = Stomp.over(SOCKET);
-                    stompClient.heartbeat.outgoing = 0;
-                    stompClient.heartbeat.incoming = 0;
-                    stompClient.onclose = function() {
+                    ALSocket.stompClient = Stomp.over(SOCKET);
+                    ALSocket.stompClient.heartbeat.outgoing = 0;
+                    ALSocket.stompClient.heartbeat.incoming = 0;
+                    ALSocket.stompClient.onclose = function() {
                         ALSocket.disconnect();
                     };
-                    stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
+                    ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
                         ALSocket.disconnect();
                     });
@@ -74,7 +74,7 @@
             }
         };
         ALSocket.checkConnected = function(isFetchMessages) {
-            if (stompClient.connected) {
+            if (ALSocket.stompClient.connected) {
                 if (checkConnectedIntervalId) {
                     clearInterval(checkConnectedIntervalId);
                 }
@@ -108,24 +108,24 @@
             ALSocket.disconnect();
         };
         ALSocket.disconnect = function() {
-            if (stompClient && stompClient.connected) {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 ALSocket.sendStatus(0);
-                stompClient.disconnect();
+                ALSocket.stompClient.disconnect();
             }
         };
         ALSocket.unsubscibeToTypingChannel = function() {
-            if (stompClient && stompClient.connected) {
-                if (typingSubscriber) {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
+                if (ALSocket.typingSubscriber) {
                     if (MCK_TYPING_STATUS === 1) {
                         ALSocket.sendTypingStatus(0, TYPING_TAB_ID);
                     }
-                    typingSubscriber.unsubscribe();
+                    ALSocket.typingSubscriber.unsubscribe();
                 }
             }
-            typingSubscriber = null;
+            ALSocket.typingSubscriber = null;
         };
         ALSocket.unsubscibeToNotification = function() {
-            if (stompClient && stompClient.connected) {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 if (subscriber) {
                     subscriber.unsubscribe();
                 }
@@ -133,15 +133,15 @@
             subscriber = null;
         };
         ALSocket.subscibeToTypingChannel = function(subscribeId) {
-            if (stompClient && stompClient.connected) {
-                typingSubscriber = stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, ALSocket.onTypingStatus);
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
+                ALSocket.typingSubscriber = ALSocket.stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, ALSocket.onTypingStatus);
             } else {
                 ALSocket.reconnect();
             }
         };
         ALSocket.subscribeToOpenGroup = function(group) {
-            if (stompClient && stompClient.connected) {
-                var subs = stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, ALSocket.onOpenGroupMessage);
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
+                var subs = ALSocket.stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, ALSocket.onOpenGroupMessage);
                 openGroupSubscriber.push(subs.id);
                 OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] = subs.id;
             } else {
@@ -150,9 +150,9 @@
         };
         ALSocket.sendTypingStatus = function(status, mck_typing_status,MCK_USER_ID,tabId) {
             MCK_TYPING_STATUS =mck_typing_status;
-            if (stompClient && stompClient.connected) {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 if (status === 1 && MCK_TYPING_STATUS === 1) {
-                    stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
+                    ALSocket.stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                 }
@@ -161,14 +161,14 @@
                         return;
                     }
                     TYPING_TAB_ID = tabId;
-                    stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + tabId, {
+                    ALSocket.stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + tabId, {
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                     setTimeout(function() {
                         MCK_TYPING_STATUS = 0;
                     }, 60000);
                 } else if (status === 0) {
-                    stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
+                    ALSocket.stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                 }
@@ -193,23 +193,23 @@
             }
         };
         ALSocket.sendStatus = function(status) {
-            if (stompClient && stompClient.connected) {
-                stompClient.send('/topic/status-v2', {
+            if (ALSocket.stompClient && ALSocket.stompClient.connected) {
+                ALSocket.stompClient.send('/topic/status-v2', {
                     "content-type": "text/plain"
                 }, MCK_TOKEN + "," + USER_DEVICE_KEY + "," + status);
             }
         };
         ALSocket.onConnect = function() {
-            if (stompClient.connected) {
+            if (ALSocket.stompClient.connected) {
                 if (subscriber) {
                     ALSocket.unsubscibeToNotification();
                 }
-                subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
+                subscriber = ALSocket.stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
                 ALSocket.sendStatus(1);
                 ALSocket.checkConnected(true);
             } else {
                 setTimeout(function() {
-                    subscriber = stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
+                    subscriber = ALSocket.stompClient.subscribe("/topic/" + MCK_TOKEN, ALSocket.onMessage);
                     ALSocket.sendStatus(1);
                     ALSocket.checkConnected(true);
                 }, 5000);

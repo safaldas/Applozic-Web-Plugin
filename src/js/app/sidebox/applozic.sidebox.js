@@ -442,6 +442,8 @@ window.onload = function() {
         var ringToneService;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
+        var current_TabId = '';
+        var is_Group = false;
         var events = {
             'onConnectFailed': function() {},
             'onConnect': function() {},
@@ -461,13 +463,14 @@ window.onload = function() {
             'onUserActivated': function() {},
             'onUserDeactivated': function() {},
 			'onTypingStatus': function(resp) {
+                typingSubscriber =window.Applozic.ALSocket.typingSubscriber
 				if (typingSubscriber != null && typingSubscriber.id === resp.headers.subscription) {
                     var message = resp.body;
                     var publisher = message.split(",")[1];
                     var status = Number(message.split(",")[2]);
                     var tabId = resp.headers.destination.substring(resp.headers.destination.lastIndexOf("-") + 1, resp.headers.destination.length);
-                    var currTabId = mck_message_inner.getAttribute('data-mck-id');
-                    var isGroup = mck_message_inner.getAttribute('data-isgroup');
+                    var currTabId = current_TabId;
+                    var isGroup = is_Group;
                     var group = mckGroupUtils.getGroup(currTabId);
                     if (!MCK_BLOCKED_TO_MAP[publisher] && !MCK_BLOCKED_BY_MAP[publisher]) {
                         if (status === 1) {
@@ -591,6 +594,7 @@ window.onload = function() {
                 }
 			},
 			'connectToSocket': function(isFetchMessages){
+                stompClient =window.Applozic.ALSocket.stompClient
 				if (!stompClient.connected) {
                     if (isFetchMessages && mck_sidebox.style.display === 'block') {
                         var currTabId = mck_message_inner.getAttribute('data-mck-id');
@@ -4296,6 +4300,8 @@ window.onload = function() {
                     $mck_msg_to.val(params.tabId);
                     $mck_msg_inner.data('mck-id', params.tabId);
                     $mck_msg_inner.data('mck-conversationid', params.conversationId);
+                    current_TabId = params.tabId;
+                    is_Group = params.isGroup;
                     $mck_msg_inner.data('mck-topicid', params.topicId);
                     $mck_tab_option_panel.data('tabId', params.tabId);
                     $mck_tab_option_panel.removeClass('n-vis').addClass('vis');
