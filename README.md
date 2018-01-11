@@ -361,6 +361,49 @@ Sample response:
  <a href="#" class="applozic-wt-launcher" data-mck-id="PUT_USERID_HERE" data-mck-name="PUT_DISPLAYNAME_HERE" data-mck-topicid="PUT_TOPICID_HERE">CHAT ON TOPIC</a>
  ```
 
+## File Structure
+```
+  Applozic-Web-Plugin
+    |-- src
+        |-- js
+            |-- app  
+                |-- sidebox  
+                    |-- sidebox-1.0.js
+                |-- fullview   
+                    |-- applozic.fullview-1.0.js           
+                |-- modules           
+                    |-- api         
+                        |-- applozic.api.js            - Backend chat Apis
+                    |-- socket   
+                        |--  applozic.socket.js        - Mqtt socket connection
+                    |-- storage
+                        |-- applozic.storage.js        - caching data
+                    |-- applozic.utils.js              - common util functions
+                |-- call
+                    |-- mck-ringtone-service.js       - To play ringtone
+                    |-- twilio-video.js               - audio/videocall library
+                    |-- videocall.js                  - audio/videocall library
+                |-- applozic.aes.js                   - external library for Encryption
+                |-- applozic.emojis.min.js            - external library for emojis
+                |-- applozic.socket.min.js            - external library for socket
+                |-- applozic.widget.min.js            - external library for widgets
+                |-- jquery.min.js                     - external library for jquery
+                |-- locationpicker.jquery.min.js      - external library for location
+                |-- viewer.js                         - external library files for Image/Video Preview
+        |-- css
+           |-- app
+                |-- fullview 
+                   |-- applozic.fullview.css          - Fullview UI CSS 
+                |-- sidebox   
+                   |-- applozic.sidebox.css           - sidebox plugin css
+                       
+                |-- videocall.css   
+       |-- images                                     - icons used in chat interface 
+       |-- sample    
+         |-- fullview.html                            - sample ui for fullview plugin
+         |-- sidebox.html                             - sample ui for sidebox plugin
+|-- README.md
+```
 
 ### Documentation:
 
