@@ -754,10 +754,13 @@ window.onload = function() {
                     var topicId = resp.message.split(",")[1];
                     var tabId = mck_message_inner.data('mck-id');
                     if (tabId === userId) {
-                        document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-time');
-                        document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-sent');
-                        document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-delivered');
-                        document.querySelector(".mck-msg-right .mck-message-status").classList.add('mck-icon-read');
+                        var list= document.querySelectorAll(".mck-msg-right .mck-message-status");
+                        for (var i = 0; i < list.length; ++i) {
+                            list[i].classList.remove('mck-icon-time');
+                            list[i].classList.remove('mck-icon-sent');
+                            list[i].classList.remove('mck-icon-delivered');
+                            list[i].classList.add('mck-icon-read');
+                        }
                         $applozic(".mck-msg-right .mck-icon-delivered").attr('title', 'delivered and read');
                         var contact = mckMessageLayout.getContact(userId);
                         if (typeof contact === 'undefined') {
