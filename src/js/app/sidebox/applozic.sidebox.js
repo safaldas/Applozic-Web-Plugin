@@ -416,7 +416,8 @@ window.onload = function() {
 		var mck_tab_status = document.getElementById("mck-tab-status");
 		var mck_offline_message_box = document.getElementById("mck-offline-message-box");
 		var mck_typing_label = document.getElementById("mck-typing-label");
-		var mck_message_inner = document.getElementById("mck-message-cell").getElementsByClassName("mck-message-inner")[0];
+        //var mck_message_inner = document.getElementById("mck-message-cell").getElementsByClassName("mck-message-inner")[0];
+        var mck_message_inner = $applozic("#mck-message-cell .mck-message-inner");
         var MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
         var MCK_TAB_CONVERSATION_MAP = new Array();
         var mckInit = new MckInit();
@@ -442,8 +443,6 @@ window.onload = function() {
         var ringToneService;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
-        var current_TabId = '';
-        var is_Group = false;
         var events = {
             'onConnectFailed': function() {},
             'onConnect': function() {},
@@ -469,13 +468,13 @@ window.onload = function() {
                     var publisher = message.split(",")[1];
                     var status = Number(message.split(",")[2]);
                     var tabId = resp.headers.destination.substring(resp.headers.destination.lastIndexOf("-") + 1, resp.headers.destination.length);
-                    var currTabId = current_TabId;
-                    var isGroup = is_Group;
+                    var currTabId = mck_message_inner.data('mck-id');
+                    var isGroup = mck_message_inner.data('isgroup');
                     var group = mckGroupUtils.getGroup(currTabId);
                     if (!MCK_BLOCKED_TO_MAP[publisher] && !MCK_BLOCKED_BY_MAP[publisher]) {
                         if (status === 1) {
                             if ((MCK_USER_ID !== publisher || !isGroup) && (currTabId === publisher || currTabId === tabId)) {
-                                var isGroup = mck_message_inner.getAttribute('data-isgroup');
+                                var isGroup = mck_message_inner.data('isgroup');
                                 if (isGroup) {
                                     if (publisher !== MCK_USER_ID) {
                                         if (mckGroupLayout.authenticateGroupUser(group) || (group.type === 6 && !MCK_OPEN_GROUP_SETTINGS.disableChatForNonGroupMember)) {
@@ -547,7 +546,7 @@ window.onload = function() {
                         ALStorage.updateLatestMessage(message);
                         var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                         var mck_sidebox_content = document.getElementById("mck-sidebox-content");
-                        var tabId = mck_message_inner.getAttribute('data-mck-id');
+                        var tabId = mck_message_inner.data('mck-id');
                         if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                             var messageFeed = mckMessageLayout.getMessageFeed(message);
                             events.onMessageReceived({
@@ -597,11 +596,11 @@ window.onload = function() {
                 stompClient =window.Applozic.ALSocket.stompClient
 				if (!stompClient.connected) {
                     if (isFetchMessages && mck_sidebox.style.display === 'block') {
-                        var currTabId = mck_message_inner.getAttribute('data-mck-id');
+                        var currTabId = mck_message_inner.data('mck-id');
                         if (currTabId) {
-                            var isGroup = mck_message_inner.getAttribute('data-isgroup');
-                            var conversationId = mck_message_inner.getAttribute('data-mck-conversationid');
-                            var topicId = mck_message_inner.getAttribute('data-mck-topicid');
+                            var isGroup = mck_message_inner.data('isgroup');
+                            var conversationId = mck_message_inner.data('mck-conversationid');
+                            var topicId = mck_message_inner.data('mck-topicid');
                             ALStorage.clearMckMessageArray();
                             mckMessageLayout.loadTab({
                                 'tabId': currTabId,
@@ -667,9 +666,9 @@ window.onload = function() {
                 } else if (messageType === 'APPLOZIC_11') {
                     var userId = resp.message;
                     var contact = mckMessageLayout.fetchContact(userId);
-                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    var tabId = mck_message_inner.data('mck-id');
                     if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
-                        if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
+                        if (tabId === contact.contactId && !mck_message_inner.data('isgroup')) {
                             document.querySelector('#mck-tab-status').innerHTML = MCK_LABELS['online'];
                             if (IS_OFFLINE_MESSAGE_ENABLED) {
                                 mckMessageLayout.hideOfflineMessage();
@@ -700,8 +699,8 @@ window.onload = function() {
                         MCK_LAST_SEEN_AT_MAP[userId] = lastSeenAtTime;
                     }
                     if (!MCK_BLOCKED_TO_MAP[userId] && !MCK_BLOCKED_BY_MAP[userId]) {
-                        var tabId = mck_message_inner.getAttribute('data-mck-id');
-                        if (tabId === contact.contactId && !mck_message_inner.getAttribute('data-isgroup')) {
+                        var tabId = mck_message_inner.data('mck-id');
+                        if (tabId === contact.contactId && !mck_message_inner.data('isgroup')) {
                             document.getElementById("mck-tab-status").innerHTML = mckDateUtils.getLastSeenAtStatus(lastSeenAtTime);
                             if (IS_OFFLINE_MESSAGE_ENABLED) {
                                 mckInit.manageOfflineMessageTime(tabId);
@@ -727,7 +726,7 @@ window.onload = function() {
                     var topicId = resp.message.split(",")[1];
                     var contact = mckMessageLayout.fetchContact(userId);
                     mckMessageLayout.updateUnreadCount('user_' + contact.contactId, 0, true);
-                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    var tabId = mck_message_inner.data('mck-id');
                     if ((typeof tabId === "undefined") || tabId === '') {
                         document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-text").innerHTML = mckMessageLayout.getUnreadCount('user_' + contact.contactId);
                         document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.remove('vis');
@@ -743,7 +742,7 @@ window.onload = function() {
                 } else if (messageType === 'APPLOZIC_28') {
                     var userId = resp.message.split(",")[0];
                     var topicId = resp.message.split(",")[1];
-                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    var tabId = mck_message_inner.data('mck-id');
                     if (tabId === userId) {
                         document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-time');
                         document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-sent');
@@ -768,7 +767,7 @@ window.onload = function() {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
                     var contact = mckMessageLayout.fetchContact(userId);
-                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    var tabId = mck_message_inner.data('data-mck-id');
                     if (tabId === contact.contactId) {
                         if (status === BLOCK_STATUS_MAP[0]) {
                             MCK_BLOCKED_TO_MAP[contact.contactId] = true;
@@ -793,7 +792,7 @@ window.onload = function() {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
                     var contact = mckMessageLayout.fetchContact(userId);
-                    var tabId = mck_message_inner.getAttribute('data-mck-id');
+                    var tabId = mck_message_inner.data('mck-id');
                     if (tabId === contact.contactId) {
                         if (status === BLOCK_STATUS_MAP[2]) {
                             MCK_BLOCKED_TO_MAP[contact.contactId] = false;
@@ -845,7 +844,7 @@ window.onload = function() {
                         ALStorage.updateLatestMessage(message);
                         var contact = (message.groupId) ? mckGroupUtils.getGroup(message.groupId) : mckMessageLayout.getContact(message.to);
                         var mck_sidebox_content = document.getElementById("mck-sidebox-content");
-                        var tabId = mck_message_inner.getAttribute('data-mck-id');
+                        var tabId = mck_message_inner.data('mck-id');
                         if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                             var messageFeed = mckMessageLayout.getMessageFeed(message);
                             events.onMessageReceived({
