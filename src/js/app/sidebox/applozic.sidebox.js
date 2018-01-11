@@ -620,20 +620,30 @@ window.onload = function() {
                 }
 			},
 			'onMessage': function(resp) {
-				var messageType = resp.type;
+                var messageType = resp.type;
+                
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
+                    var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
+                    msg.classList.remove('mck-icon-time');
+                    msg.classList.add('mck-icon-sent');
+                    msg.classList.add('mck-icon-delivered');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
                     mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                     events.onMessageDelivered({
                         'messageKey': resp.message.split(",")[0]
                     });
                 } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
-                    document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-read');
+                    var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
+                    msg.classList.remove('mck-icon-time');
+                    msg.classList.remove('mck-icon-sent');
+                    msg.classList.remove('mck-icon-delivered');
+                    msg.classList.add('mck-icon-read');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
+                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-read');
                     mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                     events.onMessageRead({
                         'messageKey': resp.message.split(",")[0]
@@ -748,7 +758,7 @@ window.onload = function() {
                         document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-sent');
                         document.querySelector(".mck-msg-right .mck-message-status").classList.remove('mck-icon-delivered');
                         document.querySelector(".mck-msg-right .mck-message-status").classList.add('mck-icon-read');
-                        document.querySelector(".mck-msg-right .mck-icon-delivered").setAttribute('title', 'delivered and read');
+                        $applozic(".mck-msg-right .mck-icon-delivered").attr('title', 'delivered and read');
                         var contact = mckMessageLayout.getContact(userId);
                         if (typeof contact === 'undefined') {
                             var userIdArray = [];
@@ -3050,6 +3060,7 @@ window.onload = function() {
                                 var conversationId = data.conversationId;
                                 $mck_msg_inner.data('mck-conversationid', conversationId);
                                 $mck_msg_div.removeClass(randomId).addClass(messageKey);
+                                $mck_msg_div.attr("id",messageKey);
                                 $mck_msg_div.data('msgkey', messageKey);
                                 $applozic("." + messageKey + " .mck-message-status").removeClass('mck-icon-time').addClass('mck-icon-sent').attr('title', 'sent');
                                 mckMessageLayout.addTooltip(messageKey);
@@ -4182,7 +4193,7 @@ window.onload = function() {
             var FILE_PREVIEW_URL = "/rest/ws/aws/file/";
             var LINK_EXPRESSION = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
             var LINK_MATCHER = new RegExp(LINK_EXPRESSION);
-            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}">' +
+            var markup = '<div name="message" data-msgdelivered="${msgDeliveredExpr}" data-msgsent="${msgSentExpr}" data-msgtype="${msgTypeExpr}" data-msgtime="${msgCreatedAtTime}" data-msgcontent="${replyIdExpr}" data-msgkey="${msgKeyExpr}" data-contact="${toExpr}" id="${msgKeyExpr}" class="mck-m-b ${msgKeyExpr} ${msgFloatExpr} ${msgAvatorClassExpr}">' +
                 '<div class="mck-clear">' +
                 '<div class="blk-lg-12">' +
                 '<div class="mck-msg-avator blk-lg-3">{{html msgImgExpr}}</div>' +
