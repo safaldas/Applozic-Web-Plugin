@@ -380,7 +380,7 @@ Sample response:
                         |-- applozic.storage.js        - caching data
                     |-- applozic.utils.js              - common util functions
                 |-- call
-                    |-- mck-ringtone-service.js       - To play ringtone
+                    |-- mck-ringtone-service.js       - to play ringtone
                     |-- twilio-video.js               - audio/videocall library
                     |-- videocall.js                  - audio/videocall library
                 |-- applozic.aes.js                   - external library for Encryption
@@ -393,7 +393,7 @@ Sample response:
         |-- css
            |-- app
                 |-- fullview 
-                   |-- applozic.fullview.css          - Fullview UI CSS 
+                   |-- applozic.fullview.css          - fullview ui css 
                 |-- sidebox   
                    |-- applozic.sidebox.css           - sidebox plugin css
                        
