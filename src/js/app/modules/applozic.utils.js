@@ -556,7 +556,7 @@ function MckUtils() {
                 if (request.status === 200) {
                     //success
                     var contType = request.getResponseHeader("Content-Type");
-                    if (typeof contType === "undefined" || contType == "null") {
+                    if (typeof contType === "undefined" || contType === "null" || contType === null) {
                         contType = "";
                     }
 
