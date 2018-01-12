@@ -226,9 +226,9 @@ function MckGroupService() {
             success: function (data) {
                 if (data.status === "success") {
                     if (params.clientGroupId) {
-                        var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
-                        if (typeof group === 'object') {
-                            params.groupId = group.contactId;
+                        var groupInfo = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
+                        if (typeof groupInfo === 'object') {
+                            params.groupInfo = groupInfo.contactId;
                         }
                     }
                     response.status = "success";
@@ -393,7 +393,7 @@ function MckGroupService() {
         }
         Applozic.ALApiService.groupUpdate({
             data: { group },
-            success: function (data) {
+            success: function (data,group) {
                 if (data.status === "success") {
                     if (params.clientGroupId) {
                         var group = mckGroupLayout.getGroupByClientGroupId(params.clientGroupId);

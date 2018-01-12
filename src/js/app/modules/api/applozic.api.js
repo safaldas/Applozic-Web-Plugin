@@ -481,7 +481,7 @@
                 contentType: 'application/json',
                 success: function (response) {
                     if (options.success) {
-                        options.success(response);
+                        options.success(response,options.data.group);
                     }
                 },
                 error: function (response) {
