@@ -780,7 +780,7 @@ window.onload = function() {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
                     var contact = mckMessageLayout.fetchContact(userId);
-                    var tabId = mck_message_inner.data('data-mck-id');
+                    var tabId = mck_message_inner.data('mck-id');
                     if (tabId === contact.contactId) {
                         if (status === BLOCK_STATUS_MAP[0]) {
                             MCK_BLOCKED_TO_MAP[contact.contactId] = true;
