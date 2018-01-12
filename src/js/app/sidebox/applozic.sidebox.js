@@ -87,6 +87,7 @@ window.onload = function() {
             'file.attach.title': 'Attach File',
             'last.seen': 'Last seen',
             'last.seen.on': 'Last seen on',
+            'user.delete':'This user has been deleted',
             'ago': 'ago',
             'group.metadata': {
                 'CREATE_GROUP_MESSAGE': ':adminName created group :groupName',
@@ -442,6 +443,7 @@ window.onload = function() {
         var mckCallService = new MckCallService();
         var mckNotificationTone = null;
         var ringToneService;
+        var isUserDeleted = false;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
         var events = {
@@ -754,6 +756,13 @@ window.onload = function() {
                         response['topicId'] = topicId;
                     }
                     events.onConversationReadFromOtherSource(response);
+                } else if (messageType === 'APPLOZIC_34') {
+                    $applozic("#mck-msg-error").html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
+                    $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
+                    $applozic("#mck-msg-form").removeClass('vis').addClass('n-vis');
+                    $applozic("#li-mck-block-user").removeClass('vis').addClass('n-vis');
+                    isUserDeleted = true;
+                    return;
                 } else if (messageType === 'APPLOZIC_28') {
                     var userId = resp.message.split(",")[0];
                     var topicId = resp.message.split(",")[1];
@@ -2871,6 +2880,15 @@ window.onload = function() {
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
+                if (messagePxy.to) {
+                    if (MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
+                        $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
+                        $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
+                        $mck_msg_form.removeClass('vis').addClass('n-vis');
+                        $li_mck_block_user.removeClass('vis').addClass('n-vis');
+                        return;
+                    }
+                }
                 var metadata = messagePxy.metadata ? messagePxy.metadata : {};
                 var msgKeys = $applozic("#mck-text-box").data("AL_REPLY");
                 if (typeof msgKeys !== 'undefined' && msgKeys !== '' && !(messagePxy.forward)) {
@@ -3366,6 +3384,7 @@ window.onload = function() {
                     success: function(response) {
                         var data = response.data;
                         var isMessages = true;
+                        isUserDeleted = false;
                         var currTabId = $mck_msg_inner.data('mck-id');
                         var isGroupTab = $mck_msg_inner.data('isgroup');
                         if (!params.isGroup || params.startTime) {
@@ -3447,6 +3466,15 @@ window.onload = function() {
                                                         } else {
                                                             mckUserUtils.toggleBlockUser(params.tabId, false);
                                                         }
+                                                    }
+                                                }
+                                                if (currTabId) {
+                                                    if (MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted === true) {
+                                                        $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
+                                                        $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
+                                                        $mck_msg_form.removeClass('vis').addClass('n-vis');
+                                                        $li_mck_block_user.removeClass('vis').addClass('n-vis');
+                                                        return;
                                                     }
                                                 }
                                                 if (userDetail.userName && !params.startTime) {
