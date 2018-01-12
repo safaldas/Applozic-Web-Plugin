@@ -280,7 +280,7 @@ function MckGroupService() {
         Applozic.ALApiService.removeGroupMember({
             data: { group: group },
             success: function (response) {
-                if (data.status === 'success') {
+                if (response.status === 'success') {
                     if (params.clientGroupId) {
                         var group = mckGroupUtils.getGroupByClientGroupId(params.clientGroupId);
                         if (typeof group === 'object') {
