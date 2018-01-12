@@ -623,10 +623,12 @@ window.onload = function() {
                 var messageType = resp.type;
                 
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
+                    if(document.getElementById(resp.message.split(",")[0])){
                     var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
                     msg.classList.remove('mck-icon-time');
                     msg.classList.remove('mck-icon-sent');
                     msg.classList.add('mck-icon-delivered');
+                    }
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
@@ -635,11 +637,13 @@ window.onload = function() {
                         'messageKey': resp.message.split(",")[0]
                     });
                 } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
+                    if(document.getElementById(resp.message.split(",")[0])){
                     var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
                     msg.classList.remove('mck-icon-time');
                     msg.classList.remove('mck-icon-sent');
                     msg.classList.remove('mck-icon-delivered');
                     msg.classList.add('mck-icon-read');
+                    }
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
                     // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
