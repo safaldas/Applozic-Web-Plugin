@@ -643,7 +643,6 @@
                 contentType: 'application/json',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -671,7 +670,6 @@
                 global: false,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -699,7 +697,6 @@
                              async: (typeof options.async !== 'undefined') ? options.async : true,
                              success: function (response) {
                                 if (options.success) {
-                                    console.log(response);
                                     options.success(response);
                                 }
                             },
@@ -728,7 +725,6 @@
                 contentType: 'application/json',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -755,7 +751,6 @@
                 contentType:'application/json',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -780,7 +775,6 @@
                 global: false,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -806,7 +800,6 @@
                 global: false,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -831,7 +824,6 @@
                 type: 'post',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -861,7 +853,6 @@
                 contentType:'application/json',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -885,7 +876,6 @@
                 type: 'get',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -912,7 +902,6 @@
                 global: false,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -939,7 +928,6 @@
                 global: false,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -985,7 +973,6 @@
                 crosDomain : true,
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -1008,7 +995,6 @@
                 type: 'post',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -1035,7 +1021,6 @@
                 contentType: 'text/plain',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
@@ -1060,13 +1045,11 @@
                 type: 'get',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
                 error: function (response) {
                     if (options.error) {
-                        console.log(response);
                         options.success(response);
                     }
                 }
@@ -1108,13 +1091,11 @@
                 type: 'get',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
                 error: function (response) {
                     if (options.error) {
-                        console.log(response);
                         options.success(response);
                     }
                 }
@@ -1151,13 +1132,11 @@
                         type: 'get',
                         success: function (response) {
                             if (options.success) {
-                                console.log(response);
                                 options.success(response);
                             }
                         },
                         error: function (response) {
                             if (options.error) {
-                                console.log(response);
                                 options.success(response);
                             }
                         }
@@ -1178,13 +1157,11 @@
                 type: 'get',
                 success: function (response) {
                     if (options.success) {
-                        console.log(response);
                         options.success(response);
                     }
                 },
                 error: function (response) {
                     if (options.error) {
-                        console.log(response);
                         options.success(response);
                     }
                 }
@@ -1215,13 +1192,11 @@
                         type: 'get',
                         success: function (response) {
                             if (options.success) {
-                                console.log(response);
                                 options.success(response);
                             }
                         },
                         error: function (response) {
                             if (options.error) {
-                                console.log(response);
                                 options.success(response);
                             }
                         }
@@ -1244,13 +1219,11 @@
                         contentType: 'application/json',
                         success: function (response) {
                             if (options.success) {
-                                console.log(response);
                                 options.success(response);
                             }
                         },
                         error: function (response) {
                             if (options.error) {
-                                console.log(response);
                                 options.success(response);
                             }
                         }
