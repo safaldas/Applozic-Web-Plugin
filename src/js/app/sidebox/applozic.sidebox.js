@@ -1894,7 +1894,7 @@ window.onload = function() {
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
-                    (IS_REINITIALIZE) ? window.Applozic.ALSocket.reconnect(): window.Applozic.ALSocket.init(MCK_APP_ID, data, events);
+                    (IS_REINITIALIZE) ? window.Applozic.ALSocket.reconnect(MCK_APP_ID, data, events): window.Applozic.ALSocket.init(MCK_APP_ID, data, events);
                     // mckGroupService.loadGroups();
                 }
                 mckMessageLayout.createContactWithDetail({
@@ -4428,7 +4428,11 @@ window.onload = function() {
                         $mck_msg_form.removeClass('vis').addClass('n-vis');
                     }
                     var subscribeId = params.isGroup ? params.tabId : MCK_USER_ID;
-                    window.Applozic.ALSocket.subscibeToTypingChannel(subscribeId);
+                    var data ={};
+                    data.token = MCK_TOKEN ;
+                    data.deviceKey = USER_DEVICE_KEY;
+                    data.websocketUrl = MCK_WEBSOCKET_URL;
+                    window.Applozic.ALSocket.subscibeToTypingChannel(subscribeId,data,MCK_APP_ID, events);
                     if (typeof MCK_ON_TAB_CLICKED === 'function') {
                         MCK_ON_TAB_CLICKED({
                             tabId: params.tabId,
@@ -6900,7 +6904,11 @@ window.onload = function() {
                         $mck_tab_message_option.removeClass('vis').addClass('n-vis');
                         $mck_tab_option_panel.removeClass('vis').addClass('n-vis');
                         if (typeof OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] === 'undefined') {
-                            window.Applozic.ALSocket.subscribeToOpenGroup(group);
+                            var data ={};
+                            data.token = MCK_TOKEN ;
+                            data.deviceKey = USER_DEVICE_KEY;
+                            data.websocketUrl = MCK_WEBSOCKET_URL;
+                            window.Applozic.ALSocket.subscribeToOpenGroup(group,MCK_APP_ID, data, events);
                         }
                     }
                     if (group.adminName === MCK_USER_ID) {
