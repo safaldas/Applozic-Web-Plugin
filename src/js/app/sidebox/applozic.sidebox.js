@@ -692,12 +692,16 @@ window.onload = function() {
                             }
                         } else {
                             var htmlId = mckContactUtils.formatContactId(userId);
-                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('n-vis');
-                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('vis');
+                            if (document.querySelector("#li-user-" + htmlId + " .mck-ol-status")) {
+                                document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('n-vis');
+                                document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('vis');
+                            }
                         }
-                        document.querySelector('.mck-user-ol-status.' + htmlId).classList.remove('n-vis');
-                        document.querySelector('.mck-user-ol-status.' + htmlId).classList.add('vis');
-                        document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
+                        if (document.querySelector('.mck-user-ol-status.' + htmlId)) {
+                            document.querySelector('.mck-user-ol-status.' + htmlId).classList.remove('n-vis');
+                            document.querySelector('.mck-user-ol-status.' + htmlId).classList.add('vis');
+                            document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
+                        }
                         w.MCK_OL_MAP[userId] = true;
                         mckUserUtils.updateUserStatus({
                             'userId': resp.message,
@@ -723,11 +727,15 @@ window.onload = function() {
                                 mckInit.manageOfflineMessageTime(tabId);
                             }
                         }
-                        document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis');
-                        document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.add('n-vis');
-                        document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
-                        document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis');
-                        document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('n-vis');
+                        if (document.querySelector(".mck-user-ol-status." + contact.htmlId)) {
+                            document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis');
+                            document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.add('n-vis');
+                            document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
+                        }
+                        if (document.querySelector("#li-user-" + htmlId + " .mck-ol-status")) {
+                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis');
+                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('n-vis');
+                        }
                         mckUserUtils.updateUserStatus({
                             'userId': userId,
                             'status': 0,
