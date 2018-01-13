@@ -538,8 +538,9 @@ window.onload = function() {
                     if (messageType === "APPLOZIC_03") {
                         ALStorage.updateLatestMessage(message);
                         if (message.type !== 0 && message.type !== 4) {
-                            document.querySelector("." + message.key + " .mck-message-status").classList.remove('mck-icon-time');
-                            document.querySelector("." + message.key + " .mck-message-status").classList.add('mck-icon-sent');
+                            var msg = document.getElementById(message.key).getElementsByClassName("mck-message-status")[0];
+                            msg.classList.remove('mck-icon-time');
+                            msg.classList.add('mck-icon-sent');
                             mckMessageLayout.addTooltip(message.key);
                         }
                         events.onMessageSentUpdate({
@@ -632,9 +633,6 @@ window.onload = function() {
                     msg.classList.remove('mck-icon-sent');
                     msg.classList.add('mck-icon-delivered');
                     }
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-sent');
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-delivered');
                     mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                     events.onMessageDelivered({
                         'messageKey': resp.message.split(",")[0]
@@ -647,10 +645,6 @@ window.onload = function() {
                     msg.classList.remove('mck-icon-delivered');
                     msg.classList.add('mck-icon-read');
                     }
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-time');
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-sent');
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.remove('mck-icon-delivered');
-                    // document.querySelector("." + resp.message.split(",")[0] + " .mck-message-status").classList.add('mck-icon-read');
                     mckMessageLayout.addTooltip(resp.message.split(",")[0]);
                     events.onMessageRead({
                         'messageKey': resp.message.split(",")[0]
@@ -692,14 +686,10 @@ window.onload = function() {
                             }
                         } else {
                             var htmlId = mckContactUtils.formatContactId(userId);
-                            if (document.querySelector("#li-user-" + htmlId + " .mck-ol-status")) {
-                                document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('n-vis');
-                                document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('vis');
-                            }
+                            showElement(document.querySelector("#li-user-" + htmlId + " .mck-ol-status"));
                         }
+                        hideElement(document.querySelector('.mck-user-ol-status.' + htmlId));
                         if (document.querySelector('.mck-user-ol-status.' + htmlId)) {
-                            document.querySelector('.mck-user-ol-status.' + htmlId).classList.remove('n-vis');
-                            document.querySelector('.mck-user-ol-status.' + htmlId).classList.add('vis');
                             document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
                         }
                         w.MCK_OL_MAP[userId] = true;
@@ -727,15 +717,11 @@ window.onload = function() {
                                 mckInit.manageOfflineMessageTime(tabId);
                             }
                         }
+                        hideElement(document.querySelector(".mck-user-ol-status." + contact.htmlId));
                         if (document.querySelector(".mck-user-ol-status." + contact.htmlId)) {
-                            document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.remove('vis');
-                            document.querySelector(".mck-user-ol-status." + contact.htmlId).classList.add('n-vis');
                             document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
                         }
-                        if (document.querySelector("#li-user-" + htmlId + " .mck-ol-status")) {
-                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.remove('vis');
-                            document.querySelector("#li-user-" + htmlId + " .mck-ol-status").classList.add('n-vis');
-                        }
+                        hideElement(document.querySelector("#li-user-" + htmlId + " .mck-ol-status"));
                         mckUserUtils.updateUserStatus({
                             'userId': userId,
                             'status': 0,
@@ -754,8 +740,7 @@ window.onload = function() {
                     var tabId = mck_message_inner.data('mck-id');
                     if ((typeof tabId === "undefined") || tabId === '') {
                         document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-text").innerHTML = mckMessageLayout.getUnreadCount('user_' + contact.contactId);
-                        document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.remove('vis');
-                        document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box").classList.add('n-vis');
+                        hideElement(document.querySelector("#li-user-" + contact.htmlId + " .mck-unread-count-box"));
                     }
                     var response = {
                         'userId': userId
@@ -816,8 +801,7 @@ window.onload = function() {
                             mck_typing_box.classList.add('n-vis');
                         }
                     } else {
-                        document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.remove('vis');
-                        document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status").classList.add('n-vis');
+                        hideElement(document.querySelector("#li-user-" + contact.htmlId + " .mck-ol-status"));
                     }
                     events.onUserBlocked({
                         'status': status,
@@ -846,8 +830,7 @@ window.onload = function() {
                             }
                         }
                     } else if (w.MCK_OL_MAP[tabId]) {
-                        document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.remove('n-vis');
-                        document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status').classList.add('vis');
+                        showElement(document.querySelector('#li-user-' + contact.htmlId + ' .mck-ol-status'));
                     }
                     events.onUserUnblocked({
                         'status': status,
@@ -1732,6 +1715,20 @@ window.onload = function() {
                 'conversationId': params.conversationId
             });
         };
+
+        function showElement(element) {
+            if (element) {
+                element.classList.remove('n-vis');
+                element.classList.add('vis');
+            }
+
+        }
+        function hideElement(element) {
+            if (element) {
+                element.classList.remove('vis');
+                element.classList.add('n-vis');
+            }
+        }
 
         function MckInit() {
             var _this = this;
