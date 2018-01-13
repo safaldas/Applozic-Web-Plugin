@@ -132,20 +132,20 @@
             }
             subscriber = null;
         };
-        ALSocket.subscibeToTypingChannel = function(subscribeId,MCK_APP_ID, data, events) {
+        ALSocket.subscibeToTypingChannel = function(subscribeId,MCK_APP_ID, data, _events) {
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 ALSocket.typingSubscriber = ALSocket.stompClient.subscribe("/topic/typing-" + MCK_APP_ID + "-" + subscribeId, ALSocket.onTypingStatus);
             } else {
-                ALSocket.reconnect(MCK_APP_ID, data, events);
+                ALSocket.reconnect(MCK_APP_ID, data, _events);
             }
         };
-        ALSocket.subscribeToOpenGroup = function(group,MCK_APP_ID, data, events) {
+        ALSocket.subscribeToOpenGroup = function(group,MCK_APP_ID, data, _events) {
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 var subs = ALSocket.stompClient.subscribe("/topic/group-" + MCK_APP_ID + "-" + group.contactId, ALSocket.onOpenGroupMessage);
                 openGroupSubscriber.push(subs.id);
                 OPEN_GROUP_SUBSCRIBER_MAP[group.contactId] = subs.id;
             } else {
-                ALSocket.reconnect(MCK_APP_ID, data, events);
+                ALSocket.reconnect(MCK_APP_ID, data, _events);
             }
         };
         ALSocket.sendTypingStatus = function(status, mck_typing_status,MCK_USER_ID,tabId) {
@@ -180,11 +180,11 @@
                 events.onTypingStatus(resp);                
             }
         };
-        ALSocket.reconnect = function(MCK_APP_ID, data, events) {
+        ALSocket.reconnect = function(MCK_APP_ID, data, _events) {
             ALSocket.unsubscibeToTypingChannel();
             ALSocket.unsubscibeToNotification();
             ALSocket.disconnect();
-            ALSocket.init(MCK_APP_ID, data, events);
+            ALSocket.init(MCK_APP_ID, data, _events);
         };
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
