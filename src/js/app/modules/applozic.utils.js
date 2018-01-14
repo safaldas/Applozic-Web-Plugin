@@ -330,6 +330,19 @@ function MckUtils() {
             success: function (data) { }
         });
     }
+    _this.showElement = function(element) {
+        if (element) {
+            element.classList.remove('n-vis');
+            element.classList.add('vis');
+        }
+
+    }
+    _this.hideElement= function(element) {
+        if (element) {
+            element.classList.remove('vis');
+            element.classList.add('n-vis');
+        }
+    };
     _this.randomId = function () {
         return w.Math.random().toString(36).substring(7);
     };
