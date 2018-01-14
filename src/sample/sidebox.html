@@ -787,7 +787,7 @@
 
 					$applozic.fn
 						.applozic({
-							baseUrl:"https://apps-test.applozic.com/applozic",
+							// baseUrl:"https://apps.applozic.com/applozic",
 							userId : 'debug4', //TODO: replace with actual userId
 							userName : 'debug4',    //TODO: replace with actual userName
 							appId : 'applozic-sample-app',  //TODO: replace with actual appId
@@ -803,11 +803,12 @@
 							maxAttachmentSize : 25, //max attachment size in MB
 							desktopNotification : true,
 							locShare : true,
+							// olStatus: true,  
 							onTopicDetails: function(topic) { console.log(topic); },
 							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",
 							// video: true,
-							topicBox: true,
-							disableSelfChat:true
+							topicBox: true
+							// disableSelfChat:true
 							/* groupUserCount: false,
 							defaultMessageMetaData: {'eventId' : '123'},
 						     openGroupSettings: {
