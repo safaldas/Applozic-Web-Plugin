@@ -4,7 +4,7 @@
 
 Usages:
 
-1. Clone this repository : ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin```
+1. Clone this repository : ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin.git```
 
 2. Open Terminal and navigate to "Applozic-Web-Plugin/demo".
 
