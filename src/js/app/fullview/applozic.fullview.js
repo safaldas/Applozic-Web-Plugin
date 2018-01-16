@@ -2489,17 +2489,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var contact = mckMessageLayout.fetchContact(tabId);
                     _this.addMessageToTab(messagePxy, contact);
                 }
-                mckUtils.ajax({
-                    type: 'GET',
-                    url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
-                    global: false,
-                    data: 'sender=' + encodeURIComponent(params.sender) + "&messageContent=" + encodeURIComponent(params.messageContent),
-                    contentType: 'text/plain',
-                    success: function(data) {
+                window.Applozic.ALApiService.addMessageInbox({
+                    data: { sender: params.sender, messageContent: params.messageContent }, success: function (result) {
                         if (params.callback) {
                             params.callback(data);
                         }
-                    }
+                    }, error: function () { }
                 });
             };
             _this.submitMessage = function(messagePxy, optns) {
@@ -2522,12 +2517,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
                 messagePxy.metadata = metadata;
-                mckUtils.ajax({
-                    type: 'POST',
-                    url: MCK_BASE_URL + MESSAGE_SEND_URL,
-                    global: false,
-                    data: w.JSON.stringify(messagePxy),
-                    contentType: 'application/json',
+                window.Applozic.ALApiService.sendMessage({
+                    data: {message: messagePxy},
                     success: function(data) {
                         var currentTabId = $mck_msg_inner.data('mck-id');
                         if (typeof data === 'object') {
@@ -2621,15 +2612,14 @@ var MCK_CLIENT_GROUP_MAP = [];
             });
 
 
-            _this.deleteMessage = function(msgKey) {
+            _this.deleteMessage = function (msgKey) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data("isgroup");
                 if (typeof tabId !== 'undefined') {
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + msgKey,
-                        type: 'get',
-                        success: function(data) {
+                    window.Applozic.ALApiService.deleteMessage({
+                        data: { key: msgKey },
+                        success: function (data) {
                             if (data === 'success') {
                                 var currentTabId = $mck_msg_inner.data('mck-id');
                                 if (currentTabId === tabId) {
@@ -2655,7 +2645,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     });
                 }
             };
-            _this.deleteConversation = function() {
+            _this.deleteConversation = function () {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data("isgroup");
@@ -2665,12 +2655,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (conversationId) {
                         data += "&conversationId=" + conversationId;
                     }
-                    mckUtils.ajax({
-                        type: "get",
-                        url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
-                        global: false,
+                    window.Applozic.ALApiService.deleteConversation({
                         data: data,
-                        success: function() {
+                        success: function () {
                             var currentTabId = $mck_msg_inner.data('mck-id');
                             if (currentTabId === tabId) {
                                 $mck_msg_inner.html('');
@@ -2682,9 +2669,9 @@ var MCK_CLIENT_GROUP_MAP = [];
                             var contHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
                             $applozic("#li-" + contHtmlExpr + " .mck-cont-msg-wrapper").html('');
                             $applozic("#li-" + contHtmlExpr + " .time").html('');
-                           // mckStorage.clearMckMessageArray();
+                            // mckStorage.clearMckMessageArray();
                         },
-                        error: function() {}
+                        error: function () { }
                     });
                 }
             };
@@ -2803,21 +2790,19 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }
                 });
             };
-_this.getReplyMessageByKey = function(msgkey) {
-    var replyMsg = mckStorage.getMessageByKey(msgkey);
-      if (typeof replyMsg === "undefined" ) {
-                mckUtils.ajax({
-                        url: MCK_BASE_URL + UPDATE_REPLY_MAP,
+            _this.getReplyMessageByKey = function (msgkey) {
+                var replyMsg = mckStorage.getMessageByKey(msgkey);
+                if (typeof replyMsg === "undefined") {
+                    window.Applozic.ALApiService.updateReplyMessage({
+                        data: { key: msgkey },
                         async: false,
-                        type: 'get',
-                        data: "keys=" + msgkey,
-                        success: function(data) {
-                        mckStorage.updateMckMessageArray(data);
-                          }
+                        success: function (data) {
+                            ALStorage.updateMckMessageArray(data);
+                        }
                     });
-}
-      return  mckStorage.getMessageByKey(msgkey) ;
-};
+                }
+                return mckStorage.getMessageByKey(msgkey);
+            };
 
             _this.loadMessageList = function(params, callback) {
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
@@ -3110,42 +3095,30 @@ _this.getReplyMessageByKey = function(msgkey) {
                 });
             };
             _this.sendDeliveryUpdate = function(message) {
-                var data = "key=" + message.pairedMessageKey;
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
-                    data: data,
-                    global: false,
-                    type: 'get',
+                window.Applozic.ALApiService.sendDeliveryUpdate({
+                    data : {key: message.pairedMessageKey},
                     success: function() {},
                     error: function() {}
                 });
             };
-            _this.sendReadUpdate = function(key) {
+            _this.sendReadUpdate = function (key) {
                 if (typeof key !== "undefined" && key !== '') {
-                    var data = "key=" + key;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        success: function() {},
-                        error: function() {}
+                    window.Applozic.ALApiService.sendReadUpdate({
+                        data: { key: key },
+                        success: function () { },
+                        error: function () { }
                     });
                 }
             };
-            _this.conversationReadUpdate = function(tabId, isGroup) {
+            _this.conversationReadUpdate = function (tabId, isGroup) {
                 var ucTabId = (isGroup) ? 'group_' + tabId : 'user_' + tabId;
                 if (tabId && (mckMessageLayout.getUnreadCount(ucTabId) > 0)) {
                     var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
+                    window.Applozic.ALApiService.conversationReadUpdate({
                         data: data,
-                        global: false,
-                        type: 'get',
-                        success: function() {
+                        success: function (response) {
                             mckMessageLayout.updateUnreadCount(ucTabId, 0, true);
-                        },
-                        error: function() {}
+                        }, error: function () { }
                     });
                 }
             };
@@ -3185,13 +3158,9 @@ _this.getReplyMessageByKey = function(msgkey) {
                     if (params.fallBackTemplatesList && params.fallBackTemplatesList.length > 0) {
                         conversationPxy.fallBackTemplatesList = params.fallBackTemplatesList;
                     }
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_ID_URL,
-                        global: false,
-                        data: w.JSON.stringify(conversationPxy),
-                        type: 'post',
-                        contentType: 'application/json',
-                        success: function(data) {
+                    window.Applozic.ALApiService.getConversationId({
+                        data: conversationPxy,
+                        success: function (data) {
                             if (typeof data === 'object' && data.status === "success") {
                                 var groupPxy = data.response;
                                 if (typeof groupPxy === 'object' && groupPxy.conversationPxy !== 'undefined') {
@@ -3316,13 +3285,8 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.getTopicId = function(params) {
                 if (params.conversationId) {
                     var data = "id=" + params.conversationId;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + TOPIC_ID_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        async: (typeof params.async !== 'undefined') ? params.async : true,
-                        success: function(data) {
+                    window.Applozic.ALApiService.getTopicId({data: {"conversationId":params.conversationId}, 
+                    success: function (result) {
                             if (typeof data === 'object' && data.status === 'success') {
                                 var conversationPxy = data.response;
                                 if (typeof conversationPxy === 'object') {
@@ -3362,16 +3326,13 @@ _this.getReplyMessageByKey = function(msgkey) {
                     });
                 }
             };
-            _this.sendConversationCloseUpdate = function(conversationId) {
+            _this.sendConversationCloseUpdate = function (conversationId) {
                 if (conversationId) {
                     var data = "id=" + conversationId;
-                    mckUtils.ajax({
-                        url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
-                        data: data,
-                        global: false,
-                        type: 'get',
-                        success: function() {},
-                        error: function() {}
+                    window.Applozic.ALApiService.sendConversationCloseUpdate({
+                        conversationId: conversationId,
+                        success: function (result) { },
+                        error: function () { }
                     });
                 }
             };
@@ -5714,60 +5675,38 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
             var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
             var USER_STATUS_URL = "/rest/ws/user/chat/status";
-            _this.getContactDisplayName = function(userIdArray) {
+            _this.getContactDisplayName = function (userIdArray) {
                 var mckContactNameArray = [];
-                if (userIdArray.length > 0 && userIdArray[0]) {
-                    var data = '';
-                    var uniqueUserIdArray = userIdArray.filter(function(item, pos) {
-                        return userIdArray.indexOf(item) === pos;
-                    });
-                    for (var i = 0; i < uniqueUserIdArray.length; i++) {
-                        var userId = uniqueUserIdArray[i];
-                        if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
-                            data += "userIds=" + encodeURIComponent(userId) + "&";
+                window.Applozic.ALApiService.getContactDisplayName({
+                    data: { "userIdArray": userIdArray },
+                    success: function (data) {
+                        for (var userId in data) {
+                            if (data.hasOwnProperty(userId)) {
+                                mckContactNameArray.push([userId, data[userId]]);
+                                MCK_CONTACT_NAME_MAP[userId] = data[userId];
+                                var contact = mckMessageLayout.fetchContact(userId);
+                                contact.displayName = data[userId];
+                            }
                         }
-                    }
-                    if (data.lastIndexOf("&") === data.length - 1) {
-                        data = data.substring(0, data.length - 1);
-                    }
-                    if (data) {
-                        mckUtils.ajax({
-                            url: MCK_BASE_URL + CONTACT_NAME_URL,
-                            data: data,
-                            global: false,
-                            type: 'get',
-                            success: function(data) {
-                                for (var userId in data) {
-                                    if (data.hasOwnProperty(userId)) {
-                                        mckContactNameArray.push([userId, data[userId]]);
-                                        MCK_CONTACT_NAME_MAP[userId] = data[userId];
-                                        var contact = mckMessageLayout.fetchContact(userId);
-                                        contact.displayName = data[userId];
-                                    }
-                                }
-                                mckStorage.updateMckContactNameArray(mckContactNameArray);
-                            },
-                            error: function() {}
-                        });
-                    }
-                }
+                        mckStorage.updateMckContactNameArray(mckContactNameArray);
+                    },
+                    error: function () { }
+                });
             };
-            _this.loadContacts = function() {
+            _this.loadContacts = function () {
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
                 $mck_search_List.html('');
                 var mckContactNameArray = [];
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=30&orderBy=1",
-                    type: 'get',
-                    global: false,
-                    success: function(data) {
+                window.Applozic.ALApiService.getContactList({
+                    url: '?startIndex=0&pageSize=30&orderBy=1',
+                    success: function (data) {
                         $mck_search_loading.removeClass('vis').addClass('n-vis');
                         if ($mck_sidebox_search.length == 0 || $mck_sidebox_search.hasClass('vis')) {
                             if (data === null || data.length === 0) {
                                 $mck_search_inner.html('<div class="mck-no-data-text mck-text-muted">No contacts yet!</div>');
                             } else if (typeof data === 'object' && data.users.length > 0) {
 
-                                $applozic.each(data.users, function(i, user) {
+                                $applozic.each(data.users, function (i, user) {
                                     if (typeof user.userId !== 'undefined') {
                                         var contact = mckMessageLayout.getContact('' + user.userId);
                                         contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
@@ -5792,7 +5731,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             return;
                         }
                     },
-                    error: function() {
+                    error: function () {
                         $mck_search_loading.removeClass('vis').addClass('n-vis');
                         w.console.log('Unable to load contacts. Please reload page.');
                     }
@@ -5844,14 +5783,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 }
 
                 var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_DETAIL_URL,
-                    type: 'post',
-                    async: (typeof params.async !== 'undefined') ? params.async : true,
-                    data: JSON.stringify({
-                        userIdList: userIdList
-                    }),
-                    contentType: 'application/json',
+                window.Applozic.ALApiService.getUserDetail({data:{userIdList: userIdList},
                     success: function(data) {
                         if (data.status === 'success') {
                             if (data.response.length > 0) {
@@ -5894,15 +5826,13 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     }
                 });
             };
-            _this.getUserStatus = function(params) {
+            _this.getUserStatus = function (params) {
                 var response = new Object();
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_STATUS_URL,
-                    type: 'get',
-                    success: function(data) {
+                window.Applozic.ALApiService.getUserStatus({
+                    success: function (data) {
                         if (data.users.length > 0) {
                             MCK_GROUP_MEMBER_SEARCH_ARRAY = [];
-                            $applozic.each(data.users, function(i, user) {
+                            $applozic.each(data.users, function (i, user) {
                                 var contact = mckMessageLayout.getContact('' + user.userId);
                                 contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
                                 MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
@@ -5915,7 +5845,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                         }
                         return;
                     },
-                    error: function() {
+                    error: function () {
                         response.status = "error";
                         if (params.callback) {
                             params.callback(response);
@@ -7293,19 +7223,17 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                                 $file_remove.trigger('click');
                             }
                         });
-                        $applozic.ajax({
-                            type: "GET",
-                            url: MCK_FILE_URL + FILE_UPLOAD_URL,
-                            global: false,
-                            data: "data=" + new Date().getTime(),
-                            crosDomain: true,
-                            success: function(result) {
+                        var url = MCK_FILE_URL + FILE_UPLOAD_URL;
+
+                        window.Applozic.ALApiService.fileUpload({
+                            data: { url: url },
+                            success: function (result) {
                                 var fd = new FormData();
                                 fd.append('files[]', file);
                                 xhr.open("POST", result, true);
                                 xhr.send(fd);
                             },
-                            error: function() {}
+                            error: function () { }
                         });
                     }
                     return false;
@@ -7377,12 +7305,10 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     xhr.send(data);
                 }
             };
-            _this.deleteFileMeta = function(blobKey) {
-                mckUtils.ajax({
-                    url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
-                    type: 'post',
-                    success: function() {},
-                    error: function() {}
+            _this.deleteFileMeta = function (blobKey) {
+                window.Applozic.ALApiService.deleteFileMeta({
+                    data: { blobKey: blobKey, url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey, },
+                    success: function (response) { console.log(response); }, error: function () { }
                 });
             };
             _this.getFilePreviewPath = function(fileMeta) {
