@@ -1215,89 +1215,89 @@ var MCK_CLIENT_GROUP_MAP = [];
                 USER_DEVICE_KEY = '';
                 var isValidated = _this.validateAppSession(userPxy);
                 if (!isValidated) {
-                    $applozic.ajax({
-                        url: MCK_BASE_URL + INITIALIZE_APP_URL,
-                        type: 'post',
-                        data: w.JSON.stringify(userPxy),
-                        contentType: 'application/json',
-                        headers: {
-                            'Application-Key': MCK_APP_ID
-                        },
-                        success: function(result) {
-                             if (IS_CALL_ENABLED) {
-                                mckCallService.InitilizeVideoClient(result.userId, result.deviceKey);
-                            }
-                            mckStorage.clearMckMessageArray();
-                            mckStorage.clearMckContactNameArray();
-                            if (result === "INVALID_PASSWORD") {
-                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                    MCK_ON_PLUGIN_INIT({
-                                        'status': 'error',
-                                        'errorMessage': 'INVALID PASSWORD'
-                                    });
-                                }
-                                return;
-                            } else if (result === 'INVALID_APPID') {
-                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                    MCK_ON_PLUGIN_INIT({
-                                        'status': 'error',
-                                        'errorMessage': 'INVALID APPLICATION ID'
-                                    });
-                                }
-                                return;
-                            } else if (result === 'error' || result === 'USER_NOT_FOUND') {
-                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                    MCK_ON_PLUGIN_INIT({
-                                        'status': 'error',
-                                        'errorMessage': 'USER NOT FOUND'
-                                    });
-                                }
-                                return;
-                            } else if (result === 'APPMODULE_NOT_FOUND') {
-                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                    MCK_ON_PLUGIN_INIT({
-                                        'status': 'error',
-                                        'errorMessage': 'APPMODULE NOT FOUND'
-                                    });
-                                }
-                                return;
-                            }
-                            if (typeof result === 'object' && result !== null && result.token) {
-                                if (optns.imageLink) {
-                                    $mck_user_icon.html('<img src=" ' + optns.imageLink + '" />');
-                                    $mck_user_icon.parents('.mck-box-top').removeClass('mck-wt-user-icon');
-                                }
-                                result.appId = userPxy.applicationId;
-                                if (MCK_ACCESS_TOKEN) {
-                                    result.accessToken = userPxy.password;
-                                }
-                                _this.onInitApp(result);
-                                // mckUtils.manageIdleTime();
-                            } else {
-                                if (typeof MCK_ON_PLUGIN_INIT === 'function') {
-                                    MCK_ON_PLUGIN_INIT({
-                                        'status': 'error',
-                                        'errorMessage': 'UNABLE TO PROCESS REQUEST'
-                                    });
-                                }
-                            }
-                        },
-                        error: function() {
-                            mckStorage.clearMckMessageArray();
-                            if (typeof MCK_ON_PLUGIN_INIT === "function") {
-                                MCK_ON_PLUGIN_INIT({
-                                    'status': 'error',
-                                    'errorMessage': 'UNABLE TO PROCESS REQUEST'
-                                });
+                    userPxy.applicationId =  MCK_APP_ID;
+                    window.Applozic.ALApiService.initServerUrl(MCK_BASE_URL);
+                    window.Applozic.ALApiService.login(
+                        {
+                            data: {alUser: userPxy,baseUrl: MCK_BASE_URL},
+                            success: function(result) {
+                                _this.onLoginSuccess(result, userPxy);
+                            },
+                            error: function(response) {
+                                _this.onLoginFailure();
                             }
                         }
-                    });
+                    );
                   } else {
                         if (IS_CALL_ENABLED) {
                                 mckCallService.InitilizeVideoClient(MCK_USER_ID, USER_DEVICE_KEY);
                             }
                    }
             };
+            _this.onLoginSuccess = function(result, userPxy) {
+                if (IS_CALL_ENABLED) {
+                    mckCallService.InitilizeVideoClient(result.userId, result.deviceKey);
+                }
+                ALStorage.clearMckMessageArray();
+                ALStorage.clearMckContactNameArray();
+                if (result === "INVALID_PASSWORD") {
+                    if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        MCK_ON_PLUGIN_INIT({
+                            'status': 'error',
+                            'errorMessage': 'INVALID PASSWORD'
+                        });
+                    }
+                    return;
+                } else if (result === 'INVALID_APPID') {
+                    if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        MCK_ON_PLUGIN_INIT({
+                            'status': 'error',
+                            'errorMessage': 'INVALID APPLICATION ID'
+                        });
+                    }
+                    return;
+                } else if (result === 'error' || result === 'USER_NOT_FOUND') {
+                    if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        MCK_ON_PLUGIN_INIT({
+                            'status': 'error',
+                            'errorMessage': 'USER NOT FOUND'
+                        });
+                    }
+                    return;
+                } else if (result === 'APPMODULE_NOT_FOUND') {
+                    if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        MCK_ON_PLUGIN_INIT({
+                            'status': 'error',
+                            'errorMessage': 'APPMODULE NOT FOUND'
+                        });
+                    }
+                    return;
+                }
+                if (typeof result === 'object' && result !== null && result.token) {
+                    result.appId = userPxy.applicationId;
+                    if (MCK_ACCESS_TOKEN) {
+                        result.accessToken = userPxy.password;
+                    }
+                    _this.onInitApp(result);
+                    // mckUtils.manageIdleTime();
+                } else {
+                    if (typeof MCK_ON_PLUGIN_INIT === 'function') {
+                        MCK_ON_PLUGIN_INIT({
+                            'status': 'error',
+                            'errorMessage': 'UNABLE TO PROCESS REQUEST'
+                        });
+                    }
+                }
+            };
+            _this.onLoginFailure = function() {
+                ALStorage.clearMckMessageArray();
+                if (typeof MCK_ON_PLUGIN_INIT === "function") {
+                    MCK_ON_PLUGIN_INIT({
+                        'status': 'error',
+                        'errorMessage': 'UNABLE TO PROCESS REQUEST'
+                    });
+                }
+            }
             _this.onInitApp = function(data) {
                 _this.appendLauncher();
                 _this.setLabels();
@@ -1319,6 +1319,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
+                mckUtils.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
                     (IS_REINITIALIZE) ? mckInitializeChannel.reconnect(): mckInitializeChannel.init();

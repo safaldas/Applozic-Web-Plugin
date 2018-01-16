@@ -661,8 +661,12 @@
 	<!-- 	<script type="text/javascript" src="autosuggest/js/jquery.caret.min.js"></script>
 	    <script type="text/javascript" src="autosuggest/js/jquery.atwho.min.js"></script> -->
 
-
+	<script type="text/javascript" src="../js/app/modules/applozic.utils.js"></script>		
 	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
+	<script type="text/javascript" src="../js/app/modules/applozic.chat.js"></script>
+	<script type="text/javascript" src="../js/app/modules/storage/applozic.storage.js"></script>
+	<script type="text/javascript" src="../js/app/modules/api/applozic.api.js"></script>
+	<script type="text/javascript" src="../js/app/modules/socket/applozic.socket.js"></script>
 	<script type="text/javascript"
 		src="../js/app/fullview/applozic.fullview.js"></script>
 	<script type="text/javascript">
@@ -805,11 +809,11 @@
 							$applozic.fn
 									.applozic({
 
-										baseUrl : 'https://apps.applozic.com',
-								    userId : 'debug454545', //TODO: replace userId with actual UserId
-								    userName : 'test',			//TODO: replace userId with actual UserName
+										// baseUrl : 'https://apps-test.applozic.com',
+								    userId : 'debug4', //TODO: replace userId with actual UserId
+								    userName : 'debug4',			//TODO: replace userId with actual UserName
 										appId : 'applozic-sample-app',			//TODO: replace appId with your applicationId
-										accessToken: 'suraj',								//TODO: set user access token.for new user it will create new access token
+										accessToken: 'debug4',								//TODO: set user access token.for new user it will create new access token
 
 										ojq : $original,
 										obsm : oModal,
@@ -825,7 +829,7 @@
 										maxAttachmentSize : 25, //max attachment size in MB
 										desktopNotification : true,
 										locShare : true,
-										video:true,
+										// video:true,
 										topicBox : true,
 										mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
 										googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4" // replace it with your Google API key
