@@ -44,6 +44,10 @@
         var USER_STATUS_URL = "/rest/ws/user/chat/status";
         var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
         var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
+        var ACCESS_TOKEN ;
+        var DEVICE_KEY;
+        var APP_MODULE_NAME;
+        var AUTH_CODE;
 
         function getAsUriParameters(data) {
             var url = '';
@@ -68,7 +72,7 @@
             MCK_APP_ID = options.data.alUser.applicationId;
             MCK_BASE_URL = options.data.baseUrl;
 
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
                 type: 'post',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -79,8 +83,11 @@
                 },
                 success: function (response) {
                     mckUtils.setEncryptionKey(response.encryptionKey);
-                    var AUTH_CODE = btoa(response.userId + ':' + response.deviceKey);
-                    mckUtils.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
+                     AUTH_CODE = btoa(response.userId + ':' + response.deviceKey);
+                    DEVICE_KEY = response.deviceKey;
+                    ACCESS_TOKEN =options.data.alUser.password;
+                    APP_MODULE_NAME =options.data.alUser.appModuleName;
+                    ALApiService.setAjaxHeaders(AUTH_CODE, MCK_APP_ID, response.deviceKey, options.data.alUser.password, options.data.alUser.appModuleName);
 
                     if (options.success) {
                         options.success(response);
@@ -93,6 +100,133 @@
                 }
             });
         }
+        ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
+            MCK_APP_ID = appId;
+            AUTH_CODE = authcode;
+            DEVICE_KEY = devKey;
+            ACCESS_TOKEN =accToken;
+            APP_MODULE_NAME =modName;
+        }
+        ALApiService.ajax = function (options) {
+            
+                    function extend() {
+                        for (var i = 1; i < arguments.length; i++)
+                            for (var key in arguments[i])
+                                if (arguments[i].hasOwnProperty(key))
+                                    arguments[0][key] = arguments[i][key];
+                        return arguments[0];
+                    }
+            
+                    var reqOptions = extend({}, {}, options);
+            
+                    if (mckUtils.getEncryptionKey()) {
+                        var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
+                        var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            
+                        if (reqOptions.type.toLowerCase() === 'post') {
+                            // encrypt Data
+                            while (options.data.length % 16 != 0) {
+                                options.data += ' ';
+                            }
+                            var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+                            var bytes = aesjs.util.convertStringToBytes(options.data);
+                            var encryptedBytes = aesCtr.encrypt(bytes);
+                            var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
+                            reqOptions.data = btoa(encryptedStr);
+                        }
+            
+                        reqOptions.success = function (data) {
+                            // Decrypt response
+                            var decodedData = atob(data);
+                            var arr = [];
+                            for (var i = 0; i < decodedData.length; i++) {
+                                arr.push(decodedData.charCodeAt(i));
+                            }
+                            var aesCtr = new aesjs.ModeOfOperation.ecb(key);
+                            var decryptedBytes = aesCtr.decrypt(arr);
+                            var res = aesjs.util.convertBytesToString(decryptedBytes);
+                            res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
+                            if (_this.isJsonString(res)) {
+                                options.success(JSON.parse(res));
+                            } else {
+                                options.success(res);
+                            }
+                        }
+                    }
+                    var request = new XMLHttpRequest();
+                    var responsedata;
+                    var asyn = true;
+                    var cttype;
+                    if (typeof reqOptions.async !== 'undefined' || options.async) {
+                        asyn = reqOptions.async;
+                    }
+            
+                    var typ = reqOptions.type.toUpperCase();
+            
+                    if (typ === 'GET' && typeof reqOptions.data !== "undefined") {
+                        reqOptions.url = reqOptions.url + "?" + reqOptions.data;
+                    }
+            
+                    request.open(typ, reqOptions.url, asyn);
+                    if (typ === 'POST'|| typ === 'GET') {
+                        if (typeof reqOptions.contentType === 'undefined') {
+                            cttype = 'application/x-www-form-urlencoded; charset=UTF-8';
+                        } else {
+                            cttype = reqOptions.contentType;
+                        }
+                        request.setRequestHeader('Content-Type', cttype);
+                    }
+            
+            
+                    //authorizationrequestheaders
+                    MCK_BASE_URL = MCK_BASE_URL;
+                    if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
+                        request.setRequestHeader("UserId-Enabled", true);
+            
+                        if (AUTH_CODE) {
+                            request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+                        }
+                        request.setRequestHeader("Application-Key", MCK_APP_ID);
+                        if (DEVICE_KEY) {
+                            request.setRequestHeader("Device-Key", DEVICE_KEY);
+                        }
+                        if (ACCESS_TOKEN) {
+                            request.setRequestHeader("Access-Token", ACCESS_TOKEN);
+                        }
+                        if (APP_MODULE_NAME) {
+                            request.setRequestHeader("App-Module-Name", APP_MODULE_NAME);
+                        }
+                    }
+                    if (typeof reqOptions.data === 'undefined') {
+                        request.send();
+                    } else {
+                        request.send(reqOptions.data);
+                    }
+            
+                    request.onreadystatechange = function () {
+                        if (request.readyState === XMLHttpRequest.DONE) {
+                            if (request.status === 200) {
+                                //success
+                                var contType = request.getResponseHeader("Content-Type");
+                                if (typeof contType === "undefined" || contType === "null" || contType === null) {
+                                    contType = "";
+                                }
+            
+                                if (contType.toLowerCase().indexOf("text/html") != -1) {
+                                    responsedata = request.responseXML;
+                                } else if (contType.toLowerCase().indexOf("application/json") != -1) {
+                                    responsedata = JSON.parse(request.responseText);
+                                } else {
+                                    responsedata = request.responseText;
+                                }
+                                reqOptions.success(responsedata);
+                            } else {
+                                //error
+                                reqOptions.error(responsedata);
+                            }
+                        }
+                    };
+                };
 
         /**
          * Get messages list.
@@ -121,7 +255,7 @@
             }
             var data = getAsUriParameters(options.data);
             var response = new Object();
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + MESSAGE_LIST_URL + "?" + data,
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 type: 'get',
@@ -157,7 +291,7 @@
          * source (optional): 1 - WEB, 5 - DESKTOP_BROWSER, 6 - MOBILE_BROWSER
          */
         ALApiService.sendMessage = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 type: 'POST',
                 url: MCK_BASE_URL + MESSAGE_SEND_URL,
                 global: false,
@@ -183,7 +317,7 @@
          * Applozic.ALApiService.sendDeliveryUpdate({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.sendDeliveryUpdate = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
                 data: "key=" + options.data.key,
                 global: false,
@@ -208,7 +342,7 @@
          * Applozic.ALApiService.sendReadUpdate({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.sendReadUpdate = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
                 data: "key=" + options.data.key,
                 global: false,
@@ -233,7 +367,7 @@
          * Applozic.ALApiService.deleteMessage({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.deleteMessage = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + options.data.key,
                 global: false,
                 type: 'get',
@@ -257,7 +391,7 @@
          * Applozic.ALApiService.updateReplyMessage({data: {key: '5-f4c7860c-684a-4204-942d-2ccd2375f4a0-1508588649594'}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.updateReplyMessage = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + UPDATE_REPLY_MAP + "?keys=" + options.data.key,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -284,7 +418,7 @@
          * Applozic.ALApiService.deleteConversation({data: {groupId: 5694841}, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.deleteConversation = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
                 type: "get",
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -309,7 +443,7 @@
          * Applozic.ALApiService.createGroup({data: {group: {"groupName":"test","users":[{'userId': 'debug3'}, {'userId': 'debug4'}],"type":2,"metadata":{"CREATE_GROUP_MESSAGE":":adminName created group :groupName","REMOVE_MEMBER_MESSAGE":":adminName removed :userName","ADD_MEMBER_MESSAGE":":adminName added :userName","JOIN_MEMBER_MESSAGE":":userName joined","GROUP_NAME_CHANGE_MESSAGE":"Group name changed to :groupName","GROUP_ICON_CHANGE_MESSAGE":"Group icon changed","GROUP_LEFT_MESSAGE":":userName left","DELETED_GROUP_MESSAGE":":adminName deleted group","GROUP_USER_ROLE_UPDATED_MESSAGE":":userName is :role now","GROUP_META_DATA_UPDATED_MESSAGE":"","ALERT":"","HIDE":""}} }, success: function(response) {console.log(response);}, error: function() {}});
          */
         ALApiService.createGroup = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_CREATE_URL,
                 global: false,
                 data: JSON.stringify(options.data.group),
@@ -338,7 +472,7 @@
             if (options.baseUrl) {
                 MCK_BASE_URL = options.baseUrl;
             }
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_LIST_URL,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -362,7 +496,7 @@
          */
         ALApiService.getGroupInfo = function (options) {
             var groupId = (options.data.group.groupId)? "?groupId="+options.data.group.groupId : "?clientGroupId="+options.group.clientGroupId;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_INFO_URL+ groupId,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -387,7 +521,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.addGroupMember = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_ADD_MEMBER_URL,
                 type: 'POST',
                 data: JSON.stringify(options.data.group),
@@ -416,7 +550,7 @@
          */
 
         ALApiService.removeGroupMember = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_REMOVE_MEMBER_URL,
                 type: 'POST',
                 data: JSON.stringify(options.data.group),
@@ -444,7 +578,7 @@
          */
 
         ALApiService.groupLeave = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_LEFT_URL,
                 type: 'POST',
                 data: JSON.stringify(options.data.group),
@@ -472,7 +606,7 @@
          */
 
         ALApiService.groupUpdate = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_UPDATE_URL,
                 type: 'POST',
                 data: JSON.stringify(options.data.group),
@@ -500,7 +634,7 @@
          */
 
         ALApiService.isUserPresentInGroup = function (options) {           
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_IS_USER_PRESENT_URL+ '?userId='+options.data.userId+'&clientGroupId='+options.data.clientGroupId,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -526,7 +660,7 @@
          */
 
         ALApiService.groupUserCount = function (options) {           
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_USER_COUNT_URL+ '?clientGroupIds='+options.data.clientGroupId,
                 type: 'get',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -552,7 +686,7 @@
          */
 
         ALApiService.groupDelete = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_LEFT_URL+"?clientGroupId="+options.data.clientGroupId,
                 type: 'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -576,7 +710,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.createUserFriendList = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + FRIEND_LIST_URL+options.data.group.groupName+"/add/",
                 type: 'POST',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -604,7 +738,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.createOpenFriendList = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + FRIEND_LIST_URL+options.data.group.groupName+"/add/members",
                 type: 'POST',
                 data: JSON.stringify(options.data.group),
@@ -635,7 +769,7 @@
         ALApiService.getFriendList = function (options) {
             var getFriendListUrl = (options.data.type!=="null")?"/get?groupType=9":"/get";
             options.data.url =options.data.url? options.data.url:getFriendListUrl;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + FRIEND_LIST_URL +options.data.groupName +options.data.url,
                 type: 'GET',
                 async: (typeof options.data.async !== 'undefined') ? options.data.async : true,
@@ -662,7 +796,7 @@
          */
         ALApiService.removeUserFromFriendList = function (options) {
             var getFriendListUrl = (options.group.type)?"/remove?userId="+options.group.userId+"&groupType=9":"/remove?userId="+options.group.userId;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL +FRIEND_LIST_URL+options.group.groupName+getFriendListUrl,
                 type: 'Post',
                 contentType: 'application/json',
@@ -689,7 +823,7 @@
          */
         ALApiService.deleteFriendList = function(options) {
             var getFriendListUrl =(options.group.type)?"/delete?groupType=9":"/delete";
-            mckUtils.ajax({
+            ALApiService.ajax({
                              url: MCK_BASE_URL +FRIEND_LIST_URL+options.group.groupName+getFriendListUrl,
                              type: "GET",
                              async:false,
@@ -714,7 +848,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.getUserDetail = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GET_USER_DETAIL_URL,
                 data: JSON.stringify({
                     userIdList: options.data.userIdList
@@ -742,7 +876,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.updateUserDetail = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + UPDATE_USER_DETAIL_URL,
                 data: JSON.stringify(options.data),
                 type:'POST',
@@ -768,7 +902,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.updatePassword = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + UPDATE_PASSWORD_URL+"?oldPassword="+options.data.oldPassword+"&newPassword="+options.data.newPassword,
                 type:'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -793,7 +927,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.getContactList = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + USER_FILTER+options.url,
                 type:'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -819,7 +953,7 @@
          */
 
          ALApiService.userChatMute = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + ONE_TO_ONE_MUTE_URL+"?userId="+options.data.userId+"&notificationAfterTime="+options.data.notificationAfterTime,
                 type: 'post',
                 success: function (response) {
@@ -846,7 +980,7 @@
             var group={};
             group.clientGroupId = options.data.clientGroupId;
             group.notificationAfterTime = options.data.notificationAfterTime;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_MUTE_URL,
                 type: 'post',
                 data: JSON.stringify(group),
@@ -871,7 +1005,7 @@
          */
 
         ALApiService.syncMuteUserList = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + SYNC_MUTE_USER_URL,
                 type: 'get',
                 success: function (response) {
@@ -895,7 +1029,7 @@
          */
 
         ALApiService.blockUser = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + USER_BLOCK_URL+"?userId="+options.data.userId+ "&block=" +options.data.isBlock,
                 type:'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -921,7 +1055,7 @@
          */
 
         ALApiService.unBlockUser = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + USER_UNBLOCK_URL+"?userId="+options.data.userId,
                 type:'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
@@ -948,7 +1082,7 @@
 
         ALApiService.sendConversationCloseUpdate = function(options) {
                 var data = "id=" + options.conversationId;
-                mckUtils.ajax({
+                ALApiService.ajax({
                     url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
                     data: data,
                     global: false,
@@ -965,7 +1099,7 @@
          */
 
         ALApiService.fileUpload = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 type : "GET",
                 url : options.data.url,
                 global : false,
@@ -990,7 +1124,7 @@
           window.Applozic.ALApiService.deleteFileMeta({data:{url:url} , success: function (result) {}, error: function () { } });
          */
         ALApiService.deleteFileMeta = function(options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: options.data.url,
                 type: 'post',
                 success: function (response) {
@@ -1013,7 +1147,7 @@
          */
 
         ALApiService.addMessageInbox = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 type: 'GET',
                 url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
                 global: false,
@@ -1038,7 +1172,7 @@
          */
 
         ALApiService.conversationReadUpdate = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
                 data: options.data,
                 global: false,
@@ -1064,7 +1198,7 @@
 
         ALApiService.sendSubscriptionIdToServer = function (options) {
             var subscriptionId=options.data.subscriptionId ;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
                 type: 'post',
                 data: 'registrationId=' + subscriptionId,
@@ -1086,7 +1220,7 @@
 
         ALApiService.getTopicId = function (options) {
             var conversationId = "id=" + options.data.conversationId ;
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + TOPIC_ID_URL+"?"+conversationId,
                 type: 'get',
                 success: function (response) {
@@ -1125,7 +1259,7 @@
                     data = data.substring(0, data.length - 1);
                 }
                 if (data) {
-                    mckUtils.ajax({
+                    ALApiService.ajax({
                         url: MCK_BASE_URL + CONTACT_NAME_URL,
                         data: data,
                         global: false,
@@ -1152,7 +1286,7 @@
                  */
 
         ALApiService.getUserStatus = function (options) {
-            mckUtils.ajax({
+            ALApiService.ajax({
                 url: MCK_BASE_URL + USER_STATUS_URL,
                 type: 'get',
                 success: function (response) {
@@ -1186,7 +1320,7 @@
                     if (options.data.pageSize) {
                         reqdata += '&pageSize=' + options.data.pageSize;
                     }
-                    mckUtils.ajax({
+                    ALApiService.ajax({
                         url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
                         data: reqdata,
                         type: 'get',
@@ -1211,7 +1345,7 @@
                  */
 
                 ALApiService.getConversationId = function (options) {
-                    mckUtils.ajax({
+                    ALApiService.ajax({
                         url: MCK_BASE_URL + CONVERSATION_ID_URL,
                         global: false,
                         data: w.JSON.stringify(options.data),
