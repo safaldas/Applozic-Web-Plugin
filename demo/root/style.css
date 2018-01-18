@@ -50,8 +50,6 @@ optgroup {
 td, th {
     padding: 0;
 }
-/*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
-
 @media print {
     *, : after, :before {
     color: #000 !important;
@@ -557,6 +555,16 @@ span.dot {
     height: 50px;
     -webkit-transform: translateZ(0);
 }
+.vis{
+    display :block;
+}
+
+.avis{
+    display :inline;
+}
+.n-vis{
+    display: none !important;
+}
 .chat-login-launcher-link {
     box-shadow: 0 0 4px rgba(0, 0, 0, .14), 0 4px 8px rgba(0, 0, 0, .28);
     background-size: 22px 22px;
@@ -844,7 +852,8 @@ p {
     background-color: #f1f4f9;
 }
 .footer-sec-block {
-    padding: 120px 0;
+    padding: 150px 0;
+    display: flow-root;
 }
 .m-20 {
     margin: 20px;
@@ -863,7 +872,7 @@ p {
 }
 @media(max-width:767px) {
 	.form-control, .w-full {
-		width: 100% !important;
+		width: 50% !important;
 	}
 }
 
@@ -872,3 +881,4 @@ p {
     padding: 0;
 }
 }
+
