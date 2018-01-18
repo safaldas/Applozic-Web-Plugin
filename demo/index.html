@@ -1,79 +1,42 @@
-
-
-<!-- Welcome aboard Applozic welcomes you -->
-
+<!--  Applozic Chat Demo  -->
 <!DOCTYPE html>
 <html class="">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Signin to Applozic, a simple and secure &#39;plug n play&#39; 
-        messaging library which allows businesses to integrate messaging into their apps without 
-        building a new infrastructure.">
-        <meta name="author" content="">
-        <meta http-equiv="”content-language”" content="”en-us”">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Custom Fonts -->
+    <!-- <link href="./root/css" rel="stylesheet" type="text/css">-->
+    <!-- Plugin CSS -->
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="./root/style.css">
 
-        
-
-  <!-- Bootstrap Core CSS -->
-  <meta property="og:image" content="https://dashboard.applozic.com/resources/2636/images/fast_easy.png">
-  <meta name="msvalidate.01" content="638CEDBA756009F79A71CE98B8700EC8">
-  <meta name="yandex-verification" content="609adb296bd5e179">
-
-
-  <!-- Custom Fonts -->
-  <link href="./root/css" rel="stylesheet" type="text/css">
-  <!-- Plugin CSS -->
-  <!-- Custom CSS -->
-  <link rel="stylesheet" type="text/css" href="./root/base-lib-style.min.css">
-  <link rel="stylesheet" type="text/css" href="./root/base-custom-style.min.css">
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->  
-
-
-  <body onload="javascript:loadScript()">
-        
-        <link rel="stylesheet" type="text/css" href="./root/register.css">
-        <script type="text/javascript" src="index.js"> 
+    <body>
+        <script type="text/javascript" src="index.js">
         </script>
-  </body>
+    </body>
 </head>
 
 <body id="page-top" style="margin-bottom: 0px; padding-bottom: 0px;">
-    
-<nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle header-prop" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="https://dashboard.applozic.com/">
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://applozic.com/">
                 <img src="./root/applozic_logo.gif" alt="Applozic logo"></a>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="sign-up">
+                        <a class="header-link btn btn-green" href="https://dashboard.applozic.com/signup.html">SignUp For Free</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div class="collapse navbar-collapse navbar-ex1-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                  
-                        <li class="sign-up">
-                            <a class="header-link btn btn-green" href="https://dashboard.applozic.com/signup.html">SignUp For Free</a>
-                        </li>  
-            </ul>
-        </div>
-    </div>
-</nav>
-        <section id="login" class="main-block bg-F1F4F9">
-    <div class="container">
-        <div class="row"> 
+    </nav>
+    <section id="login" class="main-block bg-F1F4F9">
+        <div class="container">
+            <div class="row">
                 <form id="login-form" class="ph35">
                     <div class="form-group">
                         <input type="text" title="Enter your application id here. You can generate application Id from applozic Dashboard." class="form-control" id="applicationId" name="applicationId" placeholder="applozic-sample-app" value="applozic-sample-app" required="">
@@ -82,8 +45,7 @@
                         <input type="email" class="form-control" id="loginId" name="loginId" placeholder="Email *" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,10}$" required="">
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password *" required=""
-                      onkeypress="return enableEnterKey(event)">
+                        <input type="password" class="form-control" id="loginPassword" name="loginPassword" placeholder="Password *" required="" onkeypress="return enableEnterKey(event)">
                     </div>
                     <p id="login-response" class="hide response text-center mb-15"></p>
                     <div id="login-spinner" class="form-group text-center hide">
@@ -95,37 +57,23 @@
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>   
-</section>
-        
-<section id="footer-section" class="footer-section footer-sec-block pb-0" style="
-">
-    <footer style="
-">
-        <div class="container">
-            
-            <div class="row b-bottom" style="height: 0px;padding:150px;">
-                <p class="text-center c-white m-20">Copyright © Applozic Inc, 2016 All Rights Reserved</p>
+                <div id="success-text" class="n-vis">
+                    <p>Welcome to Applozic</p>
+                    <button id="logout" type="button" class="btn btn btn-green w-full pd-12 btn-submit" onclick="logOut()">
+                        <strong>Logout</strong>
+                    </button>
+                </div>
             </div>
         </div>
-    </footer>
-</section>
+    </section>
+    <section id="footer-section" class="footer-section footer-sec-block pb-0">
+        <footer>
+            <div class="container">
+                <div class="row b-bottom">
+                    <p class="text-center c-white m-20">Copyright © Applozic Inc, 2018 All Rights Reserved</p>
+                </div>
+            </div>
+        </footer>
+    </section>
 
-<script type="text/javascript" src="./root/base-lib-script.min.js"></script> 
-<script type="text/javascript">
-    if ('' !== 'true' && (typeof localStorage !== 'undefined')) 
-    {
-        localStorage.setItem('mckLoginId', "");
-    }
-</script>
 </html>
-
-
-
-
-
-
-
-
-

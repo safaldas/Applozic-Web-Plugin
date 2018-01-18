@@ -2,17 +2,29 @@
 
 
 
-Usages:
-
-1. Clone this repository : ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin.git```
-
-2. Open Terminal and navigate to "Applozic-Web-Plugin/demo".
-
-3. Run below python scripts to start the server :<br />
-  Python v2 :<br />```python -m SimpleHTTPServer 8000```<br />
-  Python v3 : <br /> ```python -m http.server 8000```
-
-4. Access below URL from browser and enter detail to start chat<br />
-http://localhost:8000
+How to clone the repository from github :-
 
 
+1. Clone repository: ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin.git```
+or download by clicking on the Download button under the repository name.
+
+
+Steps to run the Demo :-
+
+1. Open Terminal.
+
+2. Change the current working directory to the directory where our repository has been cloned or downloaded.
+
+3. Go to demo folder by using " cd Applozic-Web-Plugin/demo " command. 
+
+4. If you are using Python 2 type command" python -m SimpleHTTPServer 8000 "
+   for Python 3 " python -m http.server 8000 " .
+
+5. Open your web browser and and enter " http://localhost:8000 " to run the demo.
+
+
+
+How to try it out:-
+
+1. Enter your credentials 
+2. You're ready to roll.
