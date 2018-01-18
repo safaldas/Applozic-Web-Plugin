@@ -2,24 +2,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
     loadScript();
 });
 
+window.applozic = {};
+
 /**
  *this method loads the all script from server and append in body tag
  */
-
 function loadScript() {
     //Applozic Chat plugin script
-    (function(d, m) {
-        var s, h;
-        s = document.createElement("script");
-        s.type = "text/javascript";
-        s.async = true;
-        s.src = "https://apps.applozic.com/sidebox.app";
-        h = document.getElementsByTagName('head')[0];
-        h.appendChild(s);
-        window.applozic = m;
-        m.init = function(t) { m._globals = t; }
-    })
-    (document, window.applozic || {});
 
 }
 
@@ -30,16 +19,16 @@ function getUserData() { //loadScript();
     var pass = document.getElementById("loginPassword").value;
     console.log(appId, userId, pass);
     intializeChat(appId, userId, pass);
-
 }
 
-function logOut() {
+function logout() {
     $applozic.fn.applozic('logout');
-
-    document.getElementById("login-form").classList.remove('n-vis');
+    location.reload();
+    
+    /*document.getElementById("login-form").classList.remove('n-vis');
     document.getElementById("login-form").classList.add('vis');
     document.getElementById("success-text").classList.add('n-vis');
-    document.getElementById("success-text").classList.remove('vis');
+    document.getElementById("success-text").classList.remove('vis');*/
 }
 
 /**
@@ -55,8 +44,20 @@ function intializeChat(appId, userId, pass) {
     }];
 
 
-    window.applozic.init({
+    (function(d, m) {
+        var s, h;
+        s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://apps.applozic.com/sidebox.app";
+        h = document.getElementsByTagName('head')[0];
+        h.appendChild(s);
+        window.applozic = m;
+        m.init = function(t) { m._globals = t; }
+    })
+    (document, window.applozic || {});
 
+    window.applozic.init({
         appId: appId, //Get your application key from https://www.applozic.com
         userId: userId, //Logged in user's id, a unique identifier for user
         userName: '', //User's display name
