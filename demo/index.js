@@ -1,16 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(event) {
-    loadScript();
+    //Todo: add click events
 });
-
-window.applozic = {};
-
-/**
- *this method loads the all script from server and append in body tag
- */
-function loadScript() {
-    //Applozic Chat plugin script
-
-}
 
 function getUserData() { //loadScript();
     //pass user login credentials to chat plugin script
