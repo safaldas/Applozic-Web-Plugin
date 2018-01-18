@@ -4,10 +4,9 @@
 
 How to clone the repository from github :-
 
-1. On GitHub, navigate to https://github.com/AppLozic/Applozic-Web-Plugin
 
-2. Clone or download buttonUnder the repository name, click Clone or download.
-
+1. Clone repository: ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin.git```
+or download by clicking on the Download button under the repository name.
 
 
 Steps to run the Demo :-
@@ -18,8 +17,8 @@ Steps to run the Demo :-
 
 3. Go to demo folder by using " cd Applozic-Web-Plugin/demo " command. 
 
-4. Now, if you use Python 2 type command" python -m SimpleHTTPServer 8000 "
-   or Python 3 " python -m http.server 8000 " .
+4. If you are using Python 2 type command" python -m SimpleHTTPServer 8000 "
+   for Python 3 " python -m http.server 8000 " .
 
 5. Open your web browser and and enter " http://localhost:8000 " to run the demo.
 

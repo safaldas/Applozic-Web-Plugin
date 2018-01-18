@@ -2955,7 +2955,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                                                         }
                                                     }
                                                 }
-                                                 if (userDetail.userName && !params.startTime) {
+                                                  if (userDetail.userName && !params.startTime) {
                                                     var name = mckMessageLayout.getTabDisplayName(params.tabId, params.isGroup, userDetail.userName);
                                                     $mck_tab_title.html(name);
                                                     $mck_tab_title.attr('title', name);
@@ -3787,6 +3787,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
+                 if (typeof MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                   var userIdArray = new Array();
+                   userIdArray.push(params.tabId);
+                   mckContactService.getUsersDetail(userIdArray, { 'async': false });
+               }
                     if ($applozic('.person[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').length == 0) {
                         _this.updateRecentConversationList(params.isGroup ? mckGroupUtils.getGroup(params.tabId) : _this.fetchContact(params.tabId), undefined, true, params.prepend);
                     }
@@ -4878,9 +4883,9 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                                 tabId: tabId,
                                 isGroup: false,
                                 'isSearch': true
-                            });   
+                            });
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
-                        }    
+                        }
                         }
                         $mck_contact_search_input.val('');
                         $mck_contact_search_box.mckModal('hide');
