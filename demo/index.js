@@ -1,5 +1,18 @@
 document.addEventListener("DOMContentLoaded", function(event) {
-    //Todo: add click events
+    document.getElementById("login-submit").onclick = function() {
+        getUserData();
+    };
+    document.getElementById("logout").onclick = function() {
+        logout();
+    };
+
+    var loginPassword = document.getElementById("loginPassword");
+    loginPassword.addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode === 13) {
+            document.getElementById("login-submit").click();
+        }
+    });
 });
 
 function getUserData() { //loadScript();
@@ -14,7 +27,6 @@ function getUserData() { //loadScript();
 function logout() {
     $applozic.fn.applozic('logout');
     location.reload();
-    
     /*document.getElementById("login-form").classList.remove('n-vis');
     document.getElementById("login-form").classList.add('vis');
     document.getElementById("success-text").classList.add('n-vis');
@@ -96,11 +108,4 @@ function intializeChat(appId, userId, pass) {
             //  }
         }
     });
-}
-
-function enableEnterKey(e) {
-    if (e.keyCode == 13) {
-        getUserData();
-        return false;
-    }
 }
