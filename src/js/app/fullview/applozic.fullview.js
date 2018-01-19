@@ -1319,7 +1319,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 IS_MCK_USER_DEACTIVATED = data.deactivated;
                 AUTH_CODE = btoa(data.userId + ':' + data.deviceKey);
                 MCK_TOTAL_UNREAD_COUNT = data.totalUnreadCount;
-                mckUtils.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
+                window.Applozic.ALApiService.setAjaxHeaders(AUTH_CODE,MCK_APP_ID,USER_DEVICE_KEY,MCK_ACCESS_TOKEN,MCK_APP_MODULE_NAME);
                 MCK_CONNECTED_CLIENT_COUNT = data.connectedClientCount;
                 if (!IS_MCK_VISITOR && MCK_USER_ID !== 'guest' && MCK_USER_ID !== '0' && MCK_USER_ID !== 'C0') {
                     (IS_REINITIALIZE) ? mckInitializeChannel.reconnect(): mckInitializeChannel.init();
@@ -2489,7 +2489,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var contact = mckMessageLayout.fetchContact(tabId);
                     _this.addMessageToTab(messagePxy, contact);
                 }
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     type: 'GET',
                     url: MCK_BASE_URL + MESSAGE_ADD_INBOX_URL,
                     global: false,
@@ -2522,7 +2522,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     messagePxy.metadata = MCK_DEFAULT_MESSAGE_METADATA;
                 }
                 messagePxy.metadata = metadata;
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     type: 'POST',
                     url: MCK_BASE_URL + MESSAGE_SEND_URL,
                     global: false,
@@ -2626,7 +2626,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 var tabId = $mck_msg_inner.data('mck-id');
                 var isGroup = $mck_msg_inner.data("isgroup");
                 if (typeof tabId !== 'undefined') {
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + MESSAGE_DELETE_URL + "?key=" + msgKey,
                         type: 'get',
                         success: function(data) {
@@ -2665,7 +2665,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if (conversationId) {
                         data += "&conversationId=" + conversationId;
                     }
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         type: "get",
                         url: MCK_BASE_URL + CONVERSATION_DELETE_URL,
                         global: false,
@@ -2709,7 +2709,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     reqData += "&mainPageSize=100";
                 }
                 var response = new Object();
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
                     type: 'get',
                     success: function(data) {
@@ -2769,7 +2769,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         resp['topicId'] = params.topicId;
                     }
                 }
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqdata,
                     type: 'get',
                     global: false,
@@ -2806,7 +2806,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 _this.getReplyMessageByKey = function(msgkey) {
     var replyMsg = mckStorage.getMessageByKey(msgkey);
       if (typeof replyMsg === "undefined" ) {
-                mckUtils.ajax({
+        window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + UPDATE_REPLY_MAP,
                         async: false,
                         type: 'get',
@@ -2853,7 +2853,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 if (!params.startTime) {
                     $mck_msg_inner.html('');
                 }
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + MESSAGE_LIST_URL + "?startIndex=0" + reqData,
                     type: 'get',
                     global: false,
@@ -3085,7 +3085,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.updateContactList = function(tabId, isGroup) {
                 var tabExpr = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
                 var paramData = "startIndex=0&pageSize=1&" + tabExpr;
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + MESSAGE_LIST_URL,
                     data: paramData,
                     global: false,
@@ -3111,7 +3111,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             };
             _this.sendDeliveryUpdate = function(message) {
                 var data = "key=" + message.pairedMessageKey;
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + MESSAGE_DELIVERY_UPDATE_URL,
                     data: data,
                     global: false,
@@ -3123,7 +3123,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.sendReadUpdate = function(key) {
                 if (typeof key !== "undefined" && key !== '') {
                     var data = "key=" + key;
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + MESSAGE_READ_UPDATE_URL,
                         data: data,
                         global: false,
@@ -3137,7 +3137,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 var ucTabId = (isGroup) ? 'group_' + tabId : 'user_' + tabId;
                 if (tabId && (mckMessageLayout.getUnreadCount(ucTabId) > 0)) {
                     var data = (isGroup) ? "groupId=" + tabId : "userId=" + encodeURIComponent(tabId);
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + CONVERSATION_READ_UPDATE_URL,
                         data: data,
                         global: false,
@@ -3185,7 +3185,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                     if (params.fallBackTemplatesList && params.fallBackTemplatesList.length > 0) {
                         conversationPxy.fallBackTemplatesList = params.fallBackTemplatesList;
                     }
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + CONVERSATION_ID_URL,
                         global: false,
                         data: w.JSON.stringify(conversationPxy),
@@ -3236,7 +3236,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 if (params.pageSize) {
                     reqdata += '&pageSize=' + params.pageSize;
                 }
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + CONVERSATION_FETCH_URL,
                     data: reqdata,
                     type: 'get',
@@ -3316,7 +3316,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.getTopicId = function(params) {
                 if (params.conversationId) {
                     var data = "id=" + params.conversationId;
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + TOPIC_ID_URL,
                         data: data,
                         global: false,
@@ -3365,7 +3365,7 @@ _this.getReplyMessageByKey = function(msgkey) {
             _this.sendConversationCloseUpdate = function(conversationId) {
                 if (conversationId) {
                     var data = "id=" + conversationId;
-                    mckUtils.ajax({
+                    window.Applozic.ALApiService.ajax({
                         url: MCK_BASE_URL + CONVERSATION_CLOSE_UPDATE_URL,
                         data: data,
                         global: false,
@@ -3479,7 +3479,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                 }
                 groupInfo.metadata = MCK_LABELS['group.metadata'];
                 var response = new Object();
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + GROUP_CREATE_URL,
                     global: false,
                     data: w.JSON.stringify(groupInfo),
@@ -5731,7 +5731,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                         data = data.substring(0, data.length - 1);
                     }
                     if (data) {
-                        mckUtils.ajax({
+                        window.Applozic.ALApiService.ajax({
                             url: MCK_BASE_URL + CONTACT_NAME_URL,
                             data: data,
                             global: false,
@@ -5756,7 +5756,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
                 $mck_search_List.html('');
                 var mckContactNameArray = [];
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=30&orderBy=1",
                     type: 'get',
                     global: false,
@@ -5844,7 +5844,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 }
 
                 var response = new Object();
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + USER_DETAIL_URL,
                     type: 'post',
                     async: (typeof params.async !== 'undefined') ? params.async : true,
@@ -5896,7 +5896,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
             };
             _this.getUserStatus = function(params) {
                 var response = new Object();
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + USER_STATUS_URL,
                     type: 'get',
                     success: function(data) {
@@ -5928,7 +5928,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     return;
                 }
                 var data = "userId=" + userId + "&block=" + isBlock;
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_BASE_URL + USER_BLOCK_URL,
                     type: 'get',
                     data: data,
@@ -7378,7 +7378,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 }
             };
             _this.deleteFileMeta = function(blobKey) {
-                mckUtils.ajax({
+                window.Applozic.ALApiService.ajax({
                     url: MCK_FILE_URL + FILE_DELETE_URL + '?key=' + blobKey,
                     type: 'post',
                     success: function() {},
@@ -7546,7 +7546,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 if (MCK_SW_SUBSCRIPTION) {
                     var subscriptionId = MCK_SW_SUBSCRIPTION.endpoint.split("/").slice(-1)[0];
                     if (subscriptionId) {
-                        mckUtils.ajax({
+                        window.Applozic.ALApiService.ajax({
                             url: MCK_BASE_URL + MCK_SW_REGISTER_URL,
                             type: 'post',
                             data: 'registrationId=' + subscriptionId,
