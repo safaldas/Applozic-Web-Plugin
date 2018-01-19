@@ -1368,7 +1368,7 @@
          /**
                  * getUsersByRole
                  * Usage Example:
-                 window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":"APPLICATION_WEB_ADMIN"}, success: function (result) {console.log(result);}, error: function () { } });
+                 window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":["APPLICATION_WEB_ADMIN","ADMIN"]}, success: function (result) {console.log(result);}, error: function () { } });
                  */        
                 ALApiService.getUsersByRole = function (options) {
                     var data = getAsUriParameters(options.data);
