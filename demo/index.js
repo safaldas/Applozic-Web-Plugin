@@ -27,7 +27,6 @@ function getUserData() { //loadScript();
 function logout() {
     $applozic.fn.applozic('logout');
     location.reload();
-
     /*document.getElementById("login-form").classList.remove('n-vis');
     document.getElementById("login-form").classList.add('vis');
     document.getElementById("success-text").classList.add('n-vis');

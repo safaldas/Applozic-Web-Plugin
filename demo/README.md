@@ -6,7 +6,7 @@ How to clone the repository from github :-
 
 
 1. Clone repository: ```git  clone https://github.com/AppLozic/Applozic-Web-Plugin.git```
-or download by clicking on the Download button under the repository name.
+or download from https://github.com/AppLozic/Applozic-Web-Plugin by clicking on the Download button under the repository name.
 
 
 Steps to run the Demo :-
