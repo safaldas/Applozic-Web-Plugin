@@ -21,6 +21,7 @@
         var GET_USER_DETAIL_URL ="/rest/ws/user/v2/detail";
         var UPDATE_USER_DETAIL_URL ="/rest/ws/user/update";
         var USER_FILTER ="/rest/ws/user/filter";
+        var USER_FILTER_BY_ROLE ="/rest/ws/user/v3/filter";
         var USER_BLOCK_URL ="/rest/ws/user/block";
         var USER_UNBLOCK_URL ="/rest/ws/user/unblock";
         var UPDATE_PASSWORD_URL ="/rest/ws/user/update/password";
@@ -1350,6 +1351,31 @@
                         global: false,
                         data: w.JSON.stringify(options.data),
                         type: 'post',
+                        contentType: 'application/json',
+                        success: function (response) {
+                            if (options.success) {
+                                options.success(response);
+                            }
+                        },
+                        error: function (response) {
+                            if (options.error) {
+                                options.success(response);
+                            }
+                        }
+                    });
+                }
+
+         /**
+                 * getUsersByRole
+                 * Usage Example:
+                 window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":"APPLICATION_WEB_ADMIN"}, success: function (result) {console.log(result);}, error: function () { } });
+                 */        
+                ALApiService.getUsersByRole = function (options) {
+                    var data = getAsUriParameters(options.data);
+                    ALApiService.ajax({
+                        url: MCK_BASE_URL + USER_FILTER_BY_ROLE +"?"+ data,
+                        global: false,
+                        type: 'get',
                         contentType: 'application/json',
                         success: function (response) {
                             if (options.success) {
