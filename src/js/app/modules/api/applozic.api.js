@@ -1130,7 +1130,6 @@
         ALApiService.sendAttachment = function (options) {
             var data = new FormData();
             var xhr = new XMLHttpRequest();
-            var url = ATTACHMENT_UPLOAD_URL;
             xhr.addEventListener('load', function (e) {
                 var file = this.responseText;
                 var message = options.data.messagePxy;
@@ -1146,7 +1145,7 @@
                 }
             });
             data.append("file", options.data.file);
-            xhr.open('post', MCK_BASE_URL + url, true);
+            xhr.open('post', MCK_BASE_URL + ATTACHMENT_UPLOAD_URL, true);
             xhr.setRequestHeader("UserId-Enabled", true);
             xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
             xhr.setRequestHeader("Application-Key", MCK_APP_ID);
