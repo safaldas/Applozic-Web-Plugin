@@ -1,0 +1,83 @@
+
+       <!-- Video Call dependencies -->
+       <script src="../js/jquery.min.js"></script>
+   	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.min.js"></script>
+   	<script type="text/javascript" src="../js/app/call/mck-ringtone-service.js"></script>
+   	<script type="text/javascript" src="../js/app/call/twilio-video.js"></script>
+   	<script type="text/javascript" src="../js/app/call/videocall.js"></script>
+   <!-- Video Call dependencies -->
+   	<script type="text/javascript" src="../js/applozic.plugins.min.js"></script>
+   	<script type="text/javascript" src="../js/applozic.widget.min.js"></script>
+   	<script type="text/javascript" src="../js/applozic.emojis.min.js"></script>
+   	<script type="text/javascript" src="../js/applozic.socket.min.js"></script>
+
+   	<!-- JS for location sharing plugin, remove it if location sharing not required -->
+   	<script type="text/javascript"
+   		src="https://maps.google.com/maps/api/js?key=AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4&libraries=places"></script>
+   	<script type="text/javascript" src="../js/locationpicker.jquery.min.js"></script>
+
+       <script type="text/javascript" src="../js/app/modules/applozic.utils.js"></script>
+     	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
+     	<script type="text/javascript" src="../js/app/modules/applozic.chat.js"></script>
+     	<script type="text/javascript" src="../js/app/modules/storage/applozic.storage.js"></script>
+     	<script type="text/javascript" src="../js/app/modules/api/applozic.api.js"></script>
+     	<script type="text/javascript" src="../js/app/modules/socket/applozic.socket.js"></script>
+       <script>
+       var events = {
+              'onConnectFailed': function() {},
+              'onConnect': function() {},
+              'onMessageDelivered': function() {},
+              'onMessageRead': function() {},
+              'onMessageDeleted': function() {},
+              'onConversationDeleted': function() {},
+              'onUserConnect': function() {},
+              'onUserDisconnect': function() {},
+              'onConversationReadFromOtherSource': function() {},
+              'onConversationRead': function() {},
+              'onMessageReceived': function() {},
+              'onMessageSentUpdate': function() {},
+              'onMessageSent': function() {},
+              'onUserBlocked': function() {},
+              'onUserUnblocked': function() {},
+              'onUserActivated': function() {},
+              'onUserDeactivated': function() {},
+              'connectToSocket': function() {},
+              'onMessage': function(resp) { console.log(resp); },
+              'onTypingStatus': function(resp) {}
+             };
+             function abc(){
+               var file =document.getElementById("photo").files[0];
+               var message= {"type":5,"contentType":0,"message":"","to":"debug5","metadata":{},"source":1};
+               window.Applozic.ALApiService.FileAttachment({data:{ file: file,messagePxy:message} , success: function (result) {}, error: function () { } });
+             }
+       Applozic.ALApiService.login({data:{baseUrl : 'https://apps-test.applozic.com',alUser:
+                                    {
+                                      userId: 'debug4',
+                                     password: 'debug4',
+                                     appVersionCode: 108,
+                                     applicationId: 'applozic-sample-app'}
+                                   },
+                            success: function(response) {
+                                    console.log(response);
+                                    var data ={};
+                                    data.token =response.token;
+                                    data.deviceKey =response.deviceKey;
+                                    data.websocketUrl =response.websocketUrl;
+                                    window.Applozic.ALSocket.init("applozic-sample-app", data, events);
+                                    
+                              },
+                               error: function() {}});
+                               </script>
+<html>
+  <head>
+    <body>
+      <form method="post" >
+        <fieldset>
+          <legend>Upload photo</legend>
+          <input type="file" name="file" id="photo">
+          <input type="button" value="Upload" onclick="abc()">
+        </fieldset>
+      </form>
+    </body>
+  </head>
+</html>
