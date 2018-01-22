@@ -45,6 +45,8 @@
         var USER_STATUS_URL = "/rest/ws/user/chat/status";
         var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
         var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
+        var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
+        var ATTACHMENT_UPLOAD_URL = "/rest/ws/upload/image";
         var ACCESS_TOKEN ;
         var DEVICE_KEY;
         var APP_MODULE_NAME;
