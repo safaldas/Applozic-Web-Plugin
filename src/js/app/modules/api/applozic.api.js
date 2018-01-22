@@ -1119,6 +1119,46 @@
             });
         }
 
+
+        /** 
+        * * Send Attachment
+        * Usage Example:
+        * var file =document.getElementById("photo").files[0];
+        * var message= {"type":5,"contentType":0,"message":"","to/groupId":"debug4","metadata":{},"source":1};
+        * window.Applozic.ALApiService.sendAttachment({data:{ file: file,messagePxy:message} , success: function (result) {}, error: function () { } });
+       */
+        ALApiService.sendAttachment = function (options) {
+            var data = new FormData();
+            var xhr = new XMLHttpRequest();
+            var url = ATTACHMENT_UPLOAD_URL;
+            xhr.addEventListener('load', function (e) {
+                var file = this.responseText;
+                var message = options.data.messagePxy;
+                if (file) {
+                    message.fileMeta = JSON.parse(file);
+                    Applozic.ALApiService.sendMessage({
+                        data:
+                            { message },
+                        success: function (response) { console.log(response); },
+                        error: function () { }
+                    });
+
+                }
+            });
+            data.append("file", options.data.file);
+            xhr.open('post', MCK_BASE_URL + url, true);
+            xhr.setRequestHeader("UserId-Enabled", true);
+            xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+            xhr.setRequestHeader("Application-Key", MCK_APP_ID);
+            xhr.setRequestHeader("Device-Key", DEVICE_KEY);
+            if (ACCESS_TOKEN) {
+                xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
+            }
+            xhr.send(data);
+        }
+
+/**
+
 /**
          * DeleteFileMeta
          * Usage Example:
