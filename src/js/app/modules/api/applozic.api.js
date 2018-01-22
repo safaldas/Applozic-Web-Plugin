@@ -32,6 +32,7 @@
         var FILE_PREVIEW_URL = "/rest/ws/aws/file";
         var FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
         var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
+        var ATTACHMENT_UPLOAD_URL = "/rest/ws/upload/image";
         var FILE_DELETE_URL = "/rest/ws/aws/file/delete";
         var MESSAGE_ADD_INBOX_URL = "/rest/ws/message/add/inbox";
         var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
@@ -1116,6 +1117,43 @@
                     }
                 }
             });
+        }
+
+
+        
+        /** 
+         * * FileAttachment
+         * Usage Example:
+         * var file =document.getElementById("photo").files[0];
+         * var message= {"type":5,"contentType":0,"message":"","to":"debug4","metadata":{},"key":"mpfj2","source":1};
+         * window.Applozic.ALApiService.FileAttachment({data:{ file: file,messagePxy:message,type:attachmentType} , success: function (result) {}, error: function () { } });
+        */
+        ALApiService.FileAttachment = function (options) {
+            var data =new FormData();
+            var xhr = new XMLHttpRequest();
+            var url= ATTACHMENT_UPLOAD_URL;
+            xhr.addEventListener('load', function(e) {
+                var file=this.responseText;
+                var message =options.data.messagePxy;
+                if (file) {
+                    message.fileMeta =JSON.parse(file);
+                    Applozic.ALApiService.sendMessage({data:
+                         {message},
+                          success: function(response) {console.log(response);}, 
+                          error: function() {}});
+
+                }    
+            });
+            data.append("file", options.data.file);
+            xhr.open('post', MCK_BASE_URL + url, true);
+            xhr.setRequestHeader("UserId-Enabled", true);
+            xhr.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
+            xhr.setRequestHeader("Application-Key", MCK_APP_ID);
+            xhr.setRequestHeader("Device-Key", DEVICE_KEY);
+            if (ACCESS_TOKEN) {
+                xhr.setRequestHeader("Access-Token", ACCESS_TOKEN);
+            }
+            xhr.send(data);
         }
 
 /**
