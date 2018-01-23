@@ -39,6 +39,7 @@
         var CONVERSATION_DELETE_URL = "/rest/ws/message/delete/conversation";
         var ONE_TO_ONE_MUTE_URL = "/rest/ws/user/chat/mute";
         var GROUP_MUTE_URL = "/rest/ws/group/user/update";
+        var REGISTER_CLIENT_URL = "/rest/ws/register/client";
         var SYNC_MUTE_USER_URL ="/rest/ws/user/chat/mute/list";
         var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
         var CONTACT_NAME_URL = "/rest/ws/user/info";
@@ -1405,6 +1406,42 @@
                         }
                     });
                 }
+                
+        /**
+       * registerClientApi
+       * Usage Example:
+       * var userPxy = {
+          'applicationId': 'APPLICATION_KEY', // Replace APPLICATION_KEY with the Application key received after Signup from https://www.applozic.com/signup.html
+          'userId': 'USER_ID', // Replace USER_ID with the user's unique identifier
+          'registrationId': 'GCM_REGISTRATION_ID', //Replace GCM_REGISTRATION_ID with GCM registration id
+          'pushNotificationFormat' : '1', //1 for PhoneGap, 2 for Ionic
+          'deviceType': '1',       //1 for Android, 4 for iOS
+          'appVersionCode': '108' 
+        };
+        window.Applozic.ALApiService.registerClientApi({data: {"userPxy":userPxy}, success: function (result) {}, error: function () { } });
+       */
+
+
+        ALApiService.registerClientApi = function (options) {
+            ALApiService.ajax({
+                url: MCK_BASE_URL + REGISTER_CLIENT_URL,
+                type: 'post',
+                data: w.JSON.stringify(options.data.userPxy),
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.success(response);
+                    }
+                }
+            });
+        }
+
+
 
          /**
                  * getUsersByRole
