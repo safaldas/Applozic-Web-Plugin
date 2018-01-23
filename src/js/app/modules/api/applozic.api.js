@@ -1413,7 +1413,7 @@
        * var userPxy = {
           'applicationId': 'APPLICATION_KEY', // Replace APPLICATION_KEY with the Application key received after Signup from https://www.applozic.com/signup.html
           'userId': 'USER_ID', // Replace USER_ID with the user's unique identifier
-          'registrationId': 'GCM_REGISTRATION_ID', //Replace GCM_REGISTRATION_ID with GCM registration id
+          'registrationId': 'PUSH_NOTIFICATION_TOKEN', //Replace with FCM push notification token for Android devices and APNS push notification token for iOS devices
           'pushNotificationFormat' : '1', //1 for PhoneGap, 2 for Ionic
           'deviceType': '1',       //1 for Android, 4 for iOS
           'appVersionCode': '108' 
