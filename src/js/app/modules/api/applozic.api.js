@@ -104,6 +104,18 @@
                 }
             });
         }
+	ALApiService.getAttachmentHeaders = function() {
+            var headers = {
+                'UserId-Enabled': true,
+                'Authorization' : "Basic " + AUTH_CODE,
+                'Application-Key': MCK_APP_ID,
+                'Device-Key': DEVICE_KEY
+              };
+              if (ACCESS_TOKEN) {
+                  headers['Access-Token'] = ACCESS_TOKEN;
+              }
+              return headers;
+        },
         ALApiService.setAjaxHeaders = function (authcode, appId, devKey, accToken, modName) {
             MCK_APP_ID = appId;
             AUTH_CODE = authcode;
