@@ -243,7 +243,7 @@
                 } else if (messageType === 'APPLOZIC_27') {
                     events.onConversationDeleted(resp);
                 }
-            } else if (messageType === 'APPLOZIC_11') {
+             else if (messageType === 'APPLOZIC_11') {
                 events.onUserConnect(resp.message);
             } else if (messageType === 'APPLOZIC_12') {
                 events.onUserDisconnect({
@@ -262,6 +262,8 @@
                     'userId': userId
                 });
             } else if (messageType === 'APPLOZIC_17') {
+                var status = resp.message.split(":")[0];
+                var userId = resp.message.split(":")[1];
                 events.onUserUnblocked({
                     'status': status,
                     'userId': userId
@@ -288,6 +290,7 @@
                 }
 
             }
+        }
         };
 
         return ALSocket;
