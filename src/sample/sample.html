@@ -26,31 +26,33 @@
        var events = {
               'onConnectFailed': function() {},
               'onConnect': function() {},
-              'onMessageDelivered': function() {},
-              'onMessageRead': function() {},
-              'onMessageDeleted': function() {},
-              'onConversationDeleted': function() {},
-              'onUserConnect': function() {},
-              'onUserDisconnect': function() {},
-              'onConversationReadFromOtherSource': function() {},
-              'onConversationRead': function() {},
-              'onMessageReceived': function() {},
-              'onMessageSentUpdate': function() {},
-              'onMessageSent': function() {},
-              'onUserBlocked': function() {},
-              'onUserUnblocked': function() {},
-              'onUserActivated': function() {},
-              'onUserDeactivated': function() {},
+              'onMessageDelivered': function(resp) {console.log("onMessageDelivered",resp);},
+              'onMessageRead': function(resp) {console.log("message read",resp);},
+              'onMessageDeleted': function(resp) {console.log("message delete",resp);},
+              'onConversationDeleted': function(resp) {console.log("ConversationDeleted",resp);},
+              'onUserConnect': function(resp) {console.log("UserConnect",resp);},
+              'onUserDisconnect': function() {console.log("onUserDisconnect",resp);},
+              'onConversationReadFromOtherSource': function() {console.log("message delete",resp);},
+              'onConversationRead': function(resp) {console.log("onConversationRead",resp);},
+              'onMessageReceived': function(resp) {console.log("onMessageReceived");},
+              'onMessageSentUpdate': function(resp) {console.log("onMessageSentUpdate",resp);},
+              'onMessageSent': function(resp) {console.log("onMessageSent",resp);},
+              'onUserBlocked': function(resp) {console.log("onUserBlocked",resp);},
+              'onUserUnblocked': function(resp) {console.log("onUserUnblocked",resp);},
+              'onUserActivated': function(resp) {console.log("onUserActivated",resp);},
+              'onUserDeactivated': function(resp) {console.log("onUserDeactivated",resp);},
               'connectToSocket': function() {},
-              'onMessage': function(resp) { console.log(resp); },
+              'onMessage': function(resp) { console.log("onmessage",resp); },
               'onTypingStatus': function(resp) {}
              };
              function abc(){
                var file =document.getElementById("photo").files[0];
                var message= {"type":5,"contentType":0,"message":"","to":"debug5","metadata":{},"source":1};
-               window.Applozic.ALApiService.FileAttachment({data:{ file: file,messagePxy:message} , success: function (result) {}, error: function () { } });
+               window.Applozic.ALApiService.sendAttachment({data:{ file: file,messagePxy:message} , success: function (result) {}, error: function () { } });
              }
-       Applozic.ALApiService.login({data:{baseUrl : 'https://apps-test.applozic.com',alUser:
+
+       Applozic.ALApiService.login({data:{baseUrl : 'https://apps-test.applozic.com',
+       alUser:
                                     {
                                       userId: 'debug4',
                                      password: 'debug4',
@@ -58,13 +60,13 @@
                                      applicationId: 'applozic-sample-app'}
                                    },
                             success: function(response) {
-                                    console.log(response);
                                     var data ={};
                                     data.token =response.token;
                                     data.deviceKey =response.deviceKey;
                                     data.websocketUrl =response.websocketUrl;
                                     window.Applozic.ALSocket.init("applozic-sample-app", data, events);
-                                    
+                                    Applozic.ALApiService.getMessages({data: {userId: "debug5"}, success: function(response) {
+                                    }, error: function() {}});
                               },
                                error: function() {}});
                                </script>
