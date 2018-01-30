@@ -227,11 +227,68 @@
                 events.onOpenGroupMessage(obj);      
             }
         };
-        ALSocket.onMessage = function(obj) {
+        ALSocket.onMessage = function (obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
                 var resp = JSON.parse(obj.body);
-                if (typeof events.onMessage === "function") { 
-                    events.onMessage(resp);     
+                var messageType = resp.type;
+                if (typeof events.onMessage === "function") {
+                    events.onMessage(resp);
+                }
+                if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
+                    events.onMessageDelivered(resp);
+                } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
+                    events.onMessageRead(resp);
+                } else if (messageType === "APPLOZIC_05") {
+                    events.onMessageDeleted(resp);
+                } else if (messageType === 'APPLOZIC_27') {
+                    events.onConversationDeleted(resp);
+                }
+                else if (messageType === 'APPLOZIC_11') {
+                    events.onUserConnect(resp.message);
+                } else if (messageType === 'APPLOZIC_12') {
+                    events.onUserDisconnect({
+                        'userId': userId,
+                        'lastSeenAtTime': lastSeenAtTime
+                    });
+                } else if (messageType === "APPLOZIC_29") {
+                    events.onConversationReadFromOtherSource(response);
+                } else if (messageType === 'APPLOZIC_28') {
+                    events.onConversationRead(response);
+                } else if (messageType === "APPLOZIC_16") {
+                    var status = resp.message.split(":")[0];
+                    var userId = resp.message.split(":")[1];
+                    events.onUserBlocked({
+                        'status': status,
+                        'userId': userId
+                    });
+                } else if (messageType === 'APPLOZIC_17') {
+                    var status = resp.message.split(":")[0];
+                    var userId = resp.message.split(":")[1];
+                    events.onUserUnblocked({
+                        'status': status,
+                        'userId': userId
+                    });
+                } else if (messageType === 'APPLOZIC_18') {
+                    events.onUserActivated();
+                } else if (messageType === 'APPLOZIC_19') {
+                    events.onUserDeactivated();
+                } else {
+                    var message = resp.message;
+                    if (messageType === "APPLOZIC_03") {
+                        events.onMessageSentUpdate({
+                            'messageKey': message.key
+                        });
+                    } else if (messageType === "APPLOZIC_01" || messageType === "APPLOZIC_02" || messageType === "MESSAGE_RECEIVED") {
+                        events.onMessageReceived({
+                            'message': messageFeed
+                        });
+                    } else if (messageType === "APPLOZIC_02") {
+                        var messageFeed = mckMessageLayout.getMessageFeed(message);
+                        events.onMessageSent({
+                            'message': messageFeed
+                        });
+                    }
+
                 }
             }
         };
