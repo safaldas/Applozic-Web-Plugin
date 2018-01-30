@@ -42,6 +42,17 @@ function MckUtils() {
             type: 'OPTIONS'
         }).done(function(data) {});
     }
+    _this.badgeCountOnLaucher = function (enablebadgecount, totalunreadCount) {
+        var element = document.getElementById("badgeCount");
+        if (enablebadgecount === true && totalunreadCount > 0) {
+            element.innerHTML = totalunreadCount;
+            element.classList.add("mck-badge-count");
+        }
+        if (enablebadgecount === true && totalunreadCount === 0) {
+            element.innerHTML = "";
+            element.classList.remove("mck-badge-count");
+        }
+    }; 
     _this.randomId = function() {
         return w.Math.random().toString(36).substring(7);
     };
