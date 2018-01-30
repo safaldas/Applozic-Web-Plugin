@@ -49,6 +49,20 @@
         cursor: pointer;
 }
 
+.mck-badge-count{
+		 width: auto;
+	     height: 20px;
+	     border-radius: 50px;
+	     background-color:  red;
+	     text-align:  center;
+	     color: white;
+	     position:  absolute;
+	     top: 0px;
+	     line-height:  20px;
+	     font-size: 16px;
+	     padding: 0px 5px;
+	     z-index: 2243001;
+	}
 
 .mck-videocall-btn {
         background-image: url(../../../images/mck-videocall-icon.png);
