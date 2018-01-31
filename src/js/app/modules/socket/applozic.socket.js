@@ -251,9 +251,9 @@
                         'lastSeenAtTime': lastSeenAtTime
                     });
                 } else if (messageType === "APPLOZIC_29") {
-                    events.onConversationReadFromOtherSource(response);
+                    events.onConversationReadFromOtherSource(resp);
                 } else if (messageType === 'APPLOZIC_28') {
-                    events.onConversationRead(response);
+                    events.onConversationRead(resp);
                 } else if (messageType === "APPLOZIC_16") {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
