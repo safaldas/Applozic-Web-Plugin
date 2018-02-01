@@ -1438,7 +1438,7 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + REGISTER_CLIENT_URL,
                 type: 'post',
-                data: w.JSON.stringify(options.data.userPxy),
+                data: JSON.stringify(options.data.userPxy),
                 contentType: 'application/json',
                 success: function (response) {
                     if (options.success) {
