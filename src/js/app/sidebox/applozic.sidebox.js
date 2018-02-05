@@ -1208,7 +1208,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             var MCK_IDLE_TIME_COUNTER = MCK_IDLE_TIME_LIMIT;
             var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
             _this.getLauncherHtml = function() {
-                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<div id ="badgeCount"></div>' + '<a href="#" target="_self" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div><div id="mck-msg-preview-btns" class="n-vis"><button id="mck-vid-call-accept">Accept</button><button id="mck-vid-call-reject">reject</reject></div></div>';
+                return '<div id="mck-sidebox-launcher" class="mck-sidebox-launcher">' + '<div id ="applozic-badge-count"></div>' + '<a href="#" target="_self" class="applozic-launcher mck-button-launcher" ' + (MCK_MODE === 'support' ? MCK_SUPPORT_ID_DATA_ATTR : '') + '><span class="mck-icon-chat"></span></a></div>' + '<div id="mck-msg-preview" class="mck-msg-preview applozic-launcher">' + '<div class="mck-row">' + '<div class="blk-lg-3 mck-preview-icon"></div>' + '<div class="blk-lg-9">' + '<div class="mck-row mck-truncate mck-preview-content">' + '<strong class="mck-preview-cont-name"></strong></div>' + '<div class="mck-row mck-preview-content">' + '<div class="mck-preview-msg-content"></div>' + '<div class="mck-preview-file-content mck-msg-text notranslate blk-lg-12 mck-attachment n-vis"></div>' + '</div></div></div><div id="mck-msg-preview-btns" class="n-vis"><button id="mck-vid-call-accept">Accept</button><button id="mck-vid-call-reject">reject</reject></div></div>';
             };
             _this.initializeApp = function(optns, isReInit) {
                 IS_REINITIALIZE = isReInit;
@@ -2354,6 +2354,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_search.val('');
             };
             _this.sendMessage = function(messagePxy) {
+                var key;
+                var message;
+                if ($("#mck-message-cell .mck-message-inner div[name='message']:last-child").data('msgkey') !== undefined) {
+                    key = $("#mck-message-cell .mck-message-inner div[name='message']:last-child").data('msgkey');
+                    message = mckMessageService.getReplyMessageByKey(key);
+                }
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
@@ -2367,6 +2373,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if ((typeof messagePxy.message === 'undefined' || messagePxy.message.length === 0) && FILE_META.length === 0) {
                     $mck_text_box.addClass("mck-text-req");
                     return;
+                }
+                if (message) {
+                    if (message.metadata.altype && (message.type === 0 || message.type === 4 || message.type === 6)) {
+                        metadata.altype = message.metadata.altype;
+                    }
                 }
                 if (messagePxy.conversationId) {
                     var conversationPxy = MCK_CONVERSATION_MAP[messagePxy.conversationId];

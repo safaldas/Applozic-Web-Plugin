@@ -43,7 +43,7 @@ function MckUtils() {
         }).done(function(data) {});
     }
     _this.badgeCountOnLaucher = function (enablebadgecount, totalunreadCount) {
-        var element = document.getElementById("badgeCount");
+        var element = document.getElementById("applozic-badge-count");
         if (enablebadgecount === true && totalunreadCount > 0) {
             element.innerHTML = totalunreadCount;
             element.classList.add("mck-badge-count");
