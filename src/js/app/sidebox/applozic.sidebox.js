@@ -2354,6 +2354,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $mck_search.val('');
             };
             _this.sendMessage = function(messagePxy) {
+                var key;
+                var message;
+                if ($("#mck-message-cell .mck-message-inner div[name='message']:last-child").data('msgkey') !== undefined) {
+                    key = $("#mck-message-cell .mck-message-inner div[name='message']:last-child").data('msgkey');
+                    message = mckMessageService.getReplyMessageByKey(key);
+                }
                 if (typeof messagePxy !== 'object') {
                     return;
                 }
@@ -2367,6 +2373,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if ((typeof messagePxy.message === 'undefined' || messagePxy.message.length === 0) && FILE_META.length === 0) {
                     $mck_text_box.addClass("mck-text-req");
                     return;
+                }
+                if (message) {
+                    if (message.metadata.altype && (message.type === 0 || message.type === 4 || message.type === 6)) {
+                        metadata.altype = message.metadata.altype;
+                    }
                 }
                 if (messagePxy.conversationId) {
                     var conversationPxy = MCK_CONVERSATION_MAP[messagePxy.conversationId];
