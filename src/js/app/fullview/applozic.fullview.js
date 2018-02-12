@@ -4865,7 +4865,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             var userIdArray = new Array();
                             userIdArray.push(userId);
                             mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                            
+
                               if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                             if (userId) {
                                 userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
@@ -5837,7 +5837,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                 $mck_search_List.html('');
                 var mckContactNameArray = [];
                 mckUtils.ajax({
-                    url: MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=80&orderBy=1",
+                    url: MCK_BASE_URL + CONTACT_LIST_URL + "?startIndex=0&pageSize=30&orderBy=1",
                     type: 'get',
                     global: false,
                     success: function(data) {
