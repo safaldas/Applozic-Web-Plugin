@@ -1368,6 +1368,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         }
                     }
                 }
+                mckContactService.loadContacts();
                 mckUserUtils.checkUserConnectedStatus();
                 if (typeof MCK_INIT_AUTO_SUGGESTION === 'function') {
                     MCK_INIT_AUTO_SUGGESTION();
@@ -2352,6 +2353,8 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.sendMessage = function(messagePxy) {
                 if (messagePxy.to) {
+                    if(MCK_USER_DETAIL_MAP[messagePxy.to]){
+                  if(MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime !== undefined){
                     if (MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
                         $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
                         $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
@@ -2360,6 +2363,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                         return;
                     }
                 }
+              }
+            }
                 $mck_msg_inner = mckMessageLayout.getMckMessageInner();
                 if (typeof messagePxy !== 'object') {
                     return;
@@ -2964,6 +2969,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                                         });
                                     }
                                     if (currTabId) {
+                                      if(MCK_USER_DETAIL_MAP[currTabId]&&MCK_USER_DETAIL_MAP[currTabId].deletedAtTime){
                                         if (MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted === true) {
                                             $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
                                             $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
@@ -2972,6 +2978,7 @@ _this.getReplyMessageByKey = function(msgkey) {
                                             return;
                                         }
                                     }
+                                  }
                                     if (data.groupFeeds.length > 0) {
                                         $applozic.each(data.groupFeeds, function(i, groupFeed) {
                                             mckGroupUtils.addGroup(groupFeed);
@@ -4217,7 +4224,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
 
                 var msgList = [{
                     msgReply: replyMsg   ? replyMsg.message + "\n" : '',
-                    msgReplyTo: replyMsg ? replyMsg.to + "\n" : '',
+                    msgReplyTo: replyMsg ? replyTo + "\n" : '',
                     msgReplyDivExpr: replyMsg ? 'vis' : 'n-vis',
                     msgReplyToVisibleExpr: (contact.isGroup && replyMsg) ? 'vis' : 'n-vis',
                     msgPreview: msgpreview ? _this.getImageForReplyMessage(replyMsg) :"",
@@ -4819,6 +4826,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     $mck_search.keypress(function (e) {
                         if (e.which === 13) {
                             var tabId = $mck_search.val();
+                            var userIdArray = new Array();
+                            userIdArray.push(tabId);
+                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
+
+                            if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                             if (tabId !== '') {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                                     mckMessageLayout.loadTab({
@@ -4829,6 +4841,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                                     $modal_footer_content.removeClass('n-vis').addClass('vis');
                                 }
                             }
+                          }
                             $applozic(this).val('');
                             return true;
                         }
@@ -4836,6 +4849,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     $applozic(d).on("click", ".mck-tab-search", function (e) {
                         e.preventDefault();
                         var tabId = $mck_search.val();
+                        var userIdArray = new Array();
+                        userIdArray.push(tabId);
+                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
+
+                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                         if (tabId !== '') {
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
@@ -4844,11 +4862,17 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             });
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
+                      }
                         $mck_search.val('');
                     });
                     $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
                             var userId = $mck_contact_search_input.val();
+                            var userIdArray = new Array();
+                            userIdArray.push(userId);
+                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
+
+                              if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                             if (userId) {
                                 userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
                                 if (userId) {
@@ -4861,6 +4885,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                                     }
                                 }
                             }
+                          }
                             $mck_contact_search_input.val('');
                             $mck_contact_search_box.mckModal('hide');
                         }
@@ -4877,6 +4902,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
                         var tabId = $mck_contact_search_input.val();
+                        var userIdArray = new Array();
+                        userIdArray.push(tabId);
+                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
+
+                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                         if (tabId !== '') {
                             if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             mckMessageLayout.loadTab({
@@ -4887,6 +4917,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
                         }
+                      }
                         $mck_contact_search_input.val('');
                         $mck_contact_search_box.mckModal('hide');
                     });
