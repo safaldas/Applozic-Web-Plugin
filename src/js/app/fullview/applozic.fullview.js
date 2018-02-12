@@ -4849,6 +4849,11 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                     $applozic(d).on("click", ".mck-tab-search", function (e) {
                         e.preventDefault();
                         var tabId = $mck_search.val();
+                        var userIdArray = new Array();
+                        userIdArray.push(tabId);
+                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
+
+                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                         if (tabId !== '') {
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
@@ -4857,6 +4862,7 @@ _this.sendVideoCallMessage = function(callId, msgType, contentType, audioOnly) {
                             });
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
+                      }
                         $mck_search.val('');
                     });
                     $mck_contact_search_input.keypress(function (e) {
