@@ -6,6 +6,7 @@
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = "https://apps.applozic.com";
         var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
+        var PUSH_NOTIFICATION_LOGOUT = "/rest/ws/device/logout";
         var MESSAGE_LIST_URL = "/rest/ws/message/list";
         var MESSAGE_SEND_URL = "/rest/ws/message/send";
         var GROUP_CREATE_URL = "/rest/ws/group/create";
@@ -124,7 +125,7 @@
             APP_MODULE_NAME =modName;
         }
         ALApiService.ajax = function (options) {
-            
+
                     function extend() {
                         for (var i = 1; i < arguments.length; i++)
                             for (var key in arguments[i])
@@ -132,13 +133,13 @@
                                     arguments[0][key] = arguments[i][key];
                         return arguments[0];
                     }
-            
+
                     var reqOptions = extend({}, {}, options);
-            
+
                     if (mckUtils.getEncryptionKey()) {
                         var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
                         var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            
+
                         if (reqOptions.type.toLowerCase() === 'post') {
                             // encrypt Data
                             while (options.data.length % 16 != 0) {
@@ -150,7 +151,7 @@
                             var encryptedStr = String.fromCharCode.apply(null, encryptedBytes);
                             reqOptions.data = btoa(encryptedStr);
                         }
-            
+
                         reqOptions.success = function (data) {
                             // Decrypt response
                             var decodedData = atob(data);
@@ -176,13 +177,13 @@
                     if (typeof reqOptions.async !== 'undefined' || options.async) {
                         asyn = reqOptions.async;
                     }
-            
+
                     var typ = reqOptions.type.toUpperCase();
-            
+
                     if (typ === 'GET' && typeof reqOptions.data !== "undefined") {
                         reqOptions.url = reqOptions.url + "?" + reqOptions.data;
                     }
-            
+
                     request.open(typ, reqOptions.url, asyn);
                     if (typ === 'POST'|| typ === 'GET') {
                         if (typeof reqOptions.contentType === 'undefined') {
@@ -192,13 +193,13 @@
                         }
                         request.setRequestHeader('Content-Type', cttype);
                     }
-            
-            
+
+
                     //authorizationrequestheaders
                     MCK_BASE_URL = MCK_BASE_URL;
                     if (reqOptions.url.indexOf(MCK_BASE_URL) !== -1) {
                         request.setRequestHeader("UserId-Enabled", true);
-            
+
                         if (AUTH_CODE) {
                             request.setRequestHeader("Authorization", "Basic " + AUTH_CODE);
                         }
@@ -218,7 +219,7 @@
                     } else {
                         request.send(reqOptions.data);
                     }
-            
+
                     request.onreadystatechange = function () {
                         if (request.readyState === XMLHttpRequest.DONE) {
                             if (request.status === 200) {
@@ -227,7 +228,7 @@
                                 if (typeof contType === "undefined" || contType === "null" || contType === null) {
                                     contType = "";
                                 }
-            
+
                                 if (contType.toLowerCase().indexOf("text/html") != -1) {
                                     responsedata = request.responseXML;
                                 } else if (contType.toLowerCase().indexOf("application/json") != -1) {
@@ -246,18 +247,18 @@
 
         /**
          * Get messages list.
-         * 
+         *
          * Usage Examples:
-         * 
+         *
          * Get latest messages group by users and groups:
          * Applozic.ALApiService.getMessages({data: {}, success: function(response) {console.log(response);}, error: function() {}});
-         * 
+         *
          * Messages between logged in user and a specific userId:
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4'}, success: function(response) {console.log(response);}, error: function() {}});
-         * 
+         *
          * Messages between logged in user and a specific groupId:
          * Applozic.ALApiService.getMessages({data: {groupId: 5694841}, success: function(response) {console.log(response);}, error: function() {}});
-         * 
+         *
          * Messages history before a timestamp, for loading message list, pass the endTime = createdAt of the last message received in the message list api response
          * Applozic.ALApiService.getMessages({data: {userId: 'debug4', endTime: 1508177918406}, success: function(response) {console.log(response);}, error: function() {}});
          */
@@ -427,7 +428,7 @@
         /**
          * Delete conversation thread of the logged in user with a particular user or group.
          * Usage Example:
-         * 
+         *
          * Delete by userId
          * Applozic.ALApiService.deleteConversation({data: {userId: 'debug2'}, success: function(response) {console.log(response);}, error: function() {}});
          * Delete by groupId
@@ -478,6 +479,31 @@
                 }
             });
         }
+/*
+* pushNotificationLogout
+* Usage Example :
+* Applozic.ALApiService.pushNotificationLogout({success: function(response) {console.log(response);} , error: function() {}})
+*/
+        ALApiService.pushNotificationLogout= function (options) {
+            ALApiService.ajax({
+                url: MCK_BASE_URL + PUSH_NOTIFICATION_LOGOUT,
+                type: 'post',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
+                    }
+                }
+            });
+        }
+
+
 
         /**
          * Get groups list.
@@ -528,7 +554,7 @@
                     }
                 }
             });
-        }  
+        }
        /**
          * Add Group Member to Group.
          * Usage Example:
@@ -555,8 +581,8 @@
                     }
                 }
             });
-        }  
-        
+        }
+
         /**
          * Remove Group Member from Group.
          * Usage Example:
@@ -584,7 +610,7 @@
                     }
                 }
             });
-        }  
+        }
 
         /**
          * Group Left
@@ -612,7 +638,7 @@
                     }
                 }
             });
-        }  
+        }
 
          /**
          * Group Update
@@ -640,8 +666,8 @@
                     }
                 }
             });
-        } 
-        
+        }
+
          /**
          * Check if user is part of a Group
          * Usage Example:
@@ -649,7 +675,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
 
-        ALApiService.isUserPresentInGroup = function (options) {           
+        ALApiService.isUserPresentInGroup = function (options) {
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_IS_USER_PRESENT_URL+ '?userId='+options.data.userId+'&clientGroupId='+options.data.clientGroupId,
                 type: 'get',
@@ -666,7 +692,7 @@
                     }
                 }
             });
-        }  
+        }
 
         /**
          * Group Users Count
@@ -675,7 +701,7 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
 
-        ALApiService.groupUserCount = function (options) {           
+        ALApiService.groupUserCount = function (options) {
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_USER_COUNT_URL+ '?clientGroupIds='+options.data.clientGroupId,
                 type: 'get',
@@ -692,8 +718,8 @@
                     }
                 }
             });
-        } 
-        
+        }
+
          /**
          * Group Delete
          * Usage Example:
@@ -718,7 +744,7 @@
                     }
                 }
             });
-        }  
+        }
         /**
          * Create User FriendList
          * Usage Example:
@@ -745,7 +771,7 @@
                     }
                 }
             });
-        }  
+        }
  /**
          * Create Open FriendList
          * Usage Example:
@@ -774,7 +800,7 @@
                     }
                 }
             });
-        } 
+        }
         /**
          * Get FriendList
          * Usage Example:
@@ -802,7 +828,7 @@
                     }
                 }
             });
-        }    
+        }
 
  /**
          * remove user from friendList
@@ -829,7 +855,7 @@
                     }
                 }
             });
-        }    
+        }
 
         /**
          * delete friendList
@@ -884,7 +910,7 @@
                     }
                 }
             });
-        }  
+        }
          /**
          * Update User Detail
          * Usage Example:
@@ -910,7 +936,7 @@
                     }
                 }
             });
-        }  
+        }
 /**
          * Update Password
          * Usage Example:
@@ -1062,7 +1088,7 @@
                 }
             });
         }
-        
+
         /**
          * UnBlock User
          * Usage Example:
@@ -1107,7 +1133,7 @@
                     error: function() {}
                 });
         };
-           
+
         /**
          * FileUpload
          * Usage Example:
@@ -1135,7 +1161,7 @@
         }
 
 
-        /** 
+        /**
         * * Send Attachment
         * Usage Example:
         * var file =document.getElementById("photo").files[0];
@@ -1219,7 +1245,7 @@
                     }
                 }
             });
-        };  
+        };
 /**
          * conversationReadUpdate
          * Usage Example:
@@ -1418,7 +1444,7 @@
                         }
                     });
                 }
-                
+
         /**
        * registerClientApi
        * Usage Example:
@@ -1428,7 +1454,7 @@
           'registrationId': 'PUSH_NOTIFICATION_TOKEN', //Replace with FCM push notification token for Android devices and APNS push notification token for iOS devices
           'pushNotificationFormat' : '1', //1 for PhoneGap, 2 for Ionic
           'deviceType': '1',       //1 for Android, 4 for iOS
-          'appVersionCode': '108' 
+          'appVersionCode': '108'
         };
         window.Applozic.ALApiService.registerClientApi({data: {"userPxy":userPxy}, success: function (result) {}, error: function () { } });
        */
@@ -1459,7 +1485,7 @@
                  * getUsersByRole
                  * Usage Example:
                  window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":["APPLICATION_WEB_ADMIN","ADMIN"]}, success: function (result) {console.log(result);}, error: function () { } });
-                 */        
+                 */
                 ALApiService.getUsersByRole = function (options) {
                     var data = getAsUriParameters(options.data);
                     ALApiService.ajax({
