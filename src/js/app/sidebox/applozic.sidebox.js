@@ -1317,7 +1317,7 @@ window.onload = function() {
                 return 'Callback Function Required';
             }
         };
-  /*      _this.leaveGroup = function(params) {
+        _this.leaveGroup = function(params) {
             if (typeof params !== 'object') {
                 return 'Unsupported Format. Please check format';
             }
@@ -1336,7 +1336,7 @@ window.onload = function() {
                 return "Callback Function Required";
             }
         };
-				*/
+
         _this.addGroupMember = function(params) {
             if (typeof params !== 'object') {
                 return "Unsupported Format. Please check format";
@@ -1374,7 +1374,7 @@ window.onload = function() {
             }
         };
 
-/*       _this.removeGroupMember = function(params) {
+       _this.removeGroupMember = function(params) {
             if (typeof params !== 'object') {
                 return 'Unsupported Format. Please check format';
             }
@@ -1455,7 +1455,7 @@ window.onload = function() {
                 return 'Callback function required';
             }
         };
-*/
+
 
         _this.getMessages = function(params) {
             if (typeof params.callback === 'function') {
@@ -1634,7 +1634,7 @@ window.onload = function() {
             }
         };
 
-    /*    _this.initGroupTab = function(params) {
+        _this.initGroupTab = function(params) {
             if (typeof params === "object") {
                 var users = params.users;
                 if (typeof users === 'undefined' || users.length < 1) {
@@ -1658,7 +1658,7 @@ window.onload = function() {
                 return 'Unsupported format. Please check format';
             }
         };
-*/
+
         _this.getTotalUnreadCount = function() {
             return MCK_TOTAL_UNREAD_COUNT;
         };
@@ -5184,19 +5184,6 @@ window.onload = function() {
                 }
             };
 
-/*            _this.addGroupFromMessage = function(message, update) {
-                var groupId = message.groupId;
-                var group = mckGroupUtils.getGroup('' + groupId);
-                if (typeof group === 'undefined') {
-                    group = mckGroupUtils.createGroup(groupId);
-                    mckGroupService.loadGroups({
-                        //apzCallback: mckGroupLayout.loadGroupsCallback
-												apzCallback: mckGroupService.loadGroupsCallback
-                    });
-                }
-                _this.updateRecentConversationList(group, message, update);
-            };
-						*/
             _this.updateRecentConversationList = function(contact, message, update) {
                 var $listId = 'mck-contact-list';
                 var contactHtmlExpr = (contact.isGroup) ? 'group-' + contact.htmlId : 'user-' + contact.htmlId;
@@ -6811,58 +6798,7 @@ window.onload = function() {
                     return group['deletedAtTime'];
                 }
             };
-  /*        _this.getGroupDisplayName = function(groupId) {
-                if (typeof MCK_GROUP_MAP[groupId] === 'object') {
-                    var group = MCK_GROUP_MAP[groupId];
-                    var displayName = group['displayName'];
-                    if (group.type === 7) {
-                        var contact = mckMessageService.getContactFromGroupOfTwo(group);
-                        if (typeof contact !== 'undefined') {
-                            displayName = mckMessageLayout.getTabDisplayName(contact.contactId, false);
-                        }
-                    }
-                    if (group.type === 3) {
-                        if (displayName.indexOf(MCK_USER_ID) !== -1) {
-                            displayName = displayName.replace(MCK_USER_ID, '').replace(":", '');
-                            if (typeof(MCK_GETUSERNAME) === "function") {
-                                var name = (MCK_GETUSERNAME(displayName));
-                                displayName = (name) ? name : displayName;
-                            }
-                        }
-                    }
-                    if (!displayName && group.type === 5) {
-                        displayName = 'Broadcast';
-                    }
-                    if (!displayName) {
-                        displayName = group.contactId;
-                    }
-                    return displayName;
-                } else {
-                    return groupId;
-                }
-            };
 
-            _this.getGroupImage = function(imageSrc) {
-                return (imageSrc) ? '<img src="' + imageSrc + '"/>' : '<img src="' + MCK_BASE_URL + '/resources/sidebox/css/app/images/mck-icon-group.png"/>';
-            };
-
-            _this.getGroupDefaultIcon = function() {
-                return '<div class="mck-group-icon-default"></div>';
-            };
-
-           _this.addMemberToGroup = function(group, userId) {
-                if (typeof group.members === 'object') {
-                    if (group.members.indexOf(userId) === -1) {
-                        group.members.push(userId);
-                    }
-                    if (typeof group.removedMembersId === 'object' && (group.removedMembersId.indexOf(userId) !== -1)) {
-                        group.removedMembersId.splice(group.removedMembersId.indexOf(userId), 1);
-                    }
-                    MCK_GROUP_MAP[group.contactId] = group;
-                }
-                return group;
-            };
-	*/
             _this.removeMemberFromGroup = function(group, userId) {
                 if (typeof group.removedMembersId !== 'object' || group.removedMembersId.length < 1) {
                     group.removedMembersId = [];
@@ -6873,38 +6809,7 @@ window.onload = function() {
                 MCK_GROUP_MAP[group.contactId] = group;
                 return group;
             };
-/*            _this.authenticateGroupUser = function(group) {
-                var isGroupLeft = _this.isGroupLeft(group);
-                var isGroupMemeber = false;
-                if (!isGroupLeft && group.members.length > 0) {
-                    for (var i = 0; i < group.members.length; i++) {
-                        if (MCK_USER_ID === '' + group.members[i]) {
-                            isGroupMemeber = true;
-                            return true;
-                        }
-                    }
-                }
-                return isGroupMemeber;
-            };
 
-            _this.isAppendOpenGroupContextMenu = function(group) {
-                if (MCK_OPEN_GROUP_SETTINGS.deleteChatAccess === 0) {
-                    return false;
-                }
-                var isGroupMember = mckGroupService.authenticateGroupUser(group);
-                if (!isGroupMember) {
-                    return false;
-                }
-                if (group.adminName === MCK_USER_ID) {
-                    return true;
-                }
-
-                if (MCK_OPEN_GROUP_SETTINGS.deleteChatAccess === 2) {
-                    return true;
-                }
-                return false;
-            }
-	*/
             _this.validateOpenGroupUser = function(group) {
                 if (group.type === 6) {
                     var isGroupMember = mckGroupService.authenticateGroupUser(group);
