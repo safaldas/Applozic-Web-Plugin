@@ -587,7 +587,7 @@ window.onload = function() {
                             } else {
                                 var userIdArray = [];
                                 userIdArray.push(message.to);
-                                mckContactService.getUsersDetail(userIdArray, params);
+                                mckUserDir.getUsersDetail(userIdArray, params);
                             }
                             return;
                         }
@@ -693,7 +693,7 @@ window.onload = function() {
                             document.querySelector('.mck-user-ol-status.' + htmlId).nextElementSibling().innerHTML = '(' + MCK_LABELS['online'] + ')';
                         }
                         w.MCK_OL_MAP[userId] = true;
-                        mckUserUtils.updateUserStatus({
+                        mckUserDir.updateUserStatus({
                             'userId': resp.message,
                             'status': 1
                         });
@@ -722,7 +722,7 @@ window.onload = function() {
                             document.querySelector(".mck-user-ol-status." + contact.htmlId).nextElementSibling.innerHTML = '(Offline)';
                         }
                         mckUtils.hideElement(document.querySelector("#li-user-" + htmlId + " .mck-ol-status"));
-                        mckUserUtils.updateUserStatus({
+                        mckUserDir.updateUserStatus({
                             'userId': userId,
                             'status': 0,
                             'lastSeenAtTime': lastSeenAtTime
@@ -773,7 +773,7 @@ window.onload = function() {
                         if (typeof contact === 'undefined') {
                             var userIdArray = [];
                             userIdArray.push(userId);
-                            mckContactService.getUsersDetail(userIdArray, {});
+                            mckUserDir.getUsersDetail(userIdArray, {});
                         }
                     }
                     var response = {
@@ -899,7 +899,7 @@ window.onload = function() {
                             } else {
                                 var userIdArray = [];
                                 userIdArray.push(message.to);
-                                mckContactService.getUsersDetail(userIdArray, params);
+                                mckUserDir.getUsersDetail(userIdArray, params);
                             }
                             return;
                         }
@@ -1302,9 +1302,15 @@ window.onload = function() {
         _this.getUserStatus = function(params) {
             if (typeof params.callback === 'function') {
                 if (typeof params.userIds !== 'undefined') {
-                    mckContactService.getUsersDetail(params.userIds, params);
+                    mckUserDir.getUsersDetail(params.userIds, params);
                 } else {
-                    mckContactService.getUserStatus(params);
+                    mckUserDir.getUserStatus(params, function(data){
+											$applozic.each(data.users, function (i, user) {
+	                     var contact = mckMessageLayout.getContact('' + user.userId);
+	                     contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+	                        MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+	                    });
+										});
                 }
             }
         };
@@ -1364,7 +1370,7 @@ window.onload = function() {
                     return;
                 }
 
-                mckContactService.loadUserProfile(params.userId);
+                mckUserDir.loadUserProfile(params.userId);
 
                 params.apzCallback = mckGroupLayout.onAddedGroupMember;
                 mckGroupService.addGroupMember(params);
@@ -1922,7 +1928,7 @@ window.onload = function() {
                         }
                     }
                 }
-                mckUserUtils.checkUserConnectedStatus();
+                mckUserDir.checkUserConnectedStatus();
                 if (typeof MCK_ON_PLUGIN_INIT === 'function') {
                     MCK_ON_PLUGIN_INIT('success',data);
                 }
@@ -2546,7 +2552,9 @@ window.onload = function() {
                     }
                     var blockText = (isBlock) ? MCK_LABELS['block.user.alert'] : MCK_LABELS['unblock.user.alert'];
                     if (confirm(blockText)) {
-                        mckContactService.blockUser(tabId, isBlock);
+                        mckUserDir.blockUser(tabId, isBlock,function(userId){
+													 mckUserUtils.toggleBlockUser(userId, isBlock);
+												});
                     }
                 });
                 $mck_btn_leave_group.on('click', function(e) {
@@ -2673,9 +2681,15 @@ window.onload = function() {
                                     $mck_no_gsm_text.removeClass('n-vis').addClass('vis');
                                 }
                             } else {
-                                mckContactService.getUserStatus({
-                                    'callback': mckGroupLayout.addMembersToGroupSearchList
-                                });
+                                mckUserDir.getUserStatus({
+                                    'callback': mckGroupLayout.addMembersToGroupSearchList,
+                                }, function(data){
+																	$applozic.each(data.users, function (i, user) {
+							                        var contact = mckMessageLayout.getContact('' + user.userId);
+							                       contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+							                        MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
+							                    });
+																});
                             }
                         } else {
                             $mck_group_admin_options.removeClass('vis').addClass('n-vis');
@@ -3541,7 +3555,7 @@ window.onload = function() {
                                                     params.isMessages = isMessages;
                                                     params.messageData = data;
                                                     params.isLoadMessageList = true;
-                                                    mckContactService.getUsersDetail(userIdArray, params);
+                                                    mckUserDir.getUsersDetail(userIdArray, params);
                                                 } else {
                                                     mckGroupLayout.addGroupStatus(group);
                                                     var validated = true;
@@ -4634,7 +4648,7 @@ window.onload = function() {
                 var showNameExpr = 'n-vis';
                 var msgAvatorClassExpr = '';
 
-                mckContactService.loadUserProfile(msg.to);
+                mckUserDir.loadUserProfile(msg.to);
 
                 if (msg.groupId && msg.contentType !== 4 && contact.type !== 7 && (msg.type === 0 || msg.type === 4 || msg.type === 6)) {
                     displayName = _this.getTabDisplayName(msg.to, false);
@@ -4955,14 +4969,7 @@ window.onload = function() {
                     return '';
                 }
             };
-          /*  _this.getContactFromGroupOfTwo = function(group) {
-                for (var i = 0; i < group.members.length; i++) {
-                    if (MCK_USER_ID === '' + group.members[i]) {
-                        continue;
-                    }
-                    return mckMessageLayout.fetchContact('' + group.members[i]);
-                }
-            }; */
+
             _this.getContactImageLink = function(contact, displayName) {
                 var imgsrctag = '';
                 if (contact.isGroup && contact.type !== 7) {
@@ -5044,7 +5051,7 @@ window.onload = function() {
                         $applozic.each(data.message, function(i, message) {
                             if (!(typeof message.to === 'undefined')) {
                                 (message.groupId) ? mckGroupService.addGroupFromMessage(message, true, function(group, message, update){
-																	// mck call
+																	// mck callback function
 																	_this.updateRecentConversationList(group, message, update);
 																}): _this.addContactsFromMessage(message, true);
                                 showMoreDateTime = message.createdAtTime;
@@ -5206,7 +5213,7 @@ window.onload = function() {
                     var params = {};
                   params.async=false;
                   params.userIds =contactList;
-                  mckContactService.getUsersDetail(params.userIds,params);
+                  mckUserDir.getUsersDetail(params.userIds,params);
                   userIdArray = contactList;
                   }
                 var uniqueUserIdArray = userIdArray.filter(function(item, pos) {
@@ -5895,7 +5902,7 @@ window.onload = function() {
             };
             _this.populateMessage = function(messageType, message, notifyUser) {
                 var callDuration = mckDateUtils.convertMilisIntoTime(message.metadata.CALL_DURATION);
-                mckContactService.loadUserProfile(message.to);
+                mckUserDir.loadUserProfile(message.to);
 
                 if (message.contentType == 103) {
                     if (message.type == 4 && message.metadata.MSG_TYPE == "CALL_REJECTED") {
@@ -5997,7 +6004,7 @@ window.onload = function() {
                                     }
                                     if (!message.groupId) {
                                         $applozic('#mck-tab-status').html(MCK_LABELS['online']);
-                                        mckUserUtils.updateUserStatus({
+                                        mckUserDir.updateUserStatus({
                                             'userId': message.to,
                                             'status': 1
                                         });
@@ -6155,68 +6162,6 @@ window.onload = function() {
             var $mck_block_button = $applozic("#mck-block-button");
             var $mck_message_inner = $applozic("#mck-message-cell .mck-message-inner");
 
-            _this.updateUserStatus = function(params) {
-                if (typeof MCK_USER_DETAIL_MAP[params.userId] === 'object') {
-                    var userDetail = MCK_USER_DETAIL_MAP[params.userId];
-                    if (params.status === 0) {
-                        userDetail.connected = false;
-                        userDetail.lastSeenAtTime = params.lastSeenAtTime;
-                    } else if (params.status === 1) {
-                        userDetail.connected = true;
-                    }
-                } else {
-                    var userIdArray = new Array();
-                    userIdArray.push(params.userId);
-                    mckContactService.getUsersDetail(userIdArray, {});
-                }
-            };
-            _this.getUserDetail = function(userId) {
-                if (typeof MCK_USER_DETAIL_MAP[userId] === 'object') {
-                    return MCK_USER_DETAIL_MAP[userId];
-                } else {
-                    return;
-                }
-            };
-
-            _this.checkUserConnectedStatus = function() {
-                var userIdArray = new Array();
-                var otherUserIdArray = new Array();
-                $applozic(".mck-user-ol-status").each(function() {
-                    var tabId = $applozic(this).data('mck-id');
-                    if (typeof tabId !== "undefined" && tabId !== '') {
-                        userIdArray.push(tabId);
-                        var htmlId = mckContactUtils.formatContactId('' + tabId);
-                        $applozic(this).addClass(htmlId);
-                        $applozic(this).next().addClass(htmlId);
-                    }
-                });
-                if (userIdArray.length > 0) {
-                    $applozic.each(userIdArray, function(i, userId) {
-                        if (typeof MCK_USER_DETAIL_MAP[userId] === 'undefined') {
-                            otherUserIdArray.push(userId);
-                        }
-                    });
-                    (otherUserIdArray.length > 0) ? mckContactService.getUsersDetail(otherUserIdArray, {
-                        setStatus: true
-                    }): _this.updateUserConnectedStatus();
-                }
-            };
-            _this.updateUserConnectedStatus = function() {
-                $applozic('.mck-user-ol-status').each(function() {
-                    var $this = $applozic(this);
-                    var tabId = $this.data('mck-id');
-                    if (tabId) {
-                        var userDetail = MCK_USER_DETAIL_MAP[tabId];
-                        if (typeof MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
-                            $this.removeClass('n-vis').addClass('vis');
-                            $this.next().html('(' + MCK_LABELS['online'] + ')');
-                        } else {
-                            $this.removeClass('vis').addClass('n-vis');
-                            $this.next().html('(Offline)');
-                        }
-                    }
-                });
-            };
             _this.lastSeenOfGroupOfTwo = function(tabId) {
                 if (w.MCK_OL_MAP[tabId]) {
                     $mck_tab_status.attr('title', MCK_LABELS['online']).html(MCK_LABELS['online']);
@@ -6270,7 +6215,7 @@ window.onload = function() {
             var $mck_msg_inner = $applozic("#mck-message-cell .mck-message-inner");
             var $mck_tab_message_option = $applozic(".mck-tab-message-option");
             var $mck_loading = $applozic("#mck-contact-loading");
-            var USER_BLOCK_URL = "/rest/ws/user/block";
+           	var USER_BLOCK_URL = "/rest/ws/user/block";
             var CONTACT_NAME_URL = "/rest/ws/user/info";
             var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
             var CONTACT_LIST_URL = "/rest/ws/user/filter";
@@ -6328,23 +6273,7 @@ window.onload = function() {
                     w.console.log('Unable to load contacts. Please reload page.');
                 } });
             };
-            _this.loadUserProfile = function(userId) {
-                if (typeof userId !== "undefined") {
-                    var userIdArray = [];
-                    var memberId = '' + userId.split(",")[0];
-                    userIdArray.push(memberId);
-                    _this.loadUserProfiles(userIdArray);
-                }
-            };
-            _this.loadUserProfiles = function(userIds) {
-                var userIdArray = [];
-                $applozic.each(userIds, function(i, userId) {
-                    if (typeof mckMessageLayout.getContact(userId) === 'undefined') {
-                        userIdArray.push(userId);
-                    }
-                });
-                _this.getUsersDetail(userIdArray, { 'async': false });
-            };
+
             _this.createFriendList = function(params) {
             	var group={};
                 group.groupMemberList=params.groupMemberList;
@@ -6416,125 +6345,7 @@ window.onload = function() {
                    }, error: function () { }
                });
            };
-            _this.getUsersDetail = function(userIdArray, params) {
-                if (typeof userIdArray === 'undefined' || userIdArray.length < 1) {
-                    return;
-                }
-                var cached = (typeof params.cached !== 'undefined') ? params.cached : true;
-                var userIdList = [];
-                var uniqueUserIdArray = userIdArray.filter(function(item, pos) {
-                    return userIdArray.indexOf(item) === pos;
-                });
-
-                for (var i = 0; i < uniqueUserIdArray.length; i++) {
-                    var userId = uniqueUserIdArray[i];
-                    if (!cached || typeof MCK_USER_DETAIL_MAP[userId] === 'undefined') {
-                        userIdList.push(userId);
-                    }
-                }
-
-                if (userIdList.length === 0) {
-                    if (params.setStatus) {
-                        mckUserUtils.updateUserConnectedStatus();
-                    } else if (params.message) {
-                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                    } else if (params.isLoadMessageList) {
-                        mckMessageLayout.loadMessageListOnUserDetailFetch(params);
-                    }
-                    return;
-                }
-
-                var response = new Object();
-                window.Applozic.ALApiService.getUserDetail({data:{userIdList: userIdList},
-                success: function(data) {
-                    if (data.status === 'success') {
-                        if (data.response.length > 0) {
-                            $applozic.each(data.response, function(i, userDetail) {
-                                MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
-                                w.MCK_OL_MAP[userDetail.userId] = (userDetail.connected);
-                                var contact = mckMessageLayout.getContact('' + userDetail.userId);
-                                contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail) : mckMessageLayout.updateContactDetail(contact, userDetail);
-                            });
-                        }
-                    }
-                    if (params.setStatus) {
-                        mckUserUtils.updateUserConnectedStatus();
-                    } else if (params.message) {
-                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                    } else if (params.isLoadMessageList) {
-                        mckMessageLayout.loadMessageListOnUserDetailFetch(params);
-                    }
-
-                    response.status = "success";
-                    response.data = data;
-                    if (params.callback) {
-                        params.callback(response);
-                    }
-                },
-                error: function() {
-                    if (params.setStatus) {
-                        mckUserUtils.updateUserConnectedStatus();
-                    } else if (params.message) {
-                        mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
-                    } else if (params.isLoadMessageList) {
-                        mckMessageLayout.loadMessageListOnUserDetailFetch(params);
-                    }
-
-                    response.status = "error";
-                    if (params.callback) {
-                        params.callback(response);
-                    }
-                }
-             });
-            };
-            _this.getUserStatus = function (params) {
-                var response = new Object();
-                window.Applozic.ALApiService.getUserStatus({
-                    success: function (data) {
-                        if (data.users.length > 0) {
-                            MCK_GROUP_MEMBER_SEARCH_ARRAY = [];
-                            $applozic.each(data.users, function (i, user) {
-                                var contact = mckMessageLayout.getContact('' + user.userId);
-                                contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
-                                MCK_GROUP_MEMBER_SEARCH_ARRAY.push(contact.contactId);
-                            });
-                        }
-                        response.status = "success";
-                        response.data = data;
-                        if (params.callback) {
-                            params.callback(response);
-                        }
-                        return;
-                    },
-                    error: function () {
-                        response.status = "error";
-                        if (params.callback) {
-                            params.callback(response);
-                        }
-                    }
-                });
-            };
-            _this.blockUser = function(userId, isBlock) {
-                if (!userId || typeof isBlock === 'undefined') {
-                    return;
-                }
-                var data = "userId=" + userId + "&block=" + isBlock;
-                mckUtils.ajax({
-                    url: MCK_BASE_URL + USER_BLOCK_URL,
-                    type: 'get',
-                    data: data,
-                    success: function(data) {
-                        if (typeof data === 'object') {
-                            if (data.status === 'success') {
-                                MCK_BLOCKED_TO_MAP[userId] = isBlock;
-                                mckUserUtils.toggleBlockUser(userId, isBlock);
-                            }
-                        }
-                    },
-                    error: function() {}
-                });
-            };
-        }
+				}
         function MckGroupLayout() {
             var _this = this;
 
@@ -7045,7 +6856,14 @@ window.onload = function() {
                         MCK_TAB_CONVERSATION_MAP[params.groupId] = tabConvArray;
                     }
 
-                    mckContactService.loadUserProfiles(groupFeed.membersId);
+                    mckUserDir.loadUserProfiles(groupFeed.membersId, function(userIds){
+											$applozic.each(userIds, function(i, userId) {
+								        if (typeof mckMessageLayout.getContact(userId) === 'undefined') {
+															userIdArray.push(userId);
+													}
+
+											});
+										});
 
                     if (params.isMessage && typeof params.message === 'object') {
                         mckMessageLayout.populateMessage(params.messageType, params.message, params.notifyUser);
@@ -7331,7 +7149,7 @@ window.onload = function() {
                 if (typeof groupId !== 'undefined' && typeof userId !== 'undefined') {
                     var group = mckGroupUtils.getGroup(groupId);
                     if (typeof group === 'object' && MCK_USER_ID === group.adminName) {
-                        mckContactService.loadUserProfile(userId);
+                        mckUserDir.loadUserProfile(userId);
 
                         mckGroupService.addGroupMember({
                             'groupId': groupId,
@@ -7930,7 +7748,7 @@ window.onload = function() {
                     isGroup = true;
                 }
 
-                mckContactService.loadUserProfile(message.to);
+                mckUserDir.loadUserProfile(message.to);
 
                 var displayName = mckMessageLayout.getTabDisplayName(contact.contactId, isGroup);
                // var notificationsound = mckNotificationTone;
