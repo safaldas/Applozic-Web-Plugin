@@ -49,6 +49,7 @@
         var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
         var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
         var ATTACHMENT_UPLOAD_URL = "/rest/ws/upload/image";
+        var PUSH_NOTIFICATION_LOGOUT = "/rest/ws/device/logout";
         var ACCESS_TOKEN;
         var DEVICE_KEY;
         var APP_MODULE_NAME;
@@ -1479,11 +1480,11 @@
         }
 
 
-        /**
-                * getUsersByRole
-                * Usage Example:
-                window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":["APPLICATION_WEB_ADMIN","ADMIN"]}, success: function (result) {console.log(result);}, error: function () { } });
-                */
+            /*
+            * getUsersByRole
+            * Usage Example:
+            window.Applozic.ALApiService.getUsersByRole({data: {"startIndex":0,"pageSize":30,"roleNameList":["APPLICATION_WEB_ADMIN","ADMIN"]}, success: function (result) {console.log(result);}, error: function () { } });
+            */
         ALApiService.getUsersByRole = function (options) {
             var data = getAsUriParameters(options.data);
             ALApiService.ajax({
@@ -1499,6 +1500,30 @@
                 error: function (response) {
                     if (options.error) {
                         options.success(response);
+                    }
+                }
+            });
+        }
+
+            /*
+            * pushNotificationLogout
+            * Usage Example :
+            * Applozic.ALApiService.pushNotificationLogout({success: function(response) {console.log(response);} , error: function() {}})
+            */
+        ALApiService.pushNotificationLogout= function (options) {
+            ALApiService.ajax({
+                url: MCK_BASE_URL + PUSH_NOTIFICATION_LOGOUT,
+                type: 'post',
+                async: (typeof options.async !== 'undefined') ? options.async : true,
+                contentType: 'application/json',
+                success: function (response) {
+                    if (options.success) {
+                        options.success(response);
+                    }
+                },
+                error: function (response) {
+                    if (options.error) {
+                        options.error(response);
                     }
                 }
             });
