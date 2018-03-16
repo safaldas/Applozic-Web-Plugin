@@ -2420,6 +2420,34 @@ var MCK_CLIENT_GROUP_MAP = [];
                         isTopPanelAdded: isTopPanelAdded
                     };
                     _this.submitMessage(messagePxy, optns);
+                } else if (messagePxy.message && FILE_META.length !== 0 && (messagePxy.contentType === 1 || messagePxy.contentType === 2)) {
+                    var isTopPanelAdded = ($mck_tab_message_option.hasClass('n-vis'));
+                    var tabId = $mck_msg_inner.data('mck-id');
+                    var randomId = mckUtils.randomId();
+                    messagePxy.key = randomId;
+                    var locationMessage = {};
+                    if (messagePxy.groupId) {
+                        locationMessage.groupId = messagePxy.groupId;
+                    } else {
+                        locationMessage.to = messagePxy.to;
+                    }
+                    locationMessage.type = messagePxy.type;
+                    locationMessage.key = mckUtils.randomId();;
+                    locationMessage.message = messagePxy.message;
+                    locationMessage.contentType = messagePxy.contentType;
+                    messagePxy.contentType = 1;
+                    messagePxy.fileMeta = FILE_META[0];
+                    messagePxy.message = "";
+                    if (messagePxy.contentType !== 12 && tabId && tabId.toString() === contact.contactId) {
+                        _this.addMessageToTab(messagePxy, contact);
+                        _this.addMessageToTab(locationMessage, contact);
+                    }
+                    var optns = {
+                        tabId: contact.contactId,
+                        isTopPanelAdded: isTopPanelAdded
+                    };
+                    _this.submitMessage(messagePxy, optns);
+                    _this.submitMessage(locationMessage, optns);
                 } else if (FILE_META.length > 0) {
                     $applozic.each(FILE_META, function(i, fileMeta) {
                         var isTopPanelAdded = ($mck_tab_message_option.hasClass('n-vis'));
