@@ -198,6 +198,9 @@ window.onload = function() {
                         oInstance.logout();
                         return 'success';
                         break;
+                    case 'loadContactsForContactList':
+                        return oInstance.loadContactsForContactList(params);
+                        break;
                     case 'createFriendContactList':
                         return oInstance.createFriendContactList(params);
                         break;
@@ -1172,6 +1175,11 @@ window.onload = function() {
         _this.loadContacts = function(contacts) {
             mckMessageLayout.loadContacts(contacts);
         };
+
+        _this.loadContactsForContactList = function (contacts) {
+            mckMessageLayout.loadContactsForContactList(contacts);
+        };
+
         _this.setOffline = function() {
             if (typeof window.Applozic.ALSocket !== 'undefined') {
                 window.Applozic.ALSocket.sendStatus(0);
@@ -5596,6 +5604,17 @@ window.onload = function() {
                     }
                 });
             };
+            _this.loadContactsForContactList = function (data) {
+                var startIndex = data.startIndex ? data.startIndex : '0';
+                var pageSize = data.pageSize ? data.pageSize : '50';
+                var fetchMoreContactUrl = '?pageSize=' + pageSize + '&orderBy=1&startTime=' + startIndex;
+                var url = '?startIndex=' + startIndex + '&pageSize=' + pageSize + '&orderBy=1';
+                window.Applozic.ALApiService.getContactList({
+                    url: (data.startIndex || data.startIndex === '0') ? fetchMoreContactUrl : url,
+                    success: function (response) { console.log(response); },
+                    error: function () { }
+                });
+            }
             _this.getStatusIcon = function(msg) {
                 return '<span class="' + _this.getStatusIconName(msg) + ' move-right ' + msg.key + '_status status-icon"></span>';
             };
