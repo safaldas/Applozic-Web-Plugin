@@ -164,7 +164,7 @@ window.onload = function() {
                     case 'createGroup':
                         return oInstance.createGroup(params);
                         break;
-										case 'loadContactsForContactList':
+                    case 'loadContactsForContactList':
                         return oInstance.loadContactsForContactList(params);
                         break;
                     case 'loadBroadcastTab':
@@ -1171,9 +1171,9 @@ window.onload = function() {
                 }
             }
         };
-				_this.loadContactsForContactList = function (contacts) {
-			             mckMessageLayout.loadContactsForContactList(contacts);
-			         };
+        _this.loadContactsForContactList = function (contacts) {
+            mckMessageLayout.loadContactsForContactList(contacts);
+        };
 
         _this.loadContacts = function(contacts) {
             mckMessageLayout.loadContacts(contacts);
