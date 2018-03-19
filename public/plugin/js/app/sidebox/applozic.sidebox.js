@@ -1177,7 +1177,7 @@ window.onload = function() {
         };
 
         _this.loadContactsForContactList = function (contacts) {
-            mckMessageLayout.loadContactsForContactList(contacts);
+            return mckMessageLayout.loadContactsForContactList(contacts);
         };
 
         _this.setOffline = function() {
@@ -5611,7 +5611,11 @@ window.onload = function() {
                 var url = '?startIndex=' + startIndex + '&pageSize=' + pageSize + '&orderBy=1';
                 window.Applozic.ALApiService.getContactList({
                     url: (data.startIndex || data.startIndex === '0') ? fetchMoreContactUrl : url,
-                    success: function (response) { console.log(response); },
+                    success: function (response) {
+                        if (data.success) {
+                            data.success(response);
+                        }
+                    },
                     error: function () { }
                 });
             }
