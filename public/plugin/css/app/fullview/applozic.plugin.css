@@ -12,7 +12,7 @@ body {
 	text-rendering: optimizeLegibility;
 	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: 400;
-	background-image: url("http://s17.postimg.org/fr01hfe33/image.jpg");
+	background-image: url("../../../images/image.jpg");
 	background-size: cover;
 	background-repeat: none;
 }
@@ -64,11 +64,11 @@ body {
 	height:59px;
 }
 .mck-container .left .mck-box-top .blk-lg-3 {
-	width:60px;	
+	width:60px;
 }
 .mck-container .left .mck-box-top .blk-lg-2 {
 	width:39px;
-	
+
 }
 
 .mck-container .left .mck-box-top .blk-lg-2 a img {
@@ -76,11 +76,11 @@ body {
 	width:25px;
 }
 .mck-container .left .mck-box-top.mck-wt-user-icon .blk-lg-3 {
-    display: none !important;	
+    display: none !important;
 }
 .mck-container .left .mck-box-top .mck-box-title {
   height:59px;
-  line-height: 59px;	
+  line-height: 59px;
 }
 
 .mck-container .left .mck-box-top .mck-user-icon {
@@ -288,7 +288,7 @@ body {
 	height:100%;
 }
 .mck-container .right .conversation-section .mck-loading {
-    z-index: 100;	
+    z-index: 100;
 }
 .mck-container .right .chat {
 	position: relative;
@@ -410,7 +410,7 @@ body {
 	width: 20px;
 	height: 40px;
 	content: '';
-	background-image: url("http://s1.postimg.org/s5gfy283f/attachemnt.png");
+	background-image: url("../../../images/attachment.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -421,7 +421,7 @@ body {
 	width: 24px;
 	height: 40px;
 	content: '';
-	background-image: url("http://s14.postimg.org/q2ug83h7h/smiley.png");
+	background-image: url("../../../images/smiley.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -442,7 +442,7 @@ body {
 	height: 40px;
 	margin-left: 11px;
 	content: '';
-	background-image: url("http://s30.postimg.org/nz9dho0pp/send.png");
+	background-image: url("../../../images/send.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
