@@ -107,14 +107,16 @@
 }
 
 .mck-mike-btn {
-        background-image: url(../../../images/mck-mike.png);
+        background-image: url(../../../images/mck-mic.png);
         background-repeat: no-repeat;
         float :left !important;
         height:18px;
         width:19px;
-	    overflow: hidden;
+	    	overflow: hidden;
         background-size: 20px;
         cursor: pointer;
+				filter:grayscale(100%);
+				opacity: .5;
 }
 .mck-stop-btn {
         background-image: url(../../../images/mck-stop.png);
