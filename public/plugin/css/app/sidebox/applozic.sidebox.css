@@ -570,9 +570,12 @@
 	opacity: 0;
 }
 
-.mck-box.fade.in {
+.fade.in {
 	opacity: 1;
 	background: transparent !important;
+}
+
+.mck-box.fade.in {
 	width: 100%;
 }
 

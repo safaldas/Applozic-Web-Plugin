@@ -11,6 +11,7 @@
         var openGroupSubscriber = [];
         var checkConnectedIntervalId;
         var sendConnectedStatusIntervalId;
+        var OPEN_GROUP_SUBSCRIBER_MAP;
         var MCK_TYPING_STATUS;
         var SOCKET = '';
         var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
@@ -246,6 +247,7 @@
                 else if (messageType === 'APPLOZIC_11') {
                     events.onUserConnect(resp.message);
                 } else if (messageType === 'APPLOZIC_12') {
+                  var lastSeenAtTime = resp.message.split(",")[1];
                     events.onUserDisconnect({
                         'userId': userId,
                         'lastSeenAtTime': lastSeenAtTime

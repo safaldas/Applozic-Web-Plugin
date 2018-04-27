@@ -50,6 +50,7 @@
         var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
         var ATTACHMENT_UPLOAD_URL = "/rest/ws/upload/image";
         var PUSH_NOTIFICATION_LOGOUT = "/rest/ws/device/logout";
+        var MCK_SW_REGISTER_URL = "/rest/ws/plugin/update/sw/id";
         var ACCESS_TOKEN;
         var DEVICE_KEY;
         var APP_MODULE_NAME;
@@ -945,8 +946,9 @@
                                                       success: function(response) {console.log(response);}, error: function() {} });
          */
         ALApiService.getContactList = function (options) {
+            var baseurl = options.baseUrl ? options.baseUrl : MCK_BASE_URL;
             ALApiService.ajax({
-                url: MCK_BASE_URL + USER_FILTER + options.url,
+                url: options.baseUrl + USER_FILTER + options.url,
                 type: 'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
