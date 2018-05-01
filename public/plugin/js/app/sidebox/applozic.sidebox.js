@@ -1885,16 +1885,15 @@ window.onload = function() {
 														 var key;
 														 var fileUrl;
 														 key = $this.data("blobkey");
-														 console.log(key);
 														 alFileService.cloudupdate(key, function(result) {
 															 fileUrl= result;
 															 that.dataset.url=fileUrl;
-															 _this.setoptions(that);
+															 _this.updateparams(that);
 														 });
 
 											 }
 											 else {
-												 _this.setoptions(this);
+												 _this.updateparams(this);
 												 console.log(href);
 											 }
 									 });
@@ -1905,8 +1904,10 @@ window.onload = function() {
 							 var $this = $applozic(this);
 							 var that = this;
 							 var href = that.href;
-							 var host = that.host;
-							 if(href === "javascript:void(0)"){
+							 var hostUrl = that.host;
+                             var keygen = $this.data("cloudService");
+                             var defaultHostUrl = "storage.googleapis.com";
+							 if(keygen === "google_cloud"){
 											var key;
 											var fileUrl;
 											key = $this.data("blobkey");
@@ -1915,7 +1916,7 @@ window.onload = function() {
 												that.href=fileUrl;
 											});
 										}
-							 if(host === "storage.googleapis.com"){
+							 if(hostUrl === defaultHostUrl){
 								 var key;
 								 var fileUrl;
 								 key = $this.data("blobkey");
@@ -1926,7 +1927,7 @@ window.onload = function() {
 							 }
 						});
 
-						_this.setoptions = function(element){
+						_this.updateparams = function(element){
 							var options = {
 								url:'data-url',
 								zIndex:220000000000,

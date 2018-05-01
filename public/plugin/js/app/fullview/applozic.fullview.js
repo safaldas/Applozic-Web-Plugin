@@ -1310,12 +1310,12 @@ var MCK_CLIENT_GROUP_MAP = [];
                                  alFileService.cloudupdate(key, function(result) {
                                    fileUrl= result;
                                    that.dataset.url=fileUrl;
-                                   _this.setoptions(fileUrl,that);
+                                   _this.updateparams(fileUrl,that);
                                  });
 
                            }
                            else {
-                             _this.setoptions(href, this);
+                             _this.updateparams(href, this);
                              console.log(href);
                            }
                        }
@@ -1328,8 +1328,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                var $this = $applozic(this);
                var that = this;
                var href = that.href;
-               var host = that.host;
-               if(href === "javascript:void(0)"){
+               var hostUrl = that.host;
+               var keygen = $this.data("cloudService");
+               var defaultHostUrl = "storage.googleapis.com";
+               if(keygen === "google_cloud"){
                       var key;
                       var fileUrl;
                       key = $this.data("blobkey");
@@ -1338,7 +1340,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         that.href=fileUrl;
                       });
                     }
-                    if(host === "storage.googleapis.com"){
+                    if(hostUrl === defaultHostUrl){
      								 var key;
      								 var fileUrl;
      								 key = $this.data("blobkey");
@@ -1349,7 +1351,7 @@ var MCK_CLIENT_GROUP_MAP = [];
      							 }
             });
 
-            _this.setoptions = function(href, element){
+            _this.updateparams = function(href, element){
               $applozic(element).fancybox({
                   'openEffect': 'none',
                   'closeEffect': 'none',
@@ -4464,7 +4466,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                               // Google Cloud Server
                               var fileUrl;
                               var thumbnailUrl ;
-                              //Todo: ajax call which will return url and then set url to data-url
                               alFileService.cloudupdate(msg.fileMeta.thumbnailBlobKey, function(result) {
                                 thumbnailUrl= result;
                               });
@@ -4539,8 +4540,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
                         if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey")){
-                          //Todo: ajax call which will return url and then set url to data-url
-                          return '<a href="javascript:void(0)" role="link" target="_self" class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                          return '<a href="javascript:void(0)" role="link" target="_self" class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '" data-cloud-service="google_cloud"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                         }
                       else {
                         return '<a href="' + alFileService.getFileurl(msg) + '" role="link" target="_self" class="file-preview-link"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
