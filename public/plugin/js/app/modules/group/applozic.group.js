@@ -274,7 +274,7 @@ function MckGroupService() {
             }
           }
           response.status = "success";
-          response.data = data.response;
+      //  response.data = data.response;
         } else {
           response.status = "error";
           response.errorMessage = data.errorResponse[0].description;

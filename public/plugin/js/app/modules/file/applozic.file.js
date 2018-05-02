@@ -14,7 +14,7 @@ function AlFileService() {
   var MCK_STORAGE_URL ;
   var MCK_FILE_URL ;
   var MCK_MAP_STATIC_API_KEY ;
-  var MCK_CHECK_NEW_UPLOAD_SETTINGS ;
+  var MCK_CUSTOM_UPLOAD_SETTINGS ;
   var MCK_APP_ID;
   var AUTH_CODE;
   var USER_DEVICE_KEY;
@@ -30,7 +30,7 @@ function AlFileService() {
   _this.get = function(optns) {
     MCK_APP_ID = optns.appId;
     MCK_STORAGE_URL = optns.customUploadUrl;
-    MCK_CHECK_NEW_UPLOAD_SETTINGS = optns.fileupload;
+    MCK_CUSTOM_UPLOAD_SETTINGS = optns.fileupload;
     MCK_MAP_STATIC_API_KEY = optns.mapStaticAPIkey;
     MCK_ACCESS_TOKEN = optns.accessToken;
     MCK_APP_MODULE_NAME = optns.appModuleName;
@@ -71,7 +71,7 @@ function AlFileService() {
     if ((msg.fileMeta).hasOwnProperty("url")) {
       if ((msg.fileMeta).hasOwnProperty("thumbnailBlobKey")) {
         var fileUrl;
-        _this.cloudupdate(msg.fileMeta.blobKey,function(result){
+        _this.generatecloudurl(msg.fileMeta.blobKey,function(result){
           fileUrl= result;
         });
         return fileUrl;
@@ -87,7 +87,7 @@ function AlFileService() {
     return '';
   };
 
-_this.cloudupdate = function(key, callback) {
+_this.generatecloudurl = function(key, callback) {
   // Custom function for generating image url for google cloud server
   var url = "https://googleupload.applozic.com/files/url?key=" + key;
   var headers= {
@@ -136,10 +136,8 @@ _this.cloudupdate = function(key, callback) {
             if((msg.fileMeta).hasOwnProperty("url")){
               if((msg.fileMeta).hasOwnProperty("thumbnailBlobKey")){
                 // Google Cloud Server
-                var fileUrl;
                 var thumbnailUrl ;
-                //Todo: ajax call which will return url and then set url to data-url
-                _this.cloudupdate(msg.fileMeta.thumbnailBlobKey, function(result) {
+                _this.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
                   thumbnailUrl= result;
                 });
                 return '<img href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + thumbnailUrl + '" area-hidden="true">';
@@ -158,8 +156,18 @@ _this.cloudupdate = function(key, callback) {
       } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
         return '<a href= "#" target="_self"><video controls class="mck-video-player">' + '<source src="' + _this.getFileurl(msg) + '" type="video/mp4">' + '<source src="' + _this.getFileurl(msg) + '" type="video/ogg"></video></a>';
         //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
-      } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
+      }else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
+        if(MCK_CUSTOM_UPLOAD_SETTINGS === "googleCloud"){
+          // Google Cloud Server
+          var getUrl ;
+          _this.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+            getUrl= result;
+          });
+          return '<a href="#" target="_self"><audio controls class="mck-audio-player" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+        }
+        else {
         return '<a href="#" target="_self"><audio controls class="mck-audio-player">' + '<source src="' + _this.getFileurl(msg) + '" type="audio/ogg">' + '<source src="' + _this.getFileurl(msg) + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+      }
       } else {
         return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';
       }
@@ -171,8 +179,7 @@ _this.cloudupdate = function(key, callback) {
       if (typeof msg.fileMeta === 'object') {
           //var srcUrl=msg.fileMeta.hasOwnProperty("url")? msg.fileMeta:MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey;
           if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
-              if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey")){
-                //Todo: ajax call which will return url and then set url to data-url
+              if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey") || MCK_CUSTOM_UPLOAD_SETTINGS ===  "googleCloud"){
                 return '<a href="javascript:void(0);" role="link" target="_self"  class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '" data-cloud-service="google_cloud"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
               }
             else {

@@ -6,7 +6,6 @@ var MCK_CLIENT_GROUP_MAP = [];
         baseUrl: MCK_BASE_URL? MCK_BASE_URL :'https://apps.applozic.com',
         fileBaseUrl: 'https://applozic.appspot.com',
         customFileUrl:'https://googleupload.applozic.com',
-        customUploadUrl:'https://staging.applozic.com/storage',
         notificationIconLink: '',
         notificationSoundLink: '',
         mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
@@ -354,7 +353,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var MCK_USER_NAME = appOptions.userName;
         var IS_MCK_LOCSHARE = appOptions.locShare;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
-        var MCK_CHECK_NEW_UPLOAD_SETTINGS = appOptions.fileupload;
+        var MCK_CUSTOM_UPLOAD_SETTINGS = appOptions.fileupload;
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
         var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
         var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
@@ -717,7 +716,7 @@ var MCK_CLIENT_GROUP_MAP = [];
           MCK_CUSTOM_URL = optns.customFileUrl;
           MCK_STORAGE_URL = optns.customUploadUrl;
           MCK_FILE_URL = optns.fileBaseUrl;
-          MCK_CHECK_NEW_UPLOAD_SETTINGS = optns.fileupload;
+          MCK_CUSTOM_UPLOAD_SETTINGS = optns.fileupload;
           IS_MCK_LOCSHARE = optns.locShare;
           MCK_ON_PLUGIN_INIT = optns.onInit;
           MCK_CONTACT_NAME_MAP = new Array();
@@ -1307,15 +1306,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                                  var key;
                                  var fileUrl;
                                  key = $this.data("blobkey");
-                                 alFileService.cloudupdate(key, function(result) {
+                                 alFileService.generatecloudurl(key, function(result) {
                                    fileUrl= result;
                                    that.dataset.url=fileUrl;
-                                   _this.updateparams(fileUrl,that);
+                                   _this.setimageviewparams(fileUrl,that);
                                  });
 
                            }
                            else {
-                             _this.updateparams(href, this);
+                             _this.setimageviewparams(href, this);
                              console.log(href);
                            }
                        }
@@ -1335,7 +1334,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                       var key;
                       var fileUrl;
                       key = $this.data("blobkey");
-                      alFileService.cloudupdate(key, function(result) {
+                      alFileService.generatecloudurl(key, function(result) {
                         fileUrl= result;
                         that.href=fileUrl;
                       });
@@ -1344,14 +1343,14 @@ var MCK_CLIENT_GROUP_MAP = [];
      								 var key;
      								 var fileUrl;
      								 key = $this.data("blobkey");
-     								 alFileService.cloudupdate(key, function(result) {
+     								 alFileService.generatecloudurl(key, function(result) {
      									 fileUrl= result;
      									 that.href=fileUrl;
      								 });
      							 }
             });
 
-            _this.updateparams = function(href, element){
+            _this.setimageviewparams = function(href, element){
               $applozic(element).fancybox({
                   'openEffect': 'none',
                   'closeEffect': 'none',
@@ -3852,7 +3851,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
                     if ($applozic('.person[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').length == 0) {
-                        mckMessageLayout.updateRecentConversationList(params.isGroup ? mckGroupUtils.getGroup(params.tabId) : _this.fetchContact(params.tabId), undefined, true, params.prepend);
+                        _this.updateRecentConversationList(params.isGroup ? mckGroupUtils.getGroup(params.tabId) : _this.fetchContact(params.tabId), undefined, true, params.prepend);
                     }
                     $applozic('.person[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').addClass('active');
                     var displayName = params.isGroup ? mckGroupService.getGroupDisplayName(params.tabId) : _this.fetchContact(params.tabId).displayName;
@@ -4440,7 +4439,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }];
                 $applozic.tmpl('searchContactbox', contactList).prependTo('#' + $listId);
             };
-
             _this.getFilePath = function(msg) {
                if (msg.contentType === 2) {
                     try {
@@ -4466,7 +4464,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                               // Google Cloud Server
                               var fileUrl;
                               var thumbnailUrl ;
-                              alFileService.cloudupdate(msg.fileMeta.thumbnailBlobKey, function(result) {
+                              alFileService.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
                                 thumbnailUrl= result;
                               });
                               return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + thumbnailUrl + '" area-hidden="true">';
@@ -4486,7 +4484,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                         return '<a href= "#" ><video controls class="mck-video-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/mp4">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/ogg"></video></a>';
                         //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                     } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
-                        return '<a href="#"><audio controls class="mck-audio-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/ogg">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+                      if(MCK_CUSTOM_UPLOAD_SETTINGS === "googleCloud"){
+                        // Google Cloud Server
+                        var getUrl ;
+                        alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+                          getUrl= result;
+                        });
+                        return '<a href="#" target="_self"><audio controls class="mck-audio-player" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+                      }
+                      else {
+                      return '<a href="#" target="_self"><audio controls class="mck-audio-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/ogg">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+                    }
                     } else {
                         return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';
                     }
@@ -4539,7 +4547,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getFileAttachment = function(msg) {
                 if (typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
-                        if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey")){
+                        if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey") || MCK_CUSTOM_UPLOAD_SETTINGS ===  "googleCloud"){
                           return '<a href="javascript:void(0)" role="link" target="_self" class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '" data-cloud-service="google_cloud"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                         }
                       else {
@@ -4883,11 +4891,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                 if (IS_AUTO_TYPE_SEARCH_ENABLED) {
                     $mck_search.keypress(function (e) {
                         if (e.which === 13) {
-                          var tabId = $mck_search.val();
-                            var userIdArray = new Array();
-                            userIdArray.push(tabId);
-                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                             var tabId = $mck_search.val();
                             if (tabId !== '') {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
@@ -4899,7 +4902,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     $modal_footer_content.removeClass('n-vis').addClass('vis');
                                 }
                             }
-                          }
                             $applozic(this).val('');
                             return true;
                         }
@@ -4907,10 +4909,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(d).on("click", ".mck-tab-search", function (e) {
                         e.preventDefault();
                         var tabId = $mck_search.val();
-                        var userIdArray = new Array();
-                        userIdArray.push(tabId);
-                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                         if (tabId !== '') {
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
@@ -4919,16 +4917,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                             });
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
-                      }
                         $mck_search.val('');
                     });
                     $mck_contact_search_input.keypress(function (e) {
                         if (e.which === 13) {
                             var userId = $mck_contact_search_input.val();
-                            var userIdArray = new Array();
-                            userIdArray.push(userId);
-                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                             if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                             if (userId) {
                                 userId = (typeof userId !== "undefined" && userId !== '') ? userId.toString() : '';
                                 if (userId) {
@@ -4941,7 +4934,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     }
                                 }
                             }
-                        }
                             $mck_contact_search_input.val('');
                             $mck_contact_search_box.mckModal('hide');
                         }
@@ -4958,10 +4950,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(d).on('click', '.mck-contact-search-link', function (e) {
                         e.preventDefault();
                         var tabId = $mck_contact_search_input.val();
-                        var userIdArray = new Array();
-                        userIdArray.push(tabId);
-                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                          if(!MCK_USER_DETAIL_MAP[tabId].deletedAtTime){
                         if (tabId !== '') {
                             if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                             mckMessageLayout.loadTab({
@@ -4972,7 +4960,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
                         }
-                      }
                         $mck_contact_search_input.val('');
                         $mck_contact_search_box.mckModal('hide');
                     });
@@ -7236,13 +7223,13 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var params = {};
                     params.file = file;
                     params.name = file.name;
-                    if(MCK_CHECK_NEW_UPLOAD_SETTINGS === "awsS3Server"){
+                    if(MCK_CUSTOM_UPLOAD_SETTINGS === "awsS3Server"){
 										_this.uploadAttachment2AWS(params);
 										}
-										else if (MCK_CHECK_NEW_UPLOAD_SETTINGS ===	"googleCloud") {
+										else if (MCK_CUSTOM_UPLOAD_SETTINGS ===	"googleCloud") {
 										_this.customFileUpload(params);
 										}
-                    else if (MCK_CHECK_NEW_UPLOAD_SETTINGS ===	"customStorage"){
+                    else if (MCK_CUSTOM_UPLOAD_SETTINGS ===	"customStorage"){
 										_this.customStorageFileUpload(params);
 										}
 										else {
@@ -7370,13 +7357,13 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
 
             _this.audioRecoder = function(params) {
-                if(MCK_CHECK_NEW_UPLOAD_SETTINGS === "awsS3Server"){
+                if(MCK_CUSTOM_UPLOAD_SETTINGS === "awsS3Server"){
                 _this.uploadAttachment2AWS(params);
                 }
-                else if (MCK_CHECK_NEW_UPLOAD_SETTINGS ===	"googleCloud") {
+                else if (MCK_CUSTOM_UPLOAD_SETTINGS ===	"googleCloud") {
                 _this.customFileUpload(params);
                 }
-                else if (MCK_CHECK_NEW_UPLOAD_SETTINGS ===	"customStorage"){
+                else if (MCK_CUSTOM_UPLOAD_SETTINGS ===	"customStorage"){
   							_this.customStorageFileUpload(params);
   							}
                 else {
@@ -8563,7 +8550,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         alert("Video calling is not available at the moment. For details, contact support");
                       }
                       else{
-                        alert("missing token... please refresh page..");
+                        alert("Calling token is missing, try refreshing page and initiate call again.");
                       }
                     }
                 });

@@ -8,8 +8,7 @@ window.onload = function() {
     var default_options = {
         baseUrl: MCK_BASE_URL? MCK_BASE_URL :'https://apps.applozic.com',
         fileBaseUrl: 'https://applozic.appspot.com',
-				customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
-				customUploadUrl:'https://staging.applozic.com/storage',
+		customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
         notificationIconLink: '',
         notificationSoundLink: '',
         mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
@@ -1885,15 +1884,15 @@ window.onload = function() {
 														 var key;
 														 var fileUrl;
 														 key = $this.data("blobkey");
-														 alFileService.cloudupdate(key, function(result) {
+														 alFileService.generatecloudurl(key, function(result) {
 															 fileUrl= result;
 															 that.dataset.url=fileUrl;
-															 _this.updateparams(that);
+															 _this.setimageviewparams(that);
 														 });
 
 											 }
 											 else {
-												 _this.updateparams(this);
+												 _this.setimageviewparams(this);
 												 console.log(href);
 											 }
 									 });
@@ -1911,7 +1910,7 @@ window.onload = function() {
 											var key;
 											var fileUrl;
 											key = $this.data("blobkey");
-											alFileService.cloudupdate(key, function(result) {
+											alFileService.generatecloudurl(key, function(result) {
 												fileUrl= result;
 												that.href=fileUrl;
 											});
@@ -1920,14 +1919,14 @@ window.onload = function() {
 								 var key;
 								 var fileUrl;
 								 key = $this.data("blobkey");
-								 alFileService.cloudupdate(key, function(result) {
+								 alFileService.generatecloudurl(key, function(result) {
 									 fileUrl= result;
 									 that.href=fileUrl;
 								 });
 							 }
 						});
 
-						_this.updateparams = function(element){
+						_this.setimageviewparams = function(element){
 							var options = {
 								url:'data-url',
 								zIndex:220000000000,
@@ -7930,7 +7929,7 @@ window.onload = function() {
                         alert("Video calling is not available at the moment. For details, contact support");
                       }
                       else{
-                        alert("missing token... please refresh page..");
+                        alert("Calling token is missing, try refreshing page and initiate call again.");
                       }
                     }
                 });
