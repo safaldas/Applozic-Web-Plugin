@@ -50,7 +50,7 @@ function intializeChat(appId, userId, pass) {
         s = document.createElement("script");
         s.type = "text/javascript";
         s.async = true;
-        s.src = "https://apps-test.applozic.com/sidebox.app";
+        s.src = "https://apps.applozic.com/sidebox.app";
         h = document.getElementsByTagName('head')[0];
         h.appendChild(s);
         window.applozic = m;
