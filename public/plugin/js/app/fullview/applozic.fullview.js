@@ -4440,67 +4440,77 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic.tmpl('searchContactbox', contactList).prependTo('#' + $listId);
             };
             _this.getFilePath = function(msg) {
-               if (msg.contentType === 2) {
-                    try {
-                        var geoLoc = $applozic.parseJSON(msg.message);
-                        if (geoLoc.lat && geoLoc.lon) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '&key='+MCK_MAP_STATIC_API_KEY+'"/></a>';
-                        }
-                    } catch (ex) {
-                        if (msg.message.indexOf(',') !== -1) {
-                            return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '&key='+MCK_MAP_STATIC_API_KEY+'" /></a>';
-                        }
-                    }
-                }
-                if (typeof msg.fileMeta === "object") {
-                    if (msg.fileMeta.contentType.indexOf("image") !== -1) {
-                        if (msg.fileMeta.contentType.indexOf("svg") !== -1) {
-                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + _this.getFileurl(msg) + '" area-hidden="true"></img></a>';
-                        } else if (msg.contentType === 5) {
-                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.blobKey + '" area-hidden="true"></img></a>';
-                        } else {
-                          if((msg.fileMeta).hasOwnProperty("url")){
-                            if((msg.fileMeta).hasOwnProperty("thumbnailBlobKey")){
-                              // Google Cloud Server
-                              var fileUrl;
-                              var thumbnailUrl ;
-                              alFileService.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
-                                thumbnailUrl= result;
-                              });
-                              return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + thumbnailUrl + '" area-hidden="true">';
-                            }
-                            else {
-                              return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '" src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true">';
-                            }
-                          }
-                            else if((msg.fileMeta.thumbnailUrl === "thumbnail_"+msg.fileMeta.name )){
-                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + MCK_STORAGE_URL + "/files/thumbnail_" + msg.fileMeta.name + '" area-hidden="true" ></img></a>';
-                            }
-                          else {
-                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true" ></img></a>';
-                          }
-                        }
-                    } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
-                        return '<a href= "#" ><video controls class="mck-video-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/mp4">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/ogg"></video></a>';
-                        //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
-                    } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
-                      if(MCK_CUSTOM_UPLOAD_SETTINGS === "googleCloud"){
-                        // Google Cloud Server
-                        var getUrl ;
-                        alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
-                          getUrl= result;
-                        });
-                        return '<a href="#" target="_self"><audio controls class="mck-audio-player" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+             if (msg.contentType === 2) {
+                  try {
+                      var geoLoc = $applozic.parseJSON(msg.message);
+                      if (geoLoc.lat && geoLoc.lon) {
+                          return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + geoLoc.lat + "," + geoLoc.lon + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon + '&key='+MCK_MAP_STATIC_API_KEY+'"/></a>';
                       }
-                      else {
-                      return '<a href="#" target="_self"><audio controls class="mck-audio-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/ogg">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+                  } catch (ex) {
+                      if (msg.message.indexOf(',') !== -1) {
+                          return '<a href="http://maps.google.com/maps?z=17&t=m&q=loc:' + msg.message + '" target="_blank"><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + msg.message + '&maptype=roadmap&markers=color:red|' + msg.message + '&key='+MCK_MAP_STATIC_API_KEY+'" /></a>';
+                      }
+                  }
+              }
+              if (typeof msg.fileMeta === "object") {
+                  if (msg.fileMeta.contentType.indexOf("image") !== -1) {
+                      if (msg.fileMeta.contentType.indexOf("svg") !== -1) {
+                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + _this.getFileurl(msg) + '" area-hidden="true"></img></a>';
+                      } else if (msg.contentType === 5) {
+                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.blobKey + '" area-hidden="true"></img></a>';
+                      } else {
+                        if((msg.fileMeta).hasOwnProperty("url")){
+                          if((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1){
+                            // Google Cloud Server
+                            var fileUrl;
+                            var thumbnailUrl ;
+                            alFileService.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
+                              thumbnailUrl= result;
+                            });
+                            return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + thumbnailUrl + '" area-hidden="true">';
+                          }
+                          else {
+                            return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '" src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true">';
+                          }
+                        }
+                          else if((msg.fileMeta.thumbnailUrl === "thumbnail_"+msg.fileMeta.name )){
+                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + MCK_STORAGE_URL + "/files/thumbnail_" + msg.fileMeta.name + '" area-hidden="true" ></img></a>';
+                          }
+                        else {
+                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true" ></img></a>';
+                        }
+                      }
+                  } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
+                    if((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1){
+                      // Google Cloud Server
+                      var getUrl ;
+                      alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+                        getUrl= result;
+                      });
+                      return '<a href="#" target="_self"><video controls class="mck-video-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="video/mp4">' + '<source src="' + getUrl + '" type="video/ogg"></video></a>';
                     }
-                    } else {
-                        return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';
+                    else {
+                      return '<a href= "#" ><video controls class="mck-video-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/mp4">' + '<source src="' + alFileService.getFileurl(msg) + '" type="video/ogg"></video></a>';
+                      //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
+                      }
+                  } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
+                    if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)){
+                      // Google Cloud Server
+                      var getUrl ;
+                      alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+                        getUrl= result;
+                      });
+                      return '<a href="#" target="_self"><audio controls class="mck-audio-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
                     }
-                }
-                return '';
-            };
+                    else {
+                    return '<a href="#" target="_self"><audio controls class="mck-audio-player">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/ogg">' + '<source src="' + alFileService.getFileurl(msg) + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
+                  }
+                  } else {
+                      return '<a href="#" role="link" class="file-preview-link" target="_blank"></a>';
+                  }
+              }
+              return '';
+          };
 
             _this.getImageForMessagePreview = function(message) {
             if (typeof message.fileMeta === 'object') {
@@ -4547,7 +4557,7 @@ var MCK_CLIENT_GROUP_MAP = [];
             _this.getFileAttachment = function(msg) {
                 if (typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
-                        if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta).hasOwnProperty("thumbnailBlobKey") || MCK_CUSTOM_UPLOAD_SETTINGS ===  "googleCloud"){
+                        if((msg.fileMeta).hasOwnProperty("url") && (msg.fileMeta.url).indexOf("www.googleapis.com") !== -1){
                           return '<a href="javascript:void(0)" role="link" target="_self" class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '" data-cloud-service="google_cloud"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
                         }
                       else {
@@ -4559,6 +4569,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     return '';
                 }
             };
+
             _this.getFileIcon = function(msg) {
                 if (msg.fileMetaKey && typeof msg.fileMeta === 'object') {
                     if (msg.fileMeta.contentType.indexOf('image') !== -1) {
