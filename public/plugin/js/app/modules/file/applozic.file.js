@@ -177,30 +177,27 @@ _this.generatecloudurl = function(key, callback) {
     return '';
   };
 
-  _this.updateAudVidUrl = function (element){
-      var keygen = element.dataset.blobkey;
-      var time = new Date().getTime();
-      console.log(time);
-      var currentSrc= element.currentSrc;
-      var expiry= _this.fetchQueryString("Expires", currentSrc);
-      if(time >= (expiry*1000)){
-        _this.generatecloudurl(keygen, function(result) {
-            getUrl= result;
-        });
-      element.src=getUrl;
+  _this.updateAudVidUrl = function(element) {
+    var keygen = element.dataset.blobkey;
+    var time = new Date().getTime();
+    var currentSrc = element.currentSrc;
+    var expiry = _this.fetchQueryString("Expires", currentSrc);
+    if (time >= (expiry * 1000)) {
+      _this.generatecloudurl(keygen, function(result) {
+        getUrl = result;
+      });
+      element.src = getUrl;
     }
   };
 
-  this.fetchQueryString = function(regKey,href)
-  {
-   regKey = regKey.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
-   var regexValue = new RegExp("[\\?&]"+regKey+"=([^&#]*)");
-   var result = regexValue.exec(href);
-   if(result == null)
-   alert("The parameter is null");
-   else
-   console.log(result[1]*1000);
-   return (result[1]);
+  this.fetchQueryString = function(regKey, href) {
+    regKey = regKey.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regexValue = new RegExp("[\\?&]" + regKey + "=([^&#]*)");
+    var result = regexValue.exec(href);
+    if (result == null) {
+      console.log("The value of search query string is null");
+    }
+    return (result[1]);
   }
 
   _this.getFileAttachment = function (msg) {
