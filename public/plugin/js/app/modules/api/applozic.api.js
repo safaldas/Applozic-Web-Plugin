@@ -139,7 +139,7 @@
             var reqOptions = extend({}, {}, options);
 
             if (mckUtils.getEncryptionKey()) {
-                var key = aesjs.util.convertStringToBytes(this.getEncryptionKey());
+                var key = aesjs.util.convertStringToBytes(mckUtils.getEncryptionKey());
                 var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
                 if (reqOptions.type.toLowerCase() === 'post') {

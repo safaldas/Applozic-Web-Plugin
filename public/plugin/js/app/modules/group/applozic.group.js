@@ -262,9 +262,7 @@ function MckGroupService() {
     }
     group.userId = params.userId;
     Applozic.ALApiService.removeGroupMember({
-      data: {
-        group: group
-      },
+      data: { group: group},
       success: function(response) {
         if (response.status === 'success') {
           if (params.clientGroupId) {
@@ -274,7 +272,7 @@ function MckGroupService() {
             }
           }
           response.status = "success";
-      //  response.data = data.response;
+          // response.data = data.response;
         } else {
           response.status = "error";
           response.errorMessage = data.errorResponse[0].description;
@@ -300,6 +298,7 @@ function MckGroupService() {
       }
     });
   };
+
   _this.addGroupMember = function(params) {
     var group = {};
     var response = new Object();
