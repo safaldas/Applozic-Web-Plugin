@@ -782,7 +782,7 @@
 	        "imageData": "Base64 encoded image data" // or image data (optional)
 	    }];
 	$applozic.fn.applozic({
-	                    baseUrl : 'https://apps-test.applozic.com',
+	                    baseUrl : 'https://apps.applozic.com',
 	                    appId: appId, //Get your application key from https://www.applozic.com
 	                    userId: userId, //Logged in user's id, a unique identifier for user
 	                    userName: '', //User's display name
@@ -791,6 +791,8 @@
 	                    contactNumber: '', //optional, pass with internationl code eg: +13109097458
 	                    desktopNotification: true,
 	                    source: '1', // optional, WEB(1),DESKTOP_BROWSER(5), MOBILE_BROWSER(6)
+											customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
+											genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", // generate viewable link for a file incase of file upload on google cloud 
 	                    notificationIconLink: 'https://www.applozic.com/favicon.ico', //Icon to show in desktop notification, replace with your icon
 	                    authenticationTypeId: 1, //1 for password verification from Applozic server and 0 for access Token verification from your server
 	                    accessToken: pass, //optional, leave it blank for testing purpose, read this if you want to add additional security by verifying password from your server https://www.applozic.com/docs/configuration.html#access-token-url

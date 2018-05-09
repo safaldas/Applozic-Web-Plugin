@@ -1,4 +1,4 @@
-var ENV_URL= "https://apps-test.applozic.com";
+var ENV_URL= "https://apps.applozic.com";
 
 document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementById("login-submit").onclick = function() {

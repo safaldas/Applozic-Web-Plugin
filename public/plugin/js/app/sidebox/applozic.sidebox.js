@@ -8,7 +8,8 @@ window.onload = function() {
     var default_options = {
         baseUrl: MCK_BASE_URL? MCK_BASE_URL :'https://apps.applozic.com',
         fileBaseUrl: 'https://applozic.appspot.com',
-		customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
+				customFileUrl:'https://googleupload.applozic.com', // google cloud file upload url
+				genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", // generate viewable link for a file incase of file upload on google cloud
         notificationIconLink: '',
         notificationSoundLink: '',
         mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
@@ -376,6 +377,7 @@ window.onload = function() {
         var IS_CALL_ENABLED = appOptions.video;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
 				var MCK_CUSTOM_UPLOAD_SETTINGS = appOptions.fileupload;
+				var MCK_GENERATE_CLOUD_FILE_URL = appOptions.genereateCloudFileUrl;
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
         var MCK_ON_TOPIC_DETAILS = appOptions.onTopicDetails;
         var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
@@ -659,7 +661,6 @@ window.onload = function() {
 			},
 			'onMessage': function(resp) {
                 var messageType = resp.type;
-
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
                     if(document.getElementById(resp.message.split(",")[0])){
                     var msg = document.getElementById(resp.message.split(",")[0]).getElementsByClassName("mck-message-status")[0];
@@ -1267,6 +1268,7 @@ window.onload = function() {
            TAB_MESSAGE_DRAFT = new Object();
            MCK_FILE_URL = optns.fileBaseUrl;
 					 MCK_CUSTOM_UPLOAD_SETTINGS = optns.fileupload;
+					 MCK_GENERATE_CLOUD_FILE_URL = optns.genereateCloudFileUrl;
            IS_MCK_LOCSHARE = optns.locShare;
            IS_CALL_ENABLED = appOptions.video;
            MCK_ON_PLUGIN_INIT = optns.onInit;
@@ -1884,15 +1886,15 @@ window.onload = function() {
 														 var key;
 														 var fileUrl;
 														 key = $this.data("blobkey");
-														 alFileService.generatecloudurl(key, function(result) {
+														 alFileService.generateCloudUrl(key, function(result) {
 															 fileUrl= result;
 															 that.dataset.url=fileUrl;
-															 _this.setimageviewparams(fileUrl, that);
+															 _this.setImageViewParams(fileUrl, that);
 														 });
 
 											 }
 											 else {
-												 _this.setimageviewparams(href, this);
+												 _this.setImageViewParams(href, this);
 											 }
 									 });
             };
@@ -1909,7 +1911,7 @@ window.onload = function() {
 											var key;
 											var fileUrl;
 											key = $this.data("blobkey");
-											alFileService.generatecloudurl(key, function(result) {
+											alFileService.generateCloudUrl(key, function(result) {
 												fileUrl= result;
 												that.href=fileUrl;
 											});
@@ -1918,14 +1920,14 @@ window.onload = function() {
 								 var key;
 								 var fileUrl;
 								 key = $this.data("blobkey");
-								 alFileService.generatecloudurl(key, function(result) {
+								 alFileService.generateCloudUrl(key, function(result) {
 									 fileUrl= result;
 									 that.href=fileUrl;
 								 });
 							 }
 						});
 
-						_this.setimageviewparams = function(href, element){
+						_this.setImageViewParams = function(href, element){
               $applozic(element).fancybox({
                   'openEffect': 'none',
                   'closeEffect': 'none',

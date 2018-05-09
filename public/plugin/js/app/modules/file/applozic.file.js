@@ -11,6 +11,7 @@ function AlFileService() {
   var FILE_UPLOAD_URL = "/rest/ws/aws/file/url";
   var FILE_AWS_UPLOAD_URL = "/rest/ws/upload/file";
   var FILE_DELETE_URL = "/rest/ws/aws/file/delete";
+  var CLOUD_HOST_URL = "www.googleapis.com";
   var MCK_STORAGE_URL ;
   var MCK_FILE_URL ;
   var MCK_MAP_STATIC_API_KEY ;
@@ -20,6 +21,7 @@ function AlFileService() {
   var USER_DEVICE_KEY;
   var MCK_ACCESS_TOKEN;
   var MCK_APP_MODULE_NAME;
+  var MCK_GENERATE_CLOUD_FILE_URL;
 
   _this.init = function(optns) {
     MCK_FILE_URL = optns.fileBaseUrl;
@@ -34,6 +36,7 @@ function AlFileService() {
     MCK_MAP_STATIC_API_KEY = optns.mapStaticAPIkey;
     MCK_ACCESS_TOKEN = optns.accessToken;
     MCK_APP_MODULE_NAME = optns.appModuleName;
+    MCK_GENERATE_CLOUD_FILE_URL = optns.genereateCloudFileUrl;
   }
 
   _this.deleteFileMeta = function(blobKey) {
@@ -69,9 +72,9 @@ function AlFileService() {
   _this.getFileurl = function(msg) {
   if (typeof msg.fileMeta === "object") {
     if ((msg.fileMeta).hasOwnProperty("url")) {
-      if (((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)) {
+      if (((msg.fileMeta.url).indexOf(CLOUD_HOST_URL) !== -1)) {
         var fileUrl;
-        _this.generatecloudurl(msg.fileMeta.blobKey,function(result){
+        _this.generateCloudUrl(msg.fileMeta.blobKey,function(result){
           fileUrl= result;
         });
         return fileUrl;
@@ -87,9 +90,9 @@ function AlFileService() {
     return '';
   };
 
-_this.generatecloudurl = function(key, callback) {
+_this.generateCloudUrl = function(key, callback) {
   // Custom function for generating image url for google cloud server
-  var url = "https://googleupload.applozic.com/files/url?key=" + key;
+  var url = MCK_GENERATE_CLOUD_FILE_URL.replace("{key}",key);
   var headers = window.Applozic.ALApiService.getAttachmentHeaders();
   mckUtils.ajax({
       type: 'get',
@@ -128,10 +131,10 @@ _this.generatecloudurl = function(key, callback) {
           return '<a href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.blobKey + '" area-hidden="true"></img></a>';
         } else {
             if((msg.fileMeta).hasOwnProperty("url")){
-              if((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1){
+              if((msg.fileMeta.url).indexOf(CLOUD_HOST_URL) !== -1){
                 // Google Cloud Server
                 var thumbnailUrl ;
-                _this.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
+                _this.generateCloudUrl(msg.fileMeta.thumbnailBlobKey, function(result) {
                   thumbnailUrl= result;
                 });
                 return '<a href="#" role="link" target="_self" class="file-preview-link fancybox-media imageview" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + thumbnailUrl + '" area-hidden="true"></img></a>';
@@ -148,10 +151,10 @@ _this.generatecloudurl = function(key, callback) {
           }
         }
       } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
-        if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)){
+        if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf(CLOUD_HOST_URL) !== -1)){
           // Google Cloud Server
           var getUrl ;
-          _this.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+          _this.generateCloudUrl(msg.fileMeta.blobKey, function(result) {
             getUrl= result;
           });
           return '<a href="#" target="_self"><video controls class="mck-video-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="video/mp4">' + '<source src="' + getUrl + '" type="video/ogg"></video>';
@@ -160,9 +163,9 @@ _this.generatecloudurl = function(key, callback) {
           return '<a href= "#" target="_self"><video controls class="mck-video-player">' + '<source src="' + _this.getFileurl(msg) + '" type="video/mp4">' + '<source src="' + _this.getFileurl(msg) + '" type="video/ogg"></video></a>';
         }        //    return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><div class="mck-video-box n-vis"><video controls preload><source src="' + MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey + '" type="' + msg.fileMeta.contentType + '"></video></div><span class="file-detail"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + mckFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
       } else if (msg.fileMeta.contentType.indexOf("audio") !== -1) {
-        if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)){
+        if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf(CLOUD_HOST_URL) !== -1)){
           var getUrl ;
-          _this.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+          _this.generateCloudUrl(msg.fileMeta.blobKey, function(result) {
             getUrl= result;
           });
           return '<a href="#" target="_self"><audio controls class="mck-audio-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
@@ -180,34 +183,31 @@ _this.generatecloudurl = function(key, callback) {
   _this.updateAudVidUrl = function (element){
       var keygen = element.dataset.blobkey;
       var time = new Date().getTime();
-      console.log(time);
       var currentSrc= element.currentSrc;
       var expiry= _this.fetchQueryString("Expires", currentSrc);
       if(time >= (expiry*1000)){
-        _this.generatecloudurl(keygen, function(result) {
+        _this.generateCloudUrl(keygen, function(result) {
             getUrl= result;
         });
       element.src=getUrl;
     }
   };
 
-  this.fetchQueryString = function(regKey,href)
-  {
-   regKey = regKey.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
-   var regexValue = new RegExp("[\\?&]"+regKey+"=([^&#]*)");
-   var result = regexValue.exec(href);
-   if(result == null)
-   alert("The parameter is null");
-   else
-   console.log(result[1]*1000);
-   return (result[1]);
-  }
+  this.fetchQueryString = function(regKey, href) {
+    regKey = regKey.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regexValue = new RegExp("[\\?&]" + regKey + "=([^&#]*)");
+    var result = regexValue.exec(href);
+    if (result == null) {
+      console.log("The parameter is null for the searchedquery");
+    }
+    return (result[1]);
+  };
 
   _this.getFileAttachment = function (msg) {
       if (typeof msg.fileMeta === 'object') {
           //var srcUrl=msg.fileMeta.hasOwnProperty("url")? msg.fileMeta:MCK_FILE_URL + FILE_PREVIEW_URL + msg.fileMeta.blobKey;
           if (msg.fileMeta.contentType.indexOf("image") !== -1 || (msg.fileMeta.contentType.indexOf("audio") !== -1) || (msg.fileMeta.contentType.indexOf("video") !== -1)) {
-              if((msg.fileMeta).hasOwnProperty("url") && ((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)){
+              if((msg.fileMeta).hasOwnProperty("url") && ((msg.fileMeta.url).indexOf(CLOUD_HOST_URL) !== -1)){
                 return '<a href="javascript:void(0);" role="link" target="_self"  class="file-preview-link" data-blobKey="' + msg.fileMeta.blobKey + '" data-cloud-service="google_cloud"><span class="file-detail mck-image-download"><span class="mck-file-name"><span class="mck-icon-attachment"></span>&nbsp;' + msg.fileMeta.name + '</span>&nbsp;<span class="file-size">' + alFileService.getFilePreviewSize(msg.fileMeta.size) + '</span></span></a>';
               }
             else {
