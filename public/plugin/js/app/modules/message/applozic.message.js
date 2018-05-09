@@ -14,8 +14,6 @@ function AlMessageService() {
   var CONVERSATION_READ_UPDATE_URL = "/rest/ws/message/read/conversation";
   var offlineblk = '<div id="mck-ofl-blk" class="mck-m-b"><div class="mck-clear"><div class="blk-lg-12 mck-text-light mck-text-muted mck-test-center">${userIdExpr} is offline now</div></div></div>';
   var refreshIntervalId;
-  var $minutesLabel = $applozic("#mck-minutes");
-  var $secondsLabel = $applozic("#mck-seconds");
 
   _this.init = function(optns) {
     var IS_MCK_VISITOR = optns.visitor;

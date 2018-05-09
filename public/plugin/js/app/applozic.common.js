@@ -14,14 +14,16 @@ function MckUtils() {
         ELEMENT_NODE = 1,
         TAGS_BLOCK = [ 'p', 'div', 'pre', 'form' ];
     _this.init = function() {
+        var initurl = MCK_CONTEXTPATH? MCK_CONTEXTPATH+"/v2/tab/initialize.page" :"https://apps.applozic.com/v2/tab/initialize.page";
+        var messurl = MCK_CONTEXTPATH? MCK_CONTEXTPATH+"/rest/ws/message/list" :"https://apps.applozic.com/rest/ws/message/list";
         $applozic.ajax({
-            url: MCK_BASE_URL? MCK_BASE_URL+"/v2/tab/initialize.page" :"https://apps.applozic.com/v2/tab/initialize.page",
+            url: initurl,
             contentType: 'application/json',
             type: 'OPTIONS'
         }).done(function(data) {});
 
         $applozic.ajax({
-            url: MCK_BASE_URL? MCK_BASE_URL+"/rest/ws/message/list" :"https://apps.applozic.com/rest/ws/message/list",
+            url: messurl,
             contentType: 'application/json',
             type: 'OPTIONS'
         }).done(function(data) {});

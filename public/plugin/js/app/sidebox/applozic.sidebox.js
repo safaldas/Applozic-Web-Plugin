@@ -540,7 +540,7 @@ window.onload = function() {
                                     mck_typing_box.classList.add('n-vis');
                                     if (mck_tab_title.classList.contains("mck-tab-title-w-status" && (typeof group === "undefined" || group.type != 7))) {
                                         mck_tab_status.classList.remove('n-vis');
-                                        mck_typing_box.classList.add('vis');
+                                        mck_tab_status.classList.add('vis');
                                     }
                                     mck_typing_label.innerHTML = MCK_LABELS['typing'];
                                 }, 60000);
@@ -2226,7 +2226,7 @@ window.onload = function() {
                         }
                         _this.stopIdleTimeCounter();
                     } else {
-                        if (MCK_TYPING_STATUS === 1) {
+                        if (window.Applozic.ALSocket.mck_typing_status === 1) {
                             window.Applozic.ALSocket.sendTypingStatus(0);
                         }
                         _this.manageIdleTime();
@@ -2464,12 +2464,12 @@ window.onload = function() {
                         }
                     } else if (e.keyCode === 13) {
                         e.preventDefault();
-                        if (MCK_TYPING_STATUS === 1) {
-                            window.Applozic.ALSocket.sendTypingStatus(0, $mck_msg_inner.data('mck-id'));
+                        if (window.Applozic.ALSocket.mck_typing_status === 1) {
+                            window.Applozic.ALSocket.sendTypingStatus(0,window.Applozic.ALSocket.mck_typing_status, MCK_USER_ID, $mck_msg_inner.data('mck-id'));
                         }
                         ($mck_msg_sbmt.is(':disabled') && $mck_file_box.hasClass('vis')) ? alert('Please wait file is uploading.'): $mck_msg_form.submit();
-                    } else if (MCK_TYPING_STATUS === 0) {
-                        window.Applozic.ALSocket.sendTypingStatus(1,MCK_TYPING_STATUS, MCK_USER_ID,$mck_msg_inner.data('mck-id'));
+                    } else if (window.Applozic.ALSocket.mck_typing_status === 0) {
+                        window.Applozic.ALSocket.sendTypingStatus(1,window.Applozic.ALSocket.mck_typing_status, MCK_USER_ID,$mck_msg_inner.data('mck-id'));
                     }
                 });
                 $applozic(d).on('click', '.mck-btn-clear-messages', function() {
@@ -2885,8 +2885,8 @@ window.onload = function() {
                     }
                 });
                 $mck_msg_form.submit(function() {
-                    if (MCK_TYPING_STATUS === 1) {
-                        window.Applozic.ALSocket.sendTypingStatus(0, $mck_msg_inner.data('mck-id'));
+                    if (window.Applozic.ALSocket.mck_typing_status === 1) {
+                        window.Applozic.ALSocket.sendTypingStatus(0,window.Applozic.ALSocket.mck_typing_status, MCK_USER_ID, $mck_msg_inner.data('mck-id'));
                     }
                     var message = $applozic.trim(mckUtils.textVal($mck_text_box[0]));
                     if ($mck_file_box.hasClass('n-vis') && FILE_META.length > 0) {
@@ -2943,8 +2943,8 @@ window.onload = function() {
                     }
                     $mck_text_box.removeClass('mck-text-req');
                     if (d.activeElement && d.activeElement !== $mck_text_box) {
-                        if (MCK_TYPING_STATUS === 1) {
-                            window.Applozic.ALSocket.sendTypingStatus(0, $mck_msg_inner.data('mck-id'));
+                        if (window.Applozic.ALSocket.mck_typing_status === 1) {
+                            window.Applozic.ALSocket.sendTypingStatus(0,window.Applozic.ALSocket.mck_typing_status, MCK_USER_ID, $mck_msg_inner.data('mck-id'));
                         }
                     }
                     if (d.activeElement && d.activeElement.id !== 'mck-group-name-save') {

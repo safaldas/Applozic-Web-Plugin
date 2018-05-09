@@ -12,6 +12,7 @@
         var checkConnectedIntervalId;
         var sendConnectedStatusIntervalId;
         var OPEN_GROUP_SUBSCRIBER_MAP;
+        ALSocket.mck_typing_status = 0;
         var MCK_TYPING_STATUS;
         var SOCKET = '';
         var MCK_WEBSOCKET_URL = 'https://apps.applozic.com';
@@ -117,7 +118,7 @@
         ALSocket.unsubscibeToTypingChannel = function() {
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
                 if (ALSocket.typingSubscriber) {
-                    if (MCK_TYPING_STATUS === 1) {
+                    if (ALSocket.mck_typing_status === 1) {
                         ALSocket.sendTypingStatus(0, TYPING_TAB_ID);
                     }
                     ALSocket.typingSubscriber.unsubscribe();
@@ -150,15 +151,15 @@
             }
         };
         ALSocket.sendTypingStatus = function(status, mck_typing_status,MCK_USER_ID,tabId) {
-            MCK_TYPING_STATUS =mck_typing_status;
+            ALSocket.mck_typing_status =mck_typing_status;
             if (ALSocket.stompClient && ALSocket.stompClient.connected) {
-                if (status === 1 && MCK_TYPING_STATUS === 1) {
+                if (status === 1 && ALSocket.mck_typing_status === 1) {
                     ALSocket.stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                 }
                 if (tabId) {
-                    if (tabId === TYPING_TAB_ID && status === MCK_TYPING_STATUS && status === 1) {
+                    if (tabId === TYPING_TAB_ID && status === ALSocket.mck_typing_status && status === 1) {
                         return;
                     }
                     TYPING_TAB_ID = tabId;
@@ -166,14 +167,14 @@
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                     setTimeout(function() {
-                        MCK_TYPING_STATUS = 0;
+                        ALSocket.mck_typing_status = 0;
                     }, 60000);
                 } else if (status === 0) {
                     ALSocket.stompClient.send('/topic/typing-' + MCK_APP_ID + "-" + TYPING_TAB_ID, {
                         "content-type": "text/plain"
                     }, MCK_APP_ID + "," + MCK_USER_ID + "," + status);
                 }
-                MCK_TYPING_STATUS = status;
+                ALSocket.mck_typing_status = status;
             }
         };
         ALSocket.onTypingStatus = function(resp) {
