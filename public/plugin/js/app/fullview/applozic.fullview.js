@@ -1315,7 +1315,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                            }
                            else {
                              _this.setimageviewparams(href, this);
-                             console.log(href);
                            }
                        }
                    });
@@ -3850,6 +3849,11 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
+                    if (typeof MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                     var userIdArray = new Array();
+                     userIdArray.push(params.tabId);
+                     mckContactService.getUsersDetail(userIdArray, { 'async': false });
+                    }
                     if ($applozic('.person[data-mck-id ="' + params.tabId + '"][data-isgroup ="' + params.isGroup + '"]').length == 0) {
                         _this.updateRecentConversationList(params.isGroup ? mckGroupUtils.getGroup(params.tabId) : _this.fetchContact(params.tabId), undefined, true, params.prepend);
                     }
@@ -4467,17 +4471,17 @@ var MCK_CLIENT_GROUP_MAP = [];
                             alFileService.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
                               thumbnailUrl= result;
                             });
-                            return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '" src="' + thumbnailUrl + '" area-hidden="true">';
+                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + thumbnailUrl + '" area-hidden="true"></img></a>';
                           }
                           else {
-                            return '<img href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '" src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true">';
+                            return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true"></img></a>';
                           }
                         }
                           else if((msg.fileMeta.thumbnailUrl === "thumbnail_"+msg.fileMeta.name )){
                           return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + MCK_STORAGE_URL + "/files/thumbnail_" + msg.fileMeta.name + '" area-hidden="true" ></img></a>';
                           }
                         else {
-                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true" ></img></a>';
+                          return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="' + alFileService.getFileurl(msg) + '" data-name="' + msg.fileMeta.name + '"><img src="' + msg.fileMeta.thumbnailUrl + '" area-hidden="true"></img></a>';
                         }
                       }
                   } else if (msg.fileMeta.contentType.indexOf("video") !== -1) {
@@ -4903,6 +4907,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $mck_search.keypress(function (e) {
                         if (e.which === 13) {
                             var tabId = $mck_search.val();
+                            var userIdArray = new Array();
+                            userIdArray.push(tabId);
+                            mckContactService.getUsersDetail(userIdArray, { 'async': false });
+                          if(!(MCK_USER_DETAIL_MAP[tabId] && MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                             if (tabId !== '') {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                                     mckMessageLayout.loadTab({
@@ -4913,6 +4921,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     $modal_footer_content.removeClass('n-vis').addClass('vis');
                                 }
                             }
+                          }
                             $applozic(this).val('');
                             return true;
                         }
@@ -4920,6 +4929,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                     $applozic(d).on("click", ".mck-tab-search", function (e) {
                         e.preventDefault();
                         var tabId = $mck_search.val();
+                        var userIdArray = new Array();
+                        userIdArray.push(tabId);
+                        mckContactService.getUsersDetail(userIdArray, { 'async': false });
+                      if(!(MCK_USER_DETAIL_MAP[tabId] && MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                         if (tabId !== '') {
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
@@ -4928,6 +4941,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             });
                             $modal_footer_content.removeClass('n-vis').addClass('vis');
                         }
+                      }
                         $mck_search.val('');
                     });
                     $mck_contact_search_input.keypress(function (e) {

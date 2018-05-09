@@ -1887,13 +1887,12 @@ window.onload = function() {
 														 alFileService.generatecloudurl(key, function(result) {
 															 fileUrl= result;
 															 that.dataset.url=fileUrl;
-															 _this.setimageviewparams(that);
+															 _this.setimageviewparams(fileUrl, that);
 														 });
 
 											 }
 											 else {
-												 _this.setimageviewparams(this);
-												 console.log(href);
+												 _this.setimageviewparams(href, this);
 											 }
 									 });
             };
@@ -1926,22 +1925,15 @@ window.onload = function() {
 							 }
 						});
 
-						_this.setimageviewparams = function(element){
-							var options = {
-								url:'data-url',
-								zIndex:220000000000,
-								navbar:false,
-								title:false,
-								toolbar:false,
-								movable:false,
-								tooltip:false,
-								movable:false,
-								rotatable:false,
-								//transition:false,
-								keyboard:false,
-							};
-							var viewer = new Viewer(element, options);
-						};
+						_this.setimageviewparams = function(href, element){
+              $applozic(element).fancybox({
+                  'openEffect': 'none',
+                  'closeEffect': 'none',
+                  'padding': 0,
+                  'href': href,
+                  'type': 'image'
+              });
+            };
 
             _this.onLoginSuccess = function(result, userPxy) {
                 if (IS_CALL_ENABLED) {
