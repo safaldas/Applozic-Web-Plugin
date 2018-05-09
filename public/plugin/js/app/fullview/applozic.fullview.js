@@ -7922,7 +7922,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                         stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
                         w.addEventListener("beforeunload", function(e) {
                           var check_url=e.target.activeElement.href;
-                          console.log(check_url);
                           if(!check_url || 0 === check_url.length){
                             _this.disconnect();
                           }

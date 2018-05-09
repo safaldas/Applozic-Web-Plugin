@@ -71,7 +71,6 @@
                     ALSocket.stompClient.connect("guest", "guest", ALSocket.onConnect, ALSocket.onError, '/');
                     window.addEventListener("beforeunload", function(e) {
                       var check_url=e.target.activeElement.href;
-                      console.log(check_url);
                       if(!check_url || 0 === check_url.length){
                       ALSocket.disconnect();
                       }
