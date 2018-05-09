@@ -774,13 +774,15 @@
 
 					$applozic.fn
 						.applozic({
-							baseUrl:'https://apps-test.applozic.com',
+							baseUrl:'https://apps.applozic.com',
 							userId : 'debug4', //TODO: replace with actual userId
 							userName : 'debug4',    //TODO: replace with actual userName
 							appId : 'applozic-sample-app',  //TODO: replace with actual appId
 							accessToken: 'debug4',   //TODO: replace with actual Access token
 							ojq : $original,
 							obsm : oModal,
+							customFileUrl:'https://googleupload.applozic.com', //optional, google cloud file upload url
+							genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}", //optional, generate viewable link for a file incase of file upload on google cloud
 							notificationIconLink : "https://www.applozic.com/resources/images/applozic_icon.png",
 							notificationSoundLink : "https://www.applozic.com/resources/audio/notification_sound.wav",
 							readConversation : readMessage, // readMessage function defined above

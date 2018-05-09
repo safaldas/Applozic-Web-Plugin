@@ -6,6 +6,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         baseUrl: MCK_BASE_URL? MCK_BASE_URL :'https://apps.applozic.com',
         fileBaseUrl: 'https://applozic.appspot.com',
         customFileUrl:'https://googleupload.applozic.com',
+        genereateCloudFileUrl: "https://googleupload.applozic.com/files/url?key={key}",
         notificationIconLink: '',
         notificationSoundLink: '',
         mapStaticAPIkey :'AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw',
@@ -354,6 +355,7 @@ var MCK_CLIENT_GROUP_MAP = [];
         var IS_MCK_LOCSHARE = appOptions.locShare;
         var MCK_FILE_URL = appOptions.fileBaseUrl;
         var MCK_CUSTOM_UPLOAD_SETTINGS = appOptions.fileupload;
+        var MCK_GENERATE_CLOUD_FILE_URL = appOptions.genereateCloudFileUrl;
         var MCK_ON_PLUGIN_INIT = appOptions.onInit;
         var AUTHENTICATION_TYPE_ID_MAP = [0, 1, 2];
         var MCK_ON_PLUGIN_CLOSE = appOptions.onClose;
@@ -717,6 +719,7 @@ var MCK_CLIENT_GROUP_MAP = [];
           MCK_STORAGE_URL = optns.customUploadUrl;
           MCK_FILE_URL = optns.fileBaseUrl;
           MCK_CUSTOM_UPLOAD_SETTINGS = optns.fileupload;
+          MCK_GENERATE_CLOUD_FILE_URL = optns.genereateCloudFileUrl;
           IS_MCK_LOCSHARE = optns.locShare;
           MCK_ON_PLUGIN_INIT = optns.onInit;
           MCK_CONTACT_NAME_MAP = new Array();
@@ -1306,15 +1309,15 @@ var MCK_CLIENT_GROUP_MAP = [];
                                  var key;
                                  var fileUrl;
                                  key = $this.data("blobkey");
-                                 alFileService.generatecloudurl(key, function(result) {
+                                 alFileService.generateCloudUrl(key, function(result) {
                                    fileUrl= result;
                                    that.dataset.url=fileUrl;
-                                   _this.setimageviewparams(fileUrl,that);
+                                   _this.setImageViewParams(fileUrl,that);
                                  });
 
                            }
                            else {
-                             _this.setimageviewparams(href, this);
+                             _this.setImageViewParams(href, this);
                            }
                        }
                    });
@@ -1333,7 +1336,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                       var key;
                       var fileUrl;
                       key = $this.data("blobkey");
-                      alFileService.generatecloudurl(key, function(result) {
+                      alFileService.generateCloudUrl(key, function(result) {
                         fileUrl= result;
                         that.href=fileUrl;
                       });
@@ -1342,14 +1345,14 @@ var MCK_CLIENT_GROUP_MAP = [];
      								 var key;
      								 var fileUrl;
      								 key = $this.data("blobkey");
-     								 alFileService.generatecloudurl(key, function(result) {
+     								 alFileService.generateCloudUrl(key, function(result) {
      									 fileUrl= result;
      									 that.href=fileUrl;
      								 });
      							 }
             });
 
-            _this.setimageviewparams = function(href, element){
+            _this.setImageViewParams = function(href, element){
               $applozic(element).fancybox({
                   'openEffect': 'none',
                   'closeEffect': 'none',
@@ -4468,7 +4471,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             // Google Cloud Server
                             var fileUrl;
                             var thumbnailUrl ;
-                            alFileService.generatecloudurl(msg.fileMeta.thumbnailBlobKey, function(result) {
+                            alFileService.generateCloudUrl(msg.fileMeta.thumbnailBlobKey, function(result) {
                               thumbnailUrl= result;
                             });
                             return '<a href="#" role="link" class="file-preview-link fancybox-media fancybox" data-type="' + msg.fileMeta.contentType + '" data-url="" data-blobKey="' + msg.fileMeta.blobKey + '" data-name="' + msg.fileMeta.name + '"><img src="' + thumbnailUrl + '" area-hidden="true"></img></a>';
@@ -4488,7 +4491,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1){
                       // Google Cloud Server
                       var getUrl ;
-                      alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+                      alFileService.generateCloudUrl(msg.fileMeta.blobKey, function(result) {
                         getUrl= result;
                       });
                       return '<a href="#" target="_self"><video controls class="mck-video-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="video/mp4">' + '<source src="' + getUrl + '" type="video/ogg"></video></a>';
@@ -4501,7 +4504,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     if(((msg.fileMeta).hasOwnProperty("url")) && ((msg.fileMeta.url).indexOf("www.googleapis.com") !== -1)){
                       // Google Cloud Server
                       var getUrl ;
-                      alFileService.generatecloudurl(msg.fileMeta.blobKey, function(result) {
+                      alFileService.generateCloudUrl(msg.fileMeta.blobKey, function(result) {
                         getUrl= result;
                       });
                       return '<a href="#" target="_self"><audio controls class="mck-audio-player" onplay="alFileService.updateAudVidUrl(this);" data-cloud-service="google_cloud" data-blobKey="' + msg.fileMeta.blobKey + '">' + '<source src="' + getUrl + '" type="audio/ogg">' + '<source src="' + getUrl + '" type="audio/mpeg"></audio>' + '<p class="mck-file-tag"></p></a>';
@@ -7918,7 +7921,10 @@ var MCK_CLIENT_GROUP_MAP = [];
                         };
                         stompClient.connect("guest", "guest", _this.onConnect, _this.onError, '/');
                         w.addEventListener("beforeunload", function(e) {
+                          var check_url=e.target.activeElement.href;
+                          if(!check_url || 0 === check_url.length){
                             _this.disconnect();
+                          }
                         });
                     }
                 }
