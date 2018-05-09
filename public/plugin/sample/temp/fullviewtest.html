@@ -705,13 +705,13 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.min.js"></script>
 	<script type="text/javascript" src="../js/app/call/mck-ringtone-service.js"></script>
-	<script type="text/javascript" src="../js/app/call/twilio-video.js"></script>
-	<script type="text/javascript" src="../js/app/call/videocall.js"></script>
+	<script type="text/javascript" src="../js/twilio-video.js"></script>
+
 <!-- Video Call dependencies -->
+	<script type="text/javascript" src="../js/viewer.js"></script>
 	<script type="text/javascript" src="../js/applozic.plugins.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.widget.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.emojis.min.js"></script>
-	<script type="text/javascript" src="../js/applozic.socket.min.js"></script>
 
 	<!-- JS for location sharing plugin, remove it if location sharing not required -->
 	<script type="text/javascript"
@@ -722,14 +722,10 @@
 	<!-- 	<script type="text/javascript" src="autosuggest/js/jquery.caret.min.js"></script>
 	    <script type="text/javascript" src="autosuggest/js/jquery.atwho.min.js"></script> -->
 
-	<script type="text/javascript" src="../js/app/modules/applozic.utils.js"></script>
-	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
-	<script type="text/javascript" src="../js/app/modules/applozic.chat.js"></script>
-	<script type="text/javascript" src="../js/app/modules/storage/applozic.storage.js"></script>
-	<script type="text/javascript" src="../js/app/modules/api/applozic.api.js"></script>
-	<script type="text/javascript" src="../js/app/modules/socket/applozic.socket.js"></script>
-	<script type="text/javascript"
-		src="../js/app/fullview/applozic.fullview.js"></script>
+	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
+	<script type="text/javascript" src="../../applozic.chat.min.js"></script>
+	<script type="text/javascript" src="../js/app/fullview/applozic.fullview.js"></script>
+
 	<script type="text/javascript">
 		var oModal = "";
 		if (typeof $original !== 'undefined') {
@@ -802,9 +798,11 @@
 	                    googleApiKey: "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4", // your project google api key
 	                    googleMapScriptLoaded: false, // true if your app already loaded google maps script
 	                    //   mapStaticAPIkey: "AIzaSyCWRScTDtbt8tlXDr6hiceCsU83aS2UuZw",
+										 	//   video: true,
+											fileupload : "googleServer", // awsS3Server  or googleCloud or googleServer or customStorage,
 	                    autoTypeSearchEnabled: true, // set to false if you don't want to allow sending message to user who is not in the contact list
 	                    loadOwnContacts: true, //set to true if you want to populate your own contact list (see Step 4 for reference)
-	                    olStatus: false, //set to true for displaying a green dot in chat screen for users who are online
+	                    olStatus: true, //set to true for displaying a green dot in chat screen for users who are online
 	                    onInit: function(response) {
 
 	                        if (response.status === "success") {
@@ -814,6 +812,7 @@
 	                            document.getElementById("footer-section").classList.add('n-vis');
 	                            document.getElementById("full-view").classList.remove('n-vis');
 	                            document.getElementById("full-view").classList.add('vis');
+															document.getElementsByTagName("body")[0].style.background= 'url("../images/image.jpg")';
 
 	                            $applozic.fn.applozic('loadTab', '');
 	                            $applozic.fn.applozic('loadContacts', { "contacts": contactsJSON });

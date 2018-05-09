@@ -1,3 +1,5 @@
+var ENV_URL= "https://apps-test.applozic.com";
+
 document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementById("login-submit").onclick = function() {
         getUserData();
@@ -50,7 +52,7 @@ function intializeChat(appId, userId, pass) {
         s = document.createElement("script");
         s.type = "text/javascript";
         s.async = true;
-        s.src = "https://apps.applozic.com/sidebox.app";
+        s.src = ENV_URL+"/sidebox.app";
         h = document.getElementsByTagName('head')[0];
         h.appendChild(s);
         window.applozic = m;
@@ -59,7 +61,7 @@ function intializeChat(appId, userId, pass) {
     (document, window.applozic || {});
 
     window.applozic.init({
-        baseUrl : 'https://apps-test.applozic.com',
+        baseUrl : ENV_URL,
         appId: appId, //Get your application key from https://www.applozic.com
         userId: userId, //Logged in user's id, a unique identifier for user
         userName: '', //User's display name

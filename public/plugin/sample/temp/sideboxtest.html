@@ -436,9 +436,6 @@
 										</div>
 										<div class="blk-lg-12">
 											<select id="mck-group-create-type" class="mck-select">
-												<option value="2" selected>Public</option>
-												<option value="1">Private</option>
-												<option value="6">Open</option>
 											</select>
 										</div>
 									</div>
@@ -693,31 +690,21 @@
 <!-- Video Call dependencies -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.0.2/howler.min.js"></script>
 	<script type="text/javascript" src="../js/app/call/mck-ringtone-service.js"></script>
-	<script type="text/javascript" src="../js/app/call/twilio-video.js"></script>
-	<script type="text/javascript" src="../js/app/call/videocall.js"></script>
+	<script type="text/javascript" src="../js/twilio-video.js"></script>
+
 <!-- Video Call dependencies -->
 	<script type="text/javascript" src="../js/viewer.js"></script>
 	<script type="text/javascript" src="../js/applozic.plugins.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.widget.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.emojis.min.js"></script>
-	<script type="text/javascript" src="../js/applozic.socket.min.js"></script>
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4&libraries=places"></script>
 	<script type="text/javascript" src="../js/locationpicker.jquery.min.js"></script>
 	<script type="text/javascript" src="../js/applozic.aes.js"></script>
 
-	<script type="text/javascript" src="../js/app/modules/applozic.utils.js"></script>
-
-	<script type="text/javascript" src="../js/app/applozic.common.js"></script>
-	<script type="text/javascript" src="../js/app/modules/applozic.chat.js"></script>
-
-
-	<script type="text/javascript" src="../js/app/modules/storage/applozic.storage.js"></script>
-	<script type="text/javascript" src="../js/app/modules/api/applozic.api.js"></script>
-	<script type="text/javascript" src="../js/app/modules/socket/applozic.socket.js"></script>
-
+	<script type="text/javascript" src="../js/app/modules/applozic.jquery.js"></script>
+	<script type="text/javascript" src="../../applozic.chat.min.js"></script>
 	<script type="text/javascript" src="../js/app/sidebox/applozic.sidebox.js"></script>
-	<script type="text/javascript" src="../js/app/modules/notification/applozic.notification.js"></script>
-	<script type="text/javascript" src="../js/app/modules/videocall/applozic.calling.js"></script>
+
 	<script type="text/javascript">
 		var oModal = "";
 		if (typeof $original !== 'undefined') {
@@ -803,7 +790,9 @@
 							maxAttachmentSize : 25, //max attachment size in MB
 							desktopNotification : true,
 							locShare : true,
-							// olStatus: true,
+						 	olStatus: true,
+							// awsS3Server :true,
+						  fileupload : "googleServer", // awsS3Server or googleCloud or googleServer or customStorage,
 							onTopicDetails: function(topic) { console.log(topic); },
 							googleApiKey : "AIzaSyDKfWHzu9X7Z2hByeW4RRFJrD9SizOzZt4",
 							// video: true,
