@@ -22,7 +22,6 @@ function getUserData() { //loadScript();
     var appId = document.getElementById("applicationId").value;
     var userId = document.getElementById("loginId").value;
     var pass = document.getElementById("loginPassword").value;
-    console.log(appId, userId, pass);
     intializeChat(appId, userId, pass);
 }
 
