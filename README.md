@@ -361,6 +361,63 @@ Sample response:
  <a href="#" class="applozic-wt-launcher" data-mck-id="PUT_USERID_HERE" data-mck-name="PUT_DISPLAYNAME_HERE" data-mck-topicid="PUT_TOPICID_HERE">CHAT ON TOPIC</a>
  ```
  
+ ## File Structure
+```
+Applozic-Web-Plugin
+  |--public
+    |-- plugin
+        |-- js
+            |-- app  
+                |-- sidebox  
+                    |-- applozic.sidebox.js
+                |-- fullview   
+                    |-- applozic.fullview.js           
+                |-- modules           
+                    |-- api         
+                        |-- applozic.api.js            - Backend chat Apis
+                    |-- file
+                        |-- applozic.file.js           - file related ui code
+                    |-- group
+                        |-- applozic.group.js          - group ui code
+                    |--message
+                        |-- applozic.message.js        - message ui code
+                    |-- notification
+                        |-- applozic.notification.js   - notification ui code
+                    |-- user
+                        |-- applozic.user.js           - user ui code
+                    |-- socket   
+                        |--  applozic.socket.js        - Mqtt socket connection
+                    |-- storage
+                        |-- applozic.storage.js        - caching data
+                    |-- applozic.utils.js              - common util functions
+                    |--video
+                        |-- applozic.calling.js        - audio/videocall library
+                |-- call
+                    |-- mck-ringtone-service.js       - to play ringtone            
+                    
+                |-- applozic.aes.js                   - external library for Encryption
+                |-- applozic.emojis.min.js            - external library for emojis
+                |-- applozic.socket.min.js            - external library for socket
+                |-- applozic.widget.min.js            - external library for widgets
+                |-- jquery.min.js                     - external library for jquery
+                |-- locationpicker.jquery.min.js      - external library for location
+                |-- twilio-video.js                   - audio/videocall library
+                |-- viewer.js                         - external library files for Image/Video Preview
+        |-- css
+           |-- app
+                |-- fullview 
+                   |-- applozic.fullview.css          - fullview ui css 
+                |-- sidebox   
+                   |-- applozic.sidebox.css           - sidebox plugin css
+                       
+                |-- videocall.css   
+       |-- images                                     - icons used in chat interface 
+       |-- sample    
+         |-- fullview.html                            - sample ui for fullview plugin
+         |-- sidebox.html                             - sample ui for sidebox plugin
+|-- README.md
+```
+ 
 ### Documentation:
 
 For UI customization, visit: 
