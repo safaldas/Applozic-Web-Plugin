@@ -379,7 +379,7 @@ Applozic-Web-Plugin
                         |-- applozic.file.js           - file related ui code
                     |-- group
                         |-- applozic.group.js          - group ui code
-                    |--message
+                    |-- message
                         |-- applozic.message.js        - message ui code
                     |-- notification
                         |-- applozic.notification.js   - notification ui code
@@ -389,8 +389,7 @@ Applozic-Web-Plugin
                         |--  applozic.socket.js        - Mqtt socket connection
                     |-- storage
                         |-- applozic.storage.js        - caching data
-                    |-- applozic.utils.js              - common util functions
-                    |--video
+                    |-- video
                         |-- applozic.calling.js        - audio/videocall library
                 |-- call
                     |-- mck-ringtone-service.js       - to play ringtone            
@@ -415,9 +414,12 @@ Applozic-Web-Plugin
        |-- sample    
          |-- fullview.html                            - sample ui for fullview plugin
          |-- sidebox.html                             - sample ui for sidebox plugin
+  
+  |-- applozic.chat.min.js                            - minified file of applozic modules
 |-- README.md
 ```
- 
+Note: Do not edit external libraries. 
+
 ### Documentation:
 
 For UI customization, visit: 
