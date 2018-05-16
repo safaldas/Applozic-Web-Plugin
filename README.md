@@ -369,9 +369,9 @@ Applozic-Web-Plugin
         |-- js
             |-- app  
                 |-- sidebox  
-                    |-- sidebox-1.0.js
+                    |-- applozic.sidebox.js
                 |-- fullview   
-                    |-- applozic.fullview-1.0.js           
+                    |-- applozic.fullview.js           
                 |-- modules           
                     |-- api         
                         |-- applozic.api.js            - Backend chat Apis
@@ -379,7 +379,7 @@ Applozic-Web-Plugin
                         |-- applozic.file.js           - file related ui code
                     |-- group
                         |-- applozic.group.js          - group ui code
-                    |--message
+                    |-- message
                         |-- applozic.message.js        - message ui code
                     |-- notification
                         |-- applozic.notification.js   - notification ui code
@@ -389,19 +389,18 @@ Applozic-Web-Plugin
                         |--  applozic.socket.js        - Mqtt socket connection
                     |-- storage
                         |-- applozic.storage.js        - caching data
-                    |-- applozic.utils.js              - common util functions
-                    |--video
-                        |-- applozic.calling.js
+                    |-- video
+                        |-- applozic.calling.js        - audio/videocall library
                 |-- call
-                    |-- mck-ringtone-service.js       - to play ringtone
-                    |-- twilio-video.js               - audio/videocall library
-                    |-- videocall.js                  - audio/videocall library
+                    |-- mck-ringtone-service.js       - to play ringtone            
+                    
                 |-- applozic.aes.js                   - external library for Encryption
                 |-- applozic.emojis.min.js            - external library for emojis
                 |-- applozic.socket.min.js            - external library for socket
                 |-- applozic.widget.min.js            - external library for widgets
                 |-- jquery.min.js                     - external library for jquery
                 |-- locationpicker.jquery.min.js      - external library for location
+                |-- twilio-video.js                   - audio/videocall library
                 |-- viewer.js                         - external library files for Image/Video Preview
         |-- css
            |-- app
@@ -415,9 +414,13 @@ Applozic-Web-Plugin
        |-- sample    
          |-- fullview.html                            - sample ui for fullview plugin
          |-- sidebox.html                             - sample ui for sidebox plugin
+         
+    |-- applozic.chat.min.js                            - minified file of applozic modules
 |-- README.md
 ```
- 
+Note: Do not edit external libraries. 
+
+
 ### Documentation:
 
 For UI customization, visit: 

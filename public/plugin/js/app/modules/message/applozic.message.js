@@ -421,4 +421,37 @@ function AlMessageService() {
     return messagePxy;
   };
 
+  _this.getMessageFeed = function(message) {
+    var messageFeed = {};
+    messageFeed.key = message.key;
+    messageFeed.timeStamp = message.createdAtTime;
+    messageFeed.message = message.message;
+    messageFeed.from = (message.type === 4) ? message.to : MCK_USER_ID;
+    if (message.groupId) {
+      messageFeed.to = message.groupId;
+    } else {
+      messageFeed.to = (message.type === 5) ? message.to : MCK_USER_ID;
+    }
+    messageFeed.status = "read";
+    messageFeed.type = (message.type === 4) ? 'inbox' : 'outbox';
+    if (message.type === 5) {
+      if (message.status === 3) {
+        messageFeed.status = "sent";
+      } else if (message.status === 4) {
+        messageFeed.status = "delivered";
+      }
+    }
+    if (typeof message.fileMeta === 'object') {
+      var file = $applozic.extend({}, message.fileMeta);
+      if (typeof file.url === 'undefined' || file.url === '') {
+        file.url = MCK_FILE_URL + '/rest/ws/aws/file/' + message.fileMeta.blobKey;
+      }
+      delete file.blobKey;
+      messageFeed.file = file;
+    }
+    messageFeed.source = message.source;
+    messageFeed.metadata = message.metadata;
+    return messageFeed;
+  };
+
 }

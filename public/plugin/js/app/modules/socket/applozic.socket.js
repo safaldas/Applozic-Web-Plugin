@@ -284,12 +284,13 @@
                         events.onMessageSentUpdate({
                             'messageKey': message.key
                         });
-                    } else if (messageType === "APPLOZIC_01" || messageType === "APPLOZIC_02" || messageType === "MESSAGE_RECEIVED") {
+                    } else if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
+                        var messageFeed = alMessageService.getMessageFeed(message);
                         events.onMessageReceived({
                             'message': messageFeed
                         });
                     } else if (messageType === "APPLOZIC_02") {
-                        var messageFeed = mckMessageLayout.getMessageFeed(message);
+                        var messageFeed = alMessageService.getMessageFeed(message);
                         events.onMessageSent({
                             'message': messageFeed
                         });

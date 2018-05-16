@@ -165,7 +165,7 @@
                     var decryptedBytes = aesCtr.decrypt(arr);
                     var res = aesjs.util.convertBytesToString(decryptedBytes);
                     res = res.replace(/\\u0000/g, '').replace(/^\s*|\s*[\x00-\x10]*$/g, '');
-                    if (_this.isJsonString(res)) {
+                    if (mckUtils.isJsonString(res)) {
                         options.success(JSON.parse(res));
                     } else {
                         options.success(res);
