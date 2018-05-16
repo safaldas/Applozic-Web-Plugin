@@ -586,12 +586,12 @@ window.onload = function() {
                         var mck_sidebox_content = document.getElementById("mck-sidebox-content");
                         var tabId = mck_message_inner.data('mck-id');
                         if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
-                            var messageFeed = mckMessageLayout.getMessageFeed(message);
+                            var messageFeed = alMessageService.getMessageFeed(message);
                             events.onMessageReceived({
                                 'message': messageFeed
                             });
                         } else if (messageType === "APPLOZIC_02") {
-                            var messageFeed = mckMessageLayout.getMessageFeed(message);
+                            var messageFeed = alMessageService.getMessageFeed(message);
                             events.onMessageSent({
                                 'message': messageFeed
                             });
@@ -903,12 +903,12 @@ window.onload = function() {
                         var mck_sidebox_content = document.getElementById("mck-sidebox-content");
                         var tabId = mck_message_inner.data('mck-id');
                         if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
-                            var messageFeed = mckMessageLayout.getMessageFeed(message);
+                            var messageFeed = alMessageService.getMessageFeed(message);
                             events.onMessageReceived({
                                 'message': messageFeed
                             });
                         } else if (messageType === "APPLOZIC_02") {
-                            var messageFeed = mckMessageLayout.getMessageFeed(message);
+                            var messageFeed = alMessageService.getMessageFeed(message);
                             events.onMessageSent({
                                 'message': messageFeed
                             });
@@ -1529,7 +1529,7 @@ window.onload = function() {
             if (typeof params !== 'undefined' && typeof params.callback === 'function') {
                 alMessageService.getMessageList(params, function(message){
 									if (typeof message.to !== "undefined" || typeof message.groupId !== "undefined") {
-											var messageFeed = mckMessageLayout.getMessageFeed(message);
+											var messageFeed = alMessageService.getMessageFeed(message);
 											messageFeeds.push(messageFeed);
 									}
 								});
@@ -1570,7 +1570,7 @@ window.onload = function() {
                     params.conversationId = conversationId;
                     alMessageService.getMessageList(params, function(message){
 											if (typeof message.to !== "undefined" || typeof message.groupId !== "undefined") {
-													var messageFeed = mckMessageLayout.getMessageFeed(message);
+													var messageFeed = alMessageService.getMessageFeed(message);
 													messageFeeds.push(messageFeed);
 											}
 										});
@@ -5854,38 +5854,7 @@ window.onload = function() {
                 }
                 $mck_loading.removeClass('vis').addClass('n-vis');
             };
-            _this.getMessageFeed = function(message) {
-                var messageFeed = {};
-                messageFeed.key = message.key;
-                messageFeed.timeStamp = message.createdAtTime;
-                messageFeed.message = message.message;
-                messageFeed.from = (message.type === 4) ? message.to : MCK_USER_ID;
-                if (message.groupId) {
-                    messageFeed.to = message.groupId;
-                } else {
-                    messageFeed.to = (message.type === 5) ? message.to : MCK_USER_ID;
-                }
-                messageFeed.status = "read";
-                messageFeed.type = (message.type === 4) ? 'inbox' : 'outbox';
-                if (message.type === 5) {
-                    if (message.status === 3) {
-                        messageFeed.status = "sent";
-                    } else if (message.status === 4) {
-                        messageFeed.status = "delivered";
-                    }
-                }
-                if (typeof message.fileMeta === 'object') {
-                    var file = $applozic.extend({}, message.fileMeta);
-                    if (typeof file.url === 'undefined' || file.url === '') {
-                    file.url = MCK_FILE_URL + '/rest/ws/aws/file/' + message.fileMeta.blobKey;
-                         }
-                    delete file.blobKey;
-                    messageFeed.file = file;
-                }
-                messageFeed.source = message.source;
-                messageFeed.metadata = message.metadata;
-                return messageFeed;
-            };
+            
             _this.updateUnreadCountonChatIcon = function(userDetails) {
                 if (IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED && userDetails.length > 0) {
                     var contactIdWithUnreadMessage = null;
