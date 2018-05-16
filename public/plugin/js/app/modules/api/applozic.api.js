@@ -5,6 +5,7 @@
         var MCK_APP_ID = "";
         var mckUtils = new MckUtils();
         var MCK_BASE_URL = 'https://apps.applozic.com';
+        var MCK_FILE_URL = 'https://applozic.appspot.com'
         var INITIALIZE_APP_URL = "/v2/tab/initialize.page";
         var MESSAGE_LIST_URL = "/rest/ws/message/list";
         var MESSAGE_SEND_URL = "/rest/ws/message/send";
@@ -64,7 +65,9 @@
             }
             return url.substring(0, url.length - 1)
         }
-
+        ALApiService.getFileUrl = function(){
+          return MCK_FILE_URL;
+        }
         ALApiService.initServerUrl = function (serverUrl) {
             MCK_BASE_URL = serverUrl;
         }
@@ -78,9 +81,9 @@
         ALApiService.login = function (options) {
             MCK_APP_ID = options.data.alUser.applicationId;
             MCK_BASE_URL = options.data.baseUrl ? options.data.baseUrl : "https://apps.applozic.com";
-
             ALApiService.ajax({
                 url: MCK_BASE_URL + INITIALIZE_APP_URL,
+                skipEncryption: true,
                 type: 'post',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 data: JSON.stringify(options.data.alUser),
@@ -137,8 +140,7 @@
             }
 
             var reqOptions = extend({}, {}, options);
-
-            if (mckUtils.getEncryptionKey()) {
+            if (!(options.skipEncryption === true) && mckUtils.getEncryptionKey()) {
                 var key = aesjs.util.convertStringToBytes(mckUtils.getEncryptionKey());
                 var iv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -171,7 +173,7 @@
                         options.success(res);
                     }
                 }
-            }
+          }
             var request = new XMLHttpRequest();
             var responsedata;
             var asyn = true;
