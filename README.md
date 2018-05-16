@@ -414,11 +414,12 @@ Applozic-Web-Plugin
        |-- sample    
          |-- fullview.html                            - sample ui for fullview plugin
          |-- sidebox.html                             - sample ui for sidebox plugin
-  
+         
     |-- applozic.chat.min.js                            - minified file of applozic modules
 |-- README.md
 ```
 Note: Do not edit external libraries. 
+
 
 ### Documentation:
 
