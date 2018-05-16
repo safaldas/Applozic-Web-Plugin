@@ -4,7 +4,7 @@ function AlMessageService() {
   var _this = this;
   var IS_MCK_VISITOR;
   var MCK_USER_ID;
-
+  var MCK_FILE_URL;
   var TOPIC_ID_URL = "/rest/ws/conversation/topicId";
   var CONVERSATION_ID_URL = "/rest/ws/conversation/id";
   var CONVERSATION_FETCH_URL = "/rest/ws/conversation/get";
@@ -16,8 +16,9 @@ function AlMessageService() {
   var refreshIntervalId;
 
   _this.init = function(optns) {
-    var IS_MCK_VISITOR = optns.visitor;
-    var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
+    MCK_FILE_URL = optns.fileBaseUrl;
+    IS_MCK_VISITOR = optns.visitor;
+    MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(optns.userId);
   };
 
   _this.addMessageToTab = function(messagePxy, contact, callback) {
@@ -423,6 +424,7 @@ function AlMessageService() {
 
   _this.getMessageFeed = function(message) {
     var messageFeed = {};
+    MCK_FILE_URL = window.Applozic.ALApiService.getFileUrl();
     messageFeed.key = message.key;
     messageFeed.timeStamp = message.createdAtTime;
     messageFeed.message = message.message;
@@ -442,7 +444,7 @@ function AlMessageService() {
       }
     }
     if (typeof message.fileMeta === 'object') {
-      var file = $applozic.extend({}, message.fileMeta);
+      var file = Object.assign({}, message.fileMeta);
       if (typeof file.url === 'undefined' || file.url === '') {
         file.url = MCK_FILE_URL + '/rest/ws/aws/file/' + message.fileMeta.blobKey;
       }
