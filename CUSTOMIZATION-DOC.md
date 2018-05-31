@@ -43,7 +43,7 @@ Step 2. Remove script mentioned in Step 1 under Getting Started section.
 
 Step 3. Add files to your web page:
 #### For Full view 
-Open [src/sample/fullview.html](https://github.com/AppLozic/Applozic-Web-Plugin/tree/master/src/sample/fullview.html) file as a reference and add all scripts and html in your web page in the same order as given in fullview.html
+Open [src/sample/fullview.html](https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/sample/fullview.html) file as a reference and add all scripts and html in your web page in the same order as given in fullview.html
 
 Files you can modify:
 CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/fullview/applozic.fullview.css
