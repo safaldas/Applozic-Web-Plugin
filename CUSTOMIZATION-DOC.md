@@ -43,18 +43,18 @@ Step 2. Remove script mentioned in Step 1 under Getting Started section.
 
 Step 3. Add files to your web page:
 #### For Full view 
-Open [src/sample/fullview.html](https://github.com/AppLozic/Applozic-Web-Plugin/tree/master/src/sample/fullview.html) file as a reference and add all scripts and html in your web page in the same order as given in fullview.html
+Open [src/sample/fullview.html](https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/sample/fullview.html) file as a reference and add all scripts and html in your web page in the same order as given in fullview.html
 
 Files you can modify:
-CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/fullview/applozic.fullview.css
-JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/js/app/fullview/applozic.fullview.js
+CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/css/app/fullview/applozic.fullview.css
+JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/js/app/fullview/applozic.fullview.js
 
 #### For Sidebox 
-Open [src/sample/sidebox.html](https://github.com/AppLozic/Applozic-Web-Plugin/tree/master/src/sample/sidebox.html) file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
+Open [src/sample/sidebox.html](https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/sample/sidebox.html) file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
 
 Files you can modify:
-CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/sidebox/applozic.sidebox.css
-JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/js/app/sidebox/applozic.sidebox.js
+CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/css/app/sidebox/applozic.sidebox.css
+JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/js/app/sidebox/applozic.sidebox.js
 
 Step 4. You can modify css and js files based on your design, files are present under src/css/app/ and src/js folders.
 
