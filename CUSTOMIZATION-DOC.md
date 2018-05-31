@@ -50,7 +50,7 @@ CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/ful
 JS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/js/app/fullview/applozic.fullview.js
 
 #### For Sidebox 
-Open [src/sample/sidebox.html](https://github.com/AppLozic/Applozic-Web-Plugin/tree/master/src/sample/sidebox.html) file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
+Open [src/sample/sidebox.html](https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/public/plugin/sample/sidebox.html) file as a reference and add all scripts and html in your web page in the same order as given in sidebox.html
 
 Files you can modify:
 CSS: https://github.com/AppLozic/Applozic-Web-Plugin/blob/master/src/css/app/sidebox/applozic.sidebox.css
