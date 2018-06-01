@@ -516,7 +516,7 @@
          * Applozic.ALApiService.getGroupInfo({data:{group:{groupId:"237437"}}, success: function(response){console.log(response);}, error: function() {}});
          */
         ALApiService.getGroupInfo = function (options) {
-            var groupId = (options.data.group.groupId) ? "?groupId=" + options.data.group.groupId : "?clientGroupId=" + options.group.clientGroupId;
+            var groupId = (options.data.group.groupId) ? "?groupId=" + options.data.group.groupId : "?clientGroupId=" + options.data.group.clientGroupId;
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_INFO_URL + groupId,
                 type: 'get',
