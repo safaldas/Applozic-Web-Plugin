@@ -4512,7 +4512,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 }
                  if (message.contentType === 2) {
                     var geoLoc = $applozic.parseJSON(message.message);
-            return '<span>location</span><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon +MCK_MAP_STATIC_API_KEY+ '" class="mck-image-reply move-right"/>';
+            return '<span>location</span><img src="https://maps.googleapis.com/maps/api/staticmap?zoom=17&size=200x150&center=' + geoLoc.lat + "," + geoLoc.lon + '&maptype=roadmap&markers=color:red|' + geoLoc.lat + "," + geoLoc.lon +'&key='+MCK_MAP_STATIC_API_KEY+ '" class="mck-image-reply move-right"/>';
 
                     }
             };
