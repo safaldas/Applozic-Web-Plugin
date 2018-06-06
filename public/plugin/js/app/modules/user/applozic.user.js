@@ -107,7 +107,7 @@ function AlUserService() {
       success: function(data) {
         if (typeof data === 'object') {
           if (data.status === 'success') {
-            MCK_BLOCKED_TO_MAP[userId] = isBlock;
+            alUserService.MCK_BLOCKED_TO_MAP[userId] = isBlock;
             if (typeof callback === "function") {
               callback(userId);
             }
