@@ -2444,9 +2444,9 @@ var MCK_CLIENT_GROUP_MAP = [];
             };
             _this.sendMessage = function(messagePxy) {
                 if (messagePxy.to) {
-                      if(MCK_USER_DETAIL_MAP[messagePxy.to]){
-                    if(MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime !== undefined){
-                      if (MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
+                      if(alUserService.MCK_USER_DETAIL_MAP[messagePxy.to]){
+                    if(alUserService.MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime !== undefined){
+                      if (alUserService.MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
                           $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
                           $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
                           $mck_msg_form.removeClass('vis').addClass('n-vis');
@@ -3040,7 +3040,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     }
                                     if (data.userDetails.length > 0) {
                                         $applozic.each(data.userDetails, function(i, userDetail) {
-                                            MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                            alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                             if (!params.isGroup) {
                                                 if (userDetail.connected) {
                                                     w.MCK_OL_MAP[userDetail.userId] = true;
@@ -3076,8 +3076,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                                     }
 
                                       if (currTabId) {
-                                        if(MCK_USER_DETAIL_MAP[currTabId]&&MCK_USER_DETAIL_MAP[currTabId].deletedAtTime){
-                                          if (MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted === true) {
+                                        if(alUserService.MCK_USER_DETAIL_MAP[currTabId]&&alUserService.MCK_USER_DETAIL_MAP[currTabId].deletedAtTime){
+                                          if (alUserService.MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted === true) {
                                               $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
                                               $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
                                               $mck_msg_form.removeClass('vis').addClass('n-vis');
@@ -3151,7 +3151,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 w.MCK_OL_MAP = [];
                                 if (data.userDetails.length > 0) {
                                     $applozic.each(data.userDetails, function(i, userDetail) {
-                                        MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                        alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                         if (userDetail.connected) {
                                             w.MCK_OL_MAP[userDetail.userId] = true;
                                         } else {
@@ -3628,7 +3628,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                                 var group = mckGroupUtils.addGroup(groupPxy);
                                 if (groupPxy.users.length > 0) {
                                     $applozic.each(groupPxy.users, function(i, userDetail) {
-                                        MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                        alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                         if (userDetail.connected) {
                                             w.MCK_OL_MAP[userDetail.userId] = true;
                                         } else {
@@ -3829,7 +3829,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                 $applozic('.chat').removeClass('active-chat');
                 $applozic('.left .person').removeClass('active');
                 if (params.tabId) {
-                    if (typeof MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
+                    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.tabId] === 'undefined') {
                      var userIdArray = new Array();
                      userIdArray.push(params.tabId);
                      mckContactService.getUsersDetail(userIdArray, { 'async': false });
@@ -4287,7 +4287,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                     selfDestructTimeExpr: msg.timeToLive,
                     fileMetaKeyExpr: msg.fileMetaKey,
                     downloadIconVisibleExpr: downloadIconVisible,
-                    fileExpr: _this.getFilePath(msg),
+                    fileExpr: alFileService.getFilePath(msg),
                     fileUrlExpr: alFileService.getFileurl(msg),
                     fileNameExpr: fileName,
                     fileSizeExpr: fileSize,
@@ -4890,7 +4890,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                             var userIdArray = new Array();
                             userIdArray.push(tabId);
                             mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                          if(!(MCK_USER_DETAIL_MAP[tabId] && MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
+                          if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                             if (tabId !== '') {
                                 if ((MCK_SELF_CHAT_DISABLE === true && tabId !== MCK_USER_ID) ||MCK_SELF_CHAT_DISABLE !== true){
                                     mckMessageLayout.loadTab({
@@ -4912,7 +4912,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         var userIdArray = new Array();
                         userIdArray.push(tabId);
                         mckContactService.getUsersDetail(userIdArray, { 'async': false });
-                      if(!(MCK_USER_DETAIL_MAP[tabId] && MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
+                      if(!(alUserService.MCK_USER_DETAIL_MAP[tabId] && alUserService.MCK_USER_DETAIL_MAP[tabId].deletedAtTime)){
                         if (tabId !== '') {
                             mckMessageLayout.loadTab({
                                 tabId: tabId,
@@ -5716,8 +5716,8 @@ var MCK_CLIENT_GROUP_MAP = [];
                     var $this = $applozic(this);
                     var tabId = $this.data('mck-id');
                     if (tabId) {
-                        var userDetail = MCK_USER_DETAIL_MAP[tabId];
-                        if (typeof MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
+                        var userDetail = alUserService.MCK_USER_DETAIL_MAP[tabId];
+                        if (typeof alUserService.MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
                             $this.removeClass('n-vis').addClass('vis');
                             $this.next().html('(' + MCK_LABELS['online'] + ')');
                         } else {
@@ -5878,7 +5878,7 @@ var MCK_CLIENT_GROUP_MAP = [];
 
                 for (var i = 0; i < uniqueUserIdArray.length; i++) {
                     var userId = uniqueUserIdArray[i];
-                    if (!cached || typeof MCK_USER_DETAIL_MAP[userId] === 'undefined') {
+                    if (!cached || typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'undefined') {
                         userIdList.push(userId);
                     }
                 }
@@ -5907,7 +5907,7 @@ var MCK_CLIENT_GROUP_MAP = [];
                         if (data.status === 'success') {
                             if (data.response.length > 0) {
                                 $applozic.each(data.response, function(i, userDetail) {
-                                    MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                    alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                     w.MCK_OL_MAP[userDetail.userId] = (userDetail.connected);
                                     var contact = mckMessageLayout.getContact('' + userDetail.userId);
                                     contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail) : mckMessageLayout.updateContactDetail(contact, userDetail);

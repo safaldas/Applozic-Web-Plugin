@@ -2,17 +2,16 @@ var alUserService = new AlUserService();
 
 function AlUserService() {
   var _this = this;
-
-  var MCK_USER_DETAIL_MAP = [];
-  var MCK_BLOCKED_TO_MAP = [];
+   _this.MCK_USER_DETAIL_MAP = [];
+   _this.MCK_BLOCKED_TO_MAP = [];
   var MCK_GROUP_MEMBER_SEARCH_ARRAY = new Array();
   var USER_BLOCK_URL = "/rest/ws/user/block";
   var USER_DETAIL_URL = "/rest/ws/user/v2/detail";
   var USER_STATUS_URL = "/rest/ws/user/chat/status";
 
   _this.updateUserStatus = function(params, callback) {
-    if (typeof MCK_USER_DETAIL_MAP[params.userId] === 'object') {
-      var userDetail = MCK_USER_DETAIL_MAP[params.userId];
+    if (typeof alUserService.MCK_USER_DETAIL_MAP[params.userId] === 'object') {
+      var userDetail = alUserService.MCK_USER_DETAIL_MAP[params.userId];
       if (params.status === 0) {
         userDetail.connected = false;
         userDetail.lastSeenAtTime = params.lastSeenAtTime;
@@ -28,8 +27,8 @@ function AlUserService() {
     }
   };
   _this.getUserDetail = function(userId) {
-    if (typeof MCK_USER_DETAIL_MAP[userId] === 'object') {
-      return MCK_USER_DETAIL_MAP[userId];
+    if (typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'object') {
+      return alUserService.MCK_USER_DETAIL_MAP[userId];
     } else {
       return;
     }
@@ -48,7 +47,7 @@ function AlUserService() {
     });
     if (userIdArray.length > 0) {
       $applozic.each(userIdArray, function(i, userId) {
-        if (typeof MCK_USER_DETAIL_MAP[userId] === 'undefined') {
+        if (typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'undefined') {
           otherUserIdArray.push(userId);
         }
       });

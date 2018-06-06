@@ -3020,7 +3020,7 @@ window.onload = function() {
 									return;
 							}
 							if (messagePxy.to) {
-									if (MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
+									if (alUserService.MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
 											$mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
 											$applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
 											$mck_msg_form.removeClass('vis').addClass('n-vis');
@@ -3284,13 +3284,13 @@ window.onload = function() {
                         }
                         // window.Applozic.ALSocket.checkConnected(true);
 												var displayName = mckMessageLayout.getTabDisplayName(currentTabId, false);
-                        if (!MCK_USER_DETAIL_MAP[currentTabId] && currentTabId !== displayName) {
+                        if (!alUserService.MCK_USER_DETAIL_MAP[currentTabId] && currentTabId !== displayName) {
                             mckContactService.updateDisplayName(currentTabId, displayName);
                             var userDetail = {
                                 userId: currentTabId,
                                 userName: displayName
                             };
-                            MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                            alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                         }
                     },
                     error: function(error) {
@@ -3491,7 +3491,7 @@ window.onload = function() {
 
                                     if (data.userDetails.length > 0) {
                                         $applozic.each(data.userDetails, function(i, userDetail) {
-                                            MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                            alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                             if (!params.isGroup) {
                                                 if (userDetail.connected) {
                                                     w.MCK_OL_MAP[userDetail.userId] = true;
@@ -3518,7 +3518,7 @@ window.onload = function() {
                                                     }
                                                 }
                                                 if (currTabId) {
-                                                    if (MCK_USER_DETAIL_MAP[currTabId] &&(MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted ===true)) {
+                                                    if (alUserService.MCK_USER_DETAIL_MAP[currTabId] &&(alUserService.MCK_USER_DETAIL_MAP[currTabId].deletedAtTime || isUserDeleted ===true)) {
                                                         $mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
                                                         $applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
                                                         $mck_msg_form.removeClass('vis').addClass('n-vis');
@@ -3631,7 +3631,7 @@ window.onload = function() {
                                     }
                                     if (data.userDetails.length > 0) {
                                         $applozic.each(data.userDetails, function(i, userDetail) {
-                                            MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                            alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                             if (userDetail.connected) {
                                                 w.MCK_OL_MAP[userDetail.userId] = true;
                                             } else {
@@ -3912,7 +3912,7 @@ window.onload = function() {
                                 var group = mckGroupUtils.addGroup(groupPxy);
                                 if (groupPxy.users.length > 0) {
                                     $applozic.each(groupPxy.users, function(i, userDetail) {
-                                        MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+                                        alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
                                         if (userDetail.connected) {
                                             w.MCK_OL_MAP[userDetail.userId] = true;
                                         } else {
@@ -4397,7 +4397,7 @@ window.onload = function() {
                    if (typeof MCK_CONTACT_NAME_MAP[userId] === 'string') {
                     return MCK_CONTACT_NAME_MAP[userId];
                     } else if (typeof MCK_CONTACT_NAME_MAP[userId] === 'undefined') {
-		                    var userDetail = MCK_USER_DETAIL_MAP[userId];
+		                    var userDetail = alUserService.MCK_USER_DETAIL_MAP[userId];
 		                    if (typeof userDetail !== "undefined") {
 		                        return userDetail.displayName;
 		                     }
@@ -5854,7 +5854,7 @@ window.onload = function() {
                 }
                 $mck_loading.removeClass('vis').addClass('n-vis');
             };
-            
+
             _this.updateUnreadCountonChatIcon = function(userDetails) {
                 if (IS_LAUNCH_ON_UNREAD_MESSAGE_ENABLED && userDetails.length > 0) {
                     var contactIdWithUnreadMessage = null;
@@ -5932,8 +5932,8 @@ window.onload = function() {
 										var $this = $applozic(this);
 										var tabId = $this.data('mck-id');
 										if (tabId) {
-												var userDetail = MCK_USER_DETAIL_MAP[tabId];
-												if (typeof MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
+												var userDetail = alUserService.MCK_USER_DETAIL_MAP[tabId];
+												if (typeof alUserService.MCK_USER_DETAIL_MAP[tabId] !== 'undefined' && userDetail.connected) {
 														$this.removeClass('n-vis').addClass('vis');
 														$this.next().html('(' + MCK_LABELS['online'] + ')');
 												} else {
@@ -6070,7 +6070,7 @@ window.onload = function() {
 
 				        for (var i = 0; i < uniqueUserIdArray.length; i++) {
 				            var userId = uniqueUserIdArray[i];
-				            if (!cached || typeof MCK_USER_DETAIL_MAP[userId] === 'undefined') {
+				            if (!cached || typeof alUserService.MCK_USER_DETAIL_MAP[userId] === 'undefined') {
 				                userIdList.push(userId);
 				            }
 				        }
@@ -6092,7 +6092,7 @@ window.onload = function() {
 				            if (data.status === 'success') {
 				                if (data.response.length > 0) {
 				                    $applozic.each(data.response, function(i, userDetail) {
-				                        MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
+				                        alUserService.MCK_USER_DETAIL_MAP[userDetail.userId] = userDetail;
 				                        w.MCK_OL_MAP[userDetail.userId] = (userDetail.connected);
 				                        var contact = mckMessageLayout.getContact('' + userDetail.userId);
 				                        contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(userDetail) : mckMessageLayout.updateContactDetail(contact, userDetail);
