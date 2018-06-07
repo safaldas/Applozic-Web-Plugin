@@ -5915,7 +5915,6 @@ var MCK_CLIENT_GROUP_MAP = [];
                     }),
                     contentType: 'application/json',
                     success: function(data) {
-                      console.log("test",data);
                         if (data.status === 'success') {
                             if (data.response.length > 0) {
                                 $applozic.each(data.response, function(i, userDetail) {
