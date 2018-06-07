@@ -783,7 +783,7 @@
 	        "imageData": "Base64 encoded image data" // or image data (optional)
 	    }];
 	$applozic.fn.applozic({
-	                    baseUrl : 'https://apps.applozic.com',
+	                    baseUrl : 'https://apps-test.applozic.com',
 	                    appId: appId, //Get your application key from https://www.applozic.com
 	                    userId: userId, //Logged in user's id, a unique identifier for user
 	                    userName: '', //User's display name
@@ -817,7 +817,7 @@
 	                            document.getElementById("full-view").classList.add('vis');
 															document.getElementsByTagName("body")[0].style.background= 'url("../images/image.jpg")';
 
-	                            $applozic.fn.applozic('loadTab', '');
+	                            $applozic.fn.applozic('loadTab', 'debug256');
 	                            $applozic.fn.applozic('loadContacts', { "contacts": contactsJSON });
 	                            // login successful, perform your actions if any, for example: load contacts, getting unread message count, etc
 	                        } else {
