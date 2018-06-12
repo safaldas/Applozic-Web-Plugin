@@ -367,7 +367,7 @@ window.onload = function() {
         var OPEN_GROUP_SUBSCRIBER_MAP = [];
         var MCK_CONNECTED_CLIENT_COUNT = 0;
         var GROUP_ROLE_MAP = [0, 1, 2, 3];
-        var GROUP_TYPE_MAP = [1, 2, 5, 6];
+        var GROUP_TYPE_MAP = [1, 2, 5, 6, 7, 9, 10];
         var MCK_TOPIC_CONVERSATION_MAP = [];
         var IS_MCK_USER_DEACTIVATED = false;
         var MCK_LAUNCHER = appOptions.launcher;
@@ -406,7 +406,7 @@ window.onload = function() {
         var MCK_MAP_STATIC_API_KEY = appOptions.mapStaticAPIkey;
 				var MCK_ENABLE_BADGE_COUNT = appOptions.unreadCountOnchatLauncher;
         var MCK_SELF_CHAT_DISABLE = (appOptions.disableSelfChat)?appOptions.disableSelfChat :false;
-        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : MCK_BASE_URL + "/resources/sidebox/audio/notification_tone.mp3";
+        var MCK_NOTIFICATION_TONE_LINK = (appOptions.notificationSoundLink) ? appOptions.notificationSoundLink : '';
         var MCK_USER_ID = (IS_MCK_VISITOR) ? 'guest' : $applozic.trim(appOptions.userId);
         var MCK_GOOGLE_API_KEY = (IS_MCK_LOCSHARE) ? appOptions.googleApiKey : 'NO_ACCESS';
         var MCK_SOURCE = (typeof appOptions.source === 'undefined') ? 1 : appOptions.source;
@@ -1741,55 +1741,55 @@ window.onload = function() {
         _this.subscribeToEvents = function(events) {
             if (typeof events === 'object') {
                 if (typeof events.onConnectFailed === 'function') {
-                    _this.events.onConnectFailed = events.onConnectFailed;
+                    window.Applozic.ALSocket.events.onConnectFailed = events.onConnectFailed;
                 }
                 if (typeof events.onConnect === 'function') {
-                    _this.events.onConnect = events.onConnect;
+                    window.Applozic.ALSocket.events.onConnect = events.onConnect;
                 }
                 if (typeof events.onMessageDelivered === 'function') {
-                    _this.events.onMessageDelivered = events.onMessageDelivered;
+                   	window.Applozic.ALSocket.events.onMessageDelivered = events.onMessageDelivered;
                 }
                 if (typeof events.onMessageRead === 'function') {
-                    _this.events.onMessageRead = events.onMessageRead;
+                	    window.Applozic.ALSocket.events.onMessageRead = events.onMessageRead;
                 }
                 if (typeof events.onMessageDeleted === 'function') {
-                    _this.events.onMessageDeleted = events.onMessageDeleted;
+                  	window.Applozic.ALSocket.events.onMessageDeleted = events.onMessageDeleted;
                 }
                 if (typeof events.onConversationDeleted === 'function') {
-                    _this.events.onConversationDeleted = events.onConversationDeleted;
+                 	window.Applozic.ALSocket.events.onConversationDeleted = events.onConversationDeleted;
                 }
                 if (typeof events.onUserConnect === 'function') {
-                    _this.events.onUserConnect = events.onUserConnect;
+                	   window.Applozic.ALSocket.events.onUserConnect = events.onUserConnect;
                 }
                 if (typeof events.onUserDisconnect === 'function') {
-                    _this.events.onUserDisconnect = events.onUserDisconnect;
+                 	window.Applozic.ALSocket.events.onUserDisconnect = events.onUserDisconnect;
                 }
                 if (typeof events.onConversationReadFromOtherSource === 'function') {
-                    _this.events.onConversationReadFromOtherSource = events.onConversationReadFromOtherSource;
+                 	window.Applozic.ALSocket.events.onConversationReadFromOtherSource = events.onConversationReadFromOtherSource;
                 }
                 if (typeof events.onConversationRead === 'function') {
-                    _this.events.onConversationRead = events.onConversationRead;
+                 	window.Applozic.ALSocket.events.onConversationRead = events.onConversationRead;
                 }
                 if (typeof events.onMessageReceived === 'function') {
-                    _this.events.onMessageReceived = events.onMessageReceived;
+                	   window.Applozic.ALSocket.events.onMessageReceived = events.onMessageReceived;
                 }
                 if (typeof events.onMessageSentUpdate === 'function') {
-                    _this.events.onMessageSentUpdate = events.onMessageSentUpdate;
+                	   window.Applozic.ALSocket.events.onMessageSentUpdate = events.onMessageSentUpdate;
                 }
                 if (typeof events.onMessageSent === 'function') {
-                    _this.events.onMessageSent = events.onMessageSent;
+                 	window.Applozic.ALSocket.events.onMessageSent = events.onMessageSent;
                 }
                 if (typeof events.onUserBlocked === 'function') {
-                    _this.events.onUserBlocked = events.onUserBlocked;
+                 	window.Applozic.ALSocket.events.onUserBlocked = events.onUserBlocked;
                 }
                 if (typeof events.onUserUnblocked === 'function') {
-                    _this.events.onUserUnblocked = events.onUserUnblocked;
+                 	window.Applozic.ALSocket.events.onUserUnblocked = events.onUserUnblocked;
                 }
                 if (typeof events.onUserActivated === 'function') {
-                    _this.events.onUserActivated = events.onUserActivated;
+                	   window.Applozic.ALSocket.events.onUserActivated = events.onUserActivated;
                 }
                 if (typeof events.onUserDeactivated === 'function') {
-                    _this.events.onUserDeactivated = events.onUserDeactivated;
+                 	window.Applozic.ALSocket.events.onUserDeactivated = events.onUserDeactivated;
                 }
             };
         };
@@ -2038,7 +2038,6 @@ window.onload = function() {
                 });
                 $applozic.ajaxPrefilter(function(options) {
                     if (!options.beforeSend && (options.url.indexOf(MCK_BASE_URL) !== -1)) {
-                        // _this.manageIdleTime();
                         options.beforeSend = function(jqXHR) {
                             _this.setHeaders(jqXHR);
                         };
@@ -3785,9 +3784,10 @@ window.onload = function() {
                         'status': params.topicStatus
                     };
                     if (params.isGroup) {
-                        conversationPxy.supportIds = [];
-                        conversationPxy.supportIds.push(params.supportId);
-                    }
+                    	   conversationPxy.groupId = params.groupId;
+                    } else {
+	                   	conversationPxy.userId = params.tabId;
+	                  }
                     var topicDetail = MCK_TOPIC_DETAIL_MAP[params.topicId];
                     if (typeof topicDetail === 'object') {
                         conversationPxy.topicDetail = w.JSON.stringify(topicDetail);
@@ -4416,7 +4416,6 @@ window.onload = function() {
                 var replyTo = '';
                 var  msgReplyToVisible = 'n-vis';
                 if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== "undefined" ) {
-                    console.log(msg.metadata);
                     metadatarepiledto = msg.metadata.AL_REPLY;
                     replyMsg = alMessageService.getReplyMessageByKey(metadatarepiledto);
                     if (typeof replyMsg!== "undefined" ) {
@@ -6136,7 +6135,7 @@ window.onload = function() {
                 group.groupName=params.groupName;
             	if(params.type){
                     group.type=params.type;
-                    window.Applozic.ALApiService.createOpenFriendList({data:{group},
+                    window.Applozic.ALApiService.createOpenFriendList({data:group,
                         success: function(response) {
                             if(response.status==='success'){
                             ALStorage.setFriendListGroupName(params.groupName);
@@ -6155,7 +6154,7 @@ window.onload = function() {
             		for(var i = 0, size = (params.groupMemberList).length; i < size ; i++){
             			groupMembersArray.push((params.groupMemberList)[i]);
                        }
-                       window.Applozic.ALApiService.createUserFriendList({data:{group},
+                       window.Applozic.ALApiService.createUserFriendList({data:group,
                         success: function(response) {
                                         ALStorage.setFriendListGroupName(params.groupName);
                                         if(typeof friendListGroupType !=='undefined') {
@@ -6186,7 +6185,7 @@ window.onload = function() {
                   };
            _this.removeUserFromFriendList = function (group) {
                window.Applozic.ALApiService.removeUserFromFriendList({
-                   data: { group },
+                   data:  group,
                    success: function (response) { console.log(response); },
                    error: function () { }
                });
@@ -6194,7 +6193,7 @@ window.onload = function() {
 
            _this.deleteFriendList = function (params) {
                window.Applozic.ALApiService.deleteFriendList({
-                   data: { group },
+                   data: params,
                    success: function (response) {
                        ALStorage.setFriendListGroupName('');
                        ALStorage.setFriendListGroupType('');
@@ -6737,7 +6736,7 @@ window.onload = function() {
                 var groupId = params.groupId;
                 var groupInfo = params.groupInfo;
                 var group = mckGroupUtils.getGroup(groupId);
-                if (typeof group === 'object') {
+                if (typeof group === 'object' && groupInfo) {
                     if (groupInfo.imageUrl) {
                         group.imageUrl = groupInfo.imageUrl;
                     }

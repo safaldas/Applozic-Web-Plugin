@@ -516,7 +516,7 @@
          * Applozic.ALApiService.getGroupInfo({data:{group:{groupId:"237437"}}, success: function(response){console.log(response);}, error: function() {}});
          */
         ALApiService.getGroupInfo = function (options) {
-            var groupId = (options.data.group.groupId) ? "?groupId=" + options.data.group.groupId : "?clientGroupId=" + options.data.group.clientGroupId;
+            var groupId = (options.data.groupId) ? "?groupId=" + options.data.groupId : "?clientGroupId=" + options.data.clientGroupId;
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_INFO_URL + groupId,
                 type: 'get',
@@ -574,7 +574,7 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_REMOVE_MEMBER_URL,
                 type: 'POST',
-                data: JSON.stringify(options.data.group),
+                data: JSON.stringify(options.data),
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
                 contentType: 'application/json',
@@ -602,7 +602,7 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_LEFT_URL,
                 type: 'POST',
-                data: JSON.stringify(options.data.group),
+                data: JSON.stringify(options.data),
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
                 contentType: 'application/json',
@@ -630,7 +630,7 @@
             ALApiService.ajax({
                 url: MCK_BASE_URL + GROUP_UPDATE_URL,
                 type: 'POST',
-                data: JSON.stringify(options.data.group),
+                data: JSON.stringify(options.data),
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
                 contentType: 'application/json',
@@ -751,13 +751,7 @@
                 }
             });
         }
-        /**
-                * Create Open FriendList
-                * Usage Example:
-                * Applozic.ALApiService.createOpenFriendList({data:{group:{groupName:"groupName",type: 9,
-                                                       groupMemberList: ["debug2", "debug3","videocall-1"]}},
-                                                             success: function(response) {console.log(response);}, error: function() {} });
-                */
+
         ALApiService.createOpenFriendList = function (options) {
             ALApiService.ajax({
                 url: MCK_BASE_URL + FRIEND_LIST_URL + options.data.group.groupName + "/add/members",
@@ -1157,8 +1151,7 @@
                 if (file) {
                     message.fileMeta = JSON.parse(file);
                     Applozic.ALApiService.sendMessage({
-                        data:
-                            { message },
+                        data:message,
                         success: function (response) { console.log(response); },
                         error: function () { }
                     });

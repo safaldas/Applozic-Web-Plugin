@@ -3,7 +3,7 @@
     function define_ALSocket() {
         var ALSocket = {};
         var MCK_APP_ID;
-        var events = {};
+        ALSocket.events = {};
         var subscriber = null;
         ALSocket.stompClient = null;
         var TYPING_TAB_ID = '';
@@ -55,7 +55,7 @@
                 MCK_WEBSOCKET_URL = data.websocketUrl;
             }
 
-            events = _events;
+            ALSocket.events = _events;
             if (typeof MCK_WEBSOCKET_URL !== 'undefined') {
                 var port = (!mckUtils.startsWith(MCK_WEBSOCKET_URL, "https")) ? "15674" : "15675";
                 if (typeof SockJS === 'function') {
@@ -97,8 +97,8 @@
             }
         };
         ALSocket.connectToSocket = function(isFetchMessages) {
-            if (typeof events.connectToSocket === "function") {
-                events.connectToSocket(isFetchMessages);
+            if (typeof ALSocket.connectToSocket === "function") {
+                ALSocket.events.connectToSocket(isFetchMessages);
             }
         };
         ALSocket.stopConnectedCheck = function() {
@@ -181,8 +181,8 @@
             }
         };
         ALSocket.onTypingStatus = function(resp) {
-            if (typeof events.onTypingStatus === "function") {
-                events.onTypingStatus(resp);
+            if (typeof ALSocket.events.onTypingStatus === "function") {
+                ALSocket.events.onTypingStatus(resp);
             }
         };
         ALSocket.reconnect = function() {
@@ -193,12 +193,12 @@
             data.token = MCK_TOKEN ;
             data.deviceKey = USER_DEVICE_KEY;
             data.websocketUrl = MCK_WEBSOCKET_URL;
-            ALSocket.init(MCK_APP_ID, data, events);
+            ALSocket.init(MCK_APP_ID, data, ALSocket.events);
         };
         ALSocket.onError = function(err) {
             console.log("Error in channel notification. " + err);
-            if (typeof events.onConnectFailed === "function") {
-                events.onConnectFailed();
+            if (typeof ALSocket.events.onConnectFailed === "function") {
+                ALSocket.events.onConnectFailed();
             }
         };
         ALSocket.sendStatus = function(status) {
@@ -223,75 +223,75 @@
                     ALSocket.checkConnected(true);
                 }, 5000);
             }
-            if (typeof events.onConnect === "function") {
-                events.onConnect();
+            if (typeof ALSocket.events.onConnect === "function") {
+                ALSocket.events.onConnect();
             }
         };
         ALSocket.onOpenGroupMessage = function(obj) {
-            if (typeof events.onOpenGroupMessage === "function") {
-                events.onOpenGroupMessage(obj);
+            if (typeof ALSocket.events.onOpenGroupMessage === "function") {
+                ALSocket.events.onOpenGroupMessage(obj);
             }
         };
         ALSocket.onMessage = function (obj) {
             if (subscriber != null && subscriber.id === obj.headers.subscription) {
                 var resp = JSON.parse(obj.body);
                 var messageType = resp.type;
-                if (typeof events.onMessage === "function") {
-                    events.onMessage(resp);
+                if (typeof ALSocket.events.onMessage === "function") {
+                    ALSocket.events.onMessage(resp);
                 }
                 if (messageType === "APPLOZIC_04" || messageType === "MESSAGE_DELIVERED") {
-                    events.onMessageDelivered(resp);
+                    ALSocket.events.onMessageDelivered(resp);
                 } else if (messageType === 'APPLOZIC_08' || messageType === "MT_MESSAGE_DELIVERED_READ") {
-                    events.onMessageRead(resp);
+                    ALSocket.events.onMessageRead(resp);
                 } else if (messageType === "APPLOZIC_05") {
-                    events.onMessageDeleted(resp);
+                    ALSocket.events.onMessageDeleted(resp);
                 } else if (messageType === 'APPLOZIC_27') {
-                    events.onConversationDeleted(resp);
+                    ALSocket.events.onConversationDeleted(resp);
                 }
                 else if (messageType === 'APPLOZIC_11') {
-                    events.onUserConnect(resp.message);
+                    ALSocket.events.onUserConnect(resp.message);
                 } else if (messageType === 'APPLOZIC_12') {
                   var lastSeenAtTime = resp.message.split(",")[1];
-                    events.onUserDisconnect({
+                    ALSocket.events.onUserDisconnect({
                         'userId': userId,
                         'lastSeenAtTime': lastSeenAtTime
                     });
                 } else if (messageType === "APPLOZIC_29") {
-                    events.onConversationReadFromOtherSource(resp);
+                    ALSocket.events.onConversationReadFromOtherSource(resp);
                 } else if (messageType === 'APPLOZIC_28') {
-                    events.onConversationRead(resp);
+                    ALSocket.events.onConversationRead(resp);
                 } else if (messageType === "APPLOZIC_16") {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
-                    events.onUserBlocked({
+                    ALSocket.events.onUserBlocked({
                         'status': status,
                         'userId': userId
                     });
                 } else if (messageType === 'APPLOZIC_17') {
                     var status = resp.message.split(":")[0];
                     var userId = resp.message.split(":")[1];
-                    events.onUserUnblocked({
+                    ALSocket.events.onUserUnblocked({
                         'status': status,
                         'userId': userId
                     });
                 } else if (messageType === 'APPLOZIC_18') {
-                    events.onUserActivated();
+                    ALSocket.events.onUserActivated();
                 } else if (messageType === 'APPLOZIC_19') {
-                    events.onUserDeactivated();
+                    ALSocket.events.onUserDeactivated();
                 } else {
                     var message = resp.message;
                     if (messageType === "APPLOZIC_03") {
-                        events.onMessageSentUpdate({
+                        ALSocket.events.onMessageSentUpdate({
                             'messageKey': message.key
                         });
                     } else if (messageType === "APPLOZIC_01" || messageType === "MESSAGE_RECEIVED") {
                         var messageFeed = alMessageService.getMessageFeed(message);
-                        events.onMessageReceived({
+                        ALSocket.events.onMessageReceived({
                             'message': messageFeed
                         });
                     } else if (messageType === "APPLOZIC_02") {
                         var messageFeed = alMessageService.getMessageFeed(message);
-                        events.onMessageSent({
+                        ALSocket.events.onMessageSent({
                             'message': messageFeed
                         });
                     }

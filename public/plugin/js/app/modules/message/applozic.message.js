@@ -134,7 +134,7 @@ function AlMessageService() {
           resp.messages = [];
         } else {
           var messages = data.message;
-          var messageFeeds = new Array();
+           var messageFeeds = new Array();
           $applozic.each(messages, function(i, message) {
             if (typeof callback === "function") {
               callback(message);
@@ -192,7 +192,7 @@ function AlMessageService() {
 
   _this.fetchConversationByTopicId = function(data, callback) {
     window.Applozic.ALApiService.fetchConversationByTopicId({
-      data,
+      data:data,
       success: function(data) {
         if (typeof data === 'object' && data.status === "success") {
           var conversationList = data.response;

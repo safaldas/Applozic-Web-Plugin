@@ -2,7 +2,8 @@ var mckGroupUtils = new MckGroupUtils;
 var mckGroupService = new MckGroupService();
 
 function MckGroupUtils() {
-  var _this = this
+  var _this = this;
+
   _this.getGroup = function(groupId) {
     if (typeof MCK_GROUP_MAP[groupId] === 'object') {
       return MCK_GROUP_MAP[groupId];
@@ -41,7 +42,7 @@ function MckGroupUtils() {
       'clientGroupId': group.clientGroupId,
       'isGroup': true,
       'deletedAtTime': group.deletedAtTime,
-      'metadata' : group.metadata
+      'metadata' : group.metadata,
     };
     MCK_GROUP_MAP[group.id] = groupFeed;
     if (group.clientGroupId) {
@@ -51,22 +52,21 @@ function MckGroupUtils() {
   };
   _this.createGroup = function(groupId) {
     var group = {
-      'contactId': groupId.toString(),
-      'htmlId': mckContactUtils.formatContactId('' + groupId),
-      'displayName': groupId.toString(),
-      'value': groupId.toString(),
-      'members': group.membersId ? group.membersId : group.membersName,
-      'type': 2,
-      'adminName': '',
-      'imageUrl': '',
-      'userCount': '',
-      'users': [],
-      'removedMembersId': [],
-      'clientGroupId': '',
-      'isGroup': true,
-      'deletedAtTime': ''
+            'contactId': groupId.toString(),
+            'htmlId': mckContactUtils.formatContactId('' + groupId),
+            'displayName': groupId.toString(),
+            'value': groupId.toString(),
+            'type': 2,
+            'adminName': '',
+            'imageUrl': '',
+            'userCount': '',
+            'users': [],
+            'removedMembersId': [],
+            'clientGroupId': '',
+            'isGroup': true,
+            'deletedAtTime':''
 
-    };
+        };
     MCK_GROUP_MAP[groupId] = group;
     return group;
   };
@@ -75,7 +75,7 @@ function MckGroupUtils() {
 
 function MckGroupService() {
   var _this = this;
-  var IS_MCK_VISITOR
+  var IS_MCK_VISITOR;
   var MCK_USER_ID;
   var MCK_OPEN_GROUP_SETTINGS;
   var MCK_LAST_SEEN_AT_MAP = [];
@@ -147,9 +147,7 @@ function MckGroupService() {
     }
 
     Applozic.ALApiService.getGroupInfo({
-      data: {
-        group
-      },
+      data: group,
       success: function(response) {
         if (response.status === "success") {
           var groupFeed = response.response;
@@ -204,9 +202,7 @@ function MckGroupService() {
       return;
     }
     Applozic.ALApiService.groupLeave({
-      data: {
-        group
-      },
+      data: group,
       success: function(data) {
         if (data.status === "success") {
           if (params.clientGroupId) {
@@ -262,7 +258,7 @@ function MckGroupService() {
     }
     group.userId = params.userId;
     Applozic.ALApiService.removeGroupMember({
-      data: { group: group},
+      data:group,
       success: function(response) {
         if (response.status === 'success') {
           if (params.clientGroupId) {
@@ -281,7 +277,7 @@ function MckGroupService() {
           params.callback(response);
         }
         if (params.apzCallback) {
-          params.apzCallback(response, params)
+          params.apzCallback(response, params);
         }
       },
       error: function() {
@@ -379,9 +375,7 @@ function MckGroupService() {
       group.users = params.users;
     }
     Applozic.ALApiService.groupUpdate({
-      data: {
-        group
-      },
+      data: group,
       success: function(data, group) {
         if (data.status === "success") {
           if (params.clientGroupId) {
