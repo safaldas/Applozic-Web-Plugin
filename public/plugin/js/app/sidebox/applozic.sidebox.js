@@ -3020,7 +3020,7 @@ window.onload = function() {
 									return;
 							}
 							if (messagePxy.to) {
-									if (alUserService.MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
+									if (alUserService.MCK_USER_DETAIL_MAP[messagePxy.to] && alUserService.MCK_USER_DETAIL_MAP[messagePxy.to].deletedAtTime || isUserDeleted === true) {
 											$mck_msg_error.html(MCK_LABELS['user.delete']).removeClass('n-vis').addClass('vis');
 											$applozic("#mck-tab-status").removeClass('vis').addClass('n-vis');
 											$mck_msg_form.removeClass('vis').addClass('n-vis');
