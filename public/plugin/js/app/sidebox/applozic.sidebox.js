@@ -4297,8 +4297,7 @@ window.onload = function() {
                     }
                 }
 
-                mckMessageService.loadMessageList(params, callback);
-                _this.openConversation();
+                mckMessageService.loadMessageList(params,_this.openConversation);
             };
             _this.setProductProperties = function(topicDetail, topicId) {
                 $mck_product_title.html(topicDetail.title);
@@ -4416,7 +4415,6 @@ window.onload = function() {
                 var replyTo = '';
                 var  msgReplyToVisible = 'n-vis';
                 if (typeof msg.metadata === "object" && typeof msg.metadata.AL_REPLY !== "undefined" ) {
-                    console.log(msg.metadata);
                     metadatarepiledto = msg.metadata.AL_REPLY;
                     replyMsg = alMessageService.getReplyMessageByKey(metadatarepiledto);
                     if (typeof replyMsg!== "undefined" ) {
