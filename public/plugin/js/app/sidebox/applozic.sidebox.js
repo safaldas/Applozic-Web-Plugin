@@ -477,6 +477,7 @@ window.onload = function() {
         var mckNotificationTone = null;
 				var notificationtoneoption = {};
         var ringToneService;
+				var lastFetchTime;
         var isUserDeleted = false;
         var mckVideoCallringTone = null;
         w.MCK_OL_MAP = new Array();
@@ -3311,7 +3312,17 @@ window.onload = function() {
 								console.log("caught it");
                 window.open(fileurl, "_blank");
             };
-
+						$applozic('div').scroll(function() {
+							console.log("test");
+             if ($applozic("#mck-sidebox-search").hasClass('vis') || $applozic('#mck-gm-search-box').css('display') == 'block') {
+               if ($applozic(this).scrollTop() + $applozic(this).innerHeight() >= $applozic(this)[0].scrollHeight) {
+                 if (lastFetchTime) {
+                   var url = '/rest/ws/user/filter?pageSize=50&orderBy=1&startTime=' + lastFetchTime;
+                    mckContactService.ajaxcallForContacts(url, true);
+                  }
+               }
+              }
+            });
             _this.replyMessage = function(msgKey) {
                 var displayName ='';
                 var tabId = $mck_msg_inner.data('mck-id');
@@ -4654,7 +4665,7 @@ window.onload = function() {
                     });
                 }
             };
-            _this.addContactForSearchList = function(contact, $listId) {
+            _this.addContactForSearchList = function(contact, $listId, append) {
                 var groupUserCount = contact.userCount;
                 var isGroupTab = contact.isGroup;
                 var displayName = _this.getTabDisplayName(contact.contactId, isGroupTab);
@@ -4683,7 +4694,11 @@ window.onload = function() {
                     groupUserCountExpr: contact.userCount,
                     displayGroupUserCountExpr: displayCount ? "vis" : "n-vis"
                 }];
+								if(append === true){
+                	 $applozic.tmpl('searchContactbox', contactList).appendTo('#' + $listId);
+                }else{
                 $applozic.tmpl('searchContactbox', contactList).prependTo('#' + $listId);
+                }
             };
 
         _this.getImageForMessagePreview = function(message) {
@@ -4964,7 +4979,7 @@ window.onload = function() {
                     _this.addContact(contact, $listId, message);
                 }
             };
-            _this.addContactsToSearchList = function(contactList) {
+            _this.addContactsToSearchList = function(append,contactList) {
                 var contactsArray = [],
                     userIdArray = [];
                 $applozic.each(MCK_CONTACT_ARRAY, function(i, contact) {
@@ -4990,7 +5005,7 @@ window.onload = function() {
                             var contact = _this.fetchContact('' + userId);
                             contactsArray.push(contact);
                             if ($applozic('#li-cs-user-' + contact.htmlId).length === 0) {
-                                _this.addContactForSearchList(contact, 'mck-contact-search-list');
+                                _this.addContactForSearchList(contact, 'mck-contact-search-list',append);
                             }
                         }
                     });
@@ -5261,7 +5276,7 @@ window.onload = function() {
                 $mck_search_loading.removeClass('n-vis').addClass('vis');
                 var friendListGroup = ALStorage.getFriendListGroupName();
                if (MCK_CONTACT_ARRAY.length !== 0 ||friendListGroup) {
-                   mckMessageLayout.addContactsToSearchList(contactList);
+                   mckMessageLayout.addContactsToSearchList(false,contactList);
                } else if (!IS_MCK_OWN_CONTACTS) {
                     mckContactService.loadContacts();
                 } else {
@@ -6018,43 +6033,49 @@ window.onload = function() {
                     }, error: function () { }
                 });
         };
-            _this.loadContacts = function() {
-                var mckContactNameArray = [];
-                window.Applozic.ALApiService.getContactList({
-									url:'?startIndex=0&pageSize=30&orderBy=1',
-									baseUrl: MCK_BASE_URL,
-                success: function(data) {
-                    if ($mck_sidebox_search.hasClass('vis')) {
-                        if (typeof data === 'object' && data.users.length > 0) {
-                            $applozic.each(data.users, function(i, user) {
-                                if (typeof user.userId !== 'undefined') {
-                                    var contact = mckMessageLayout.getContact('' + user.userId);
-                                    contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
-                                    MCK_CONTACT_ARRAY.push(contact);
-                                    mckContactNameArray.push([user.userId, contact.displayName]);
-                                    if (user.connected) {
-                                        w.MCK_OL_MAP[user.userId] = true;
-                                    } else {
-                                        w.MCK_OL_MAP[user.userId] = false;
-                                        if (typeof user.lastSeenAtTime !== 'undefined') {
-                                            MCK_LAST_SEEN_AT_MAP[user.userId] = user.lastSeenAtTime;
-                                        }
-                                    }
-                                }
-                            });
-                            if (mckContactNameArray.length > 0) {
-                                ALStorage.updateMckContactNameArray(mckContactNameArray);
-                            }
-                        }
-                        mckMessageLayout.addContactsToSearchList();
-                        return;
-                    }
-                },
-                error: function() {
-                    $mck_search_loading.removeClass('vis').addClass('n-vis');
-                    w.console.log('Unable to load contacts. Please reload page.');
-                } });
-            };
+				_this.loadContacts = function() {
+					 var url = CONTACT_LIST_URL + '?startIndex=0&pageSize=50&orderBy=1';
+						mckContactService.ajaxcallForContacts(url);
+				 };
+						_this.ajaxcallForContacts =  function (url,append) {
+							var mckContactNameArray = [];
+							window.Applozic.ALApiService.getContactList({
+								url:url,
+								baseUrl: MCK_BASE_URL,
+							success: function(data) {
+								lastFetchTime = data.lastFetchTime;
+									if ($mck_sidebox_search.hasClass('vis')) {
+											if (typeof data === 'object' && data.users.length > 0) {
+													$applozic.each(data.users, function(i, user) {
+															if (typeof user.userId !== 'undefined') {
+																	var contact = mckMessageLayout.getContact('' + user.userId);
+																	contact = (typeof contact === 'undefined') ? mckMessageLayout.createContactWithDetail(user) : mckMessageLayout.updateContactDetail(contact, user);
+																	MCK_CONTACT_ARRAY.push(contact);
+																	mckContactNameArray.push([user.userId, contact.displayName]);
+																	if (user.connected) {
+																			w.MCK_OL_MAP[user.userId] = true;
+																	} else {
+																			w.MCK_OL_MAP[user.userId] = false;
+																			if (typeof user.lastSeenAtTime !== 'undefined') {
+																					MCK_LAST_SEEN_AT_MAP[user.userId] = user.lastSeenAtTime;
+																			}
+																	}
+															}
+													});
+													if (mckContactNameArray.length > 0) {
+															ALStorage.updateMckContactNameArray(mckContactNameArray);
+													}
+											}
+											mckMessageLayout.addContactsToSearchList(append);
+                      mckGroupLayout.addMembersToGroupSearchList();
+											return;
+									}
+							},
+							error: function() {
+									$mck_search_loading.removeClass('vis').addClass('n-vis');
+									w.console.log('Unable to load contacts. Please reload page.');
+							} });
+}
 
 						_this.getUsersDetail = function(userIdArray, params) {
 				        if (typeof userIdArray === 'undefined' || userIdArray.length < 1) {
