@@ -950,7 +950,7 @@
         ALApiService.getContactList = function (options) {
             var baseurl = options.baseUrl ? options.baseUrl : MCK_BASE_URL;
             ALApiService.ajax({
-                url: options.baseUrl + USER_FILTER + options.url,
+                url: baseurl+ options.url,
                 type: 'GET',
                 async: (typeof options.async !== 'undefined') ? options.async : true,
                 global: false,
