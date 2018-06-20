@@ -3330,7 +3330,7 @@ window.onload = function() {
                 $mck_text_box.focus().select();
                 $('#mck-reply-to-div').removeClass('n-vis').addClass('vis');
                 if(message.type === 5) {
-                      displayName = 'You';
+                      displayName = MCK_LABELS['you'];
                     } else {
                     displayName = mckMessageLayout.getTabDisplayName(message.to, false);
                      }
@@ -4433,7 +4433,7 @@ window.onload = function() {
                      msgReplyToVisible ='vis';
                       }
                    if(replyMsg.type === 5) {
-                      replyTo = 'You';
+                      replyTo = MCK_LABELS['you'];
                     } else {
                     replyTo = mckMessageLayout.getTabDisplayName(replyMsg.to, false);
                      }
@@ -4722,7 +4722,12 @@ window.onload = function() {
             };
 
          _this.getImageForReplyMessage = function(message) {
-                var displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+					   var displayName = '';
+			       if (message.type === 5) {
+				       displayName = MCK_LABELS['you'];
+		         } else {
+				       displayName = mckMessageLayout.getTabDisplayName(message.to, false);
+		         }
              if (typeof message.fileMeta === 'object') {
                     if (message.fileMeta.contentType.indexOf("image")!== -1) {
             return '<div><div class="mck-imagereply mck-margin"><div class="mck-msgto">'+displayName+ '</div><div><span class="mck-icon-camera mck-camera"></span><span>Photo</span></div></div><div class="mck-imagereply"><img src="'+ MCK_FILE_URL + FILE_PREVIEW_URL + message.fileMeta.blobKey + '" class="mck-image-reply mck-msg-text mck-msg-content"/></div></div>';
