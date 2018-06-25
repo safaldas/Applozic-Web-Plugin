@@ -145,7 +145,7 @@ function AlMessageService() {
         if (data.groupFeeds.length > 0) {
           resp.id = data.groupFeeds[0].id;
         }
-        params.callback(resp);
+        params.callback(data);
       },
       error: function(error) {
         resp.status = "error";
